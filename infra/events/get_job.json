@@ -1,0 +1,8 @@
+{
+  "version": "2.0",
+  "routeKey": "POST /journey",
+  "rawPath": "/journey",
+  "requestContext": { "http": { "method": "POST" } },
+  "body": "{\"platform\":\"euw1\",\"riotId\":\"bst#0123\",\"archetype\":\"explorer\"}",
+  "isBase64Encoded": false
+}

@@ -1,0 +1,85 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# AWS SAM
+.aws-sam/
+samconfig.toml
+
+# Secrets and Keys
+*.pem
+*.key
+key.json
+secret.json
+infra/key.json
+infra/secret.json
+
+# Node.js / Frontend
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+dist/
+dist-ssr/
+*.local
+
+# Environment variables
+.env
+.env.local
+.env.production
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Logs
+*.log
+logs/
+
+# Test files
+*.test.js
+*.spec.js
+coverage/
+
+# Data files (if you don't want to commit match data)
+*.json.bak
+matches_*.json
+story.json
+datafiles/
+
+# AWS
+.aws/
+aws-sam-cli-linux-x86_64.zip
+sam-install/
+
+# Temporary files
+*.tmp
+*.temp
+.cache/

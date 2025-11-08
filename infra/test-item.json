@@ -1,0 +1,13 @@
+{
+  "jobId": {"S": "test-job-123"},
+  "platform": {"S": "euw1"},
+  "riotId": {"S": "Player#1234"},
+  "s3Base": {"S": "test-job-123/"},
+  "status": {"S": "queued"},
+  "quarters": {"M": {
+    "Q1": {"S": "pending"},
+    "Q2": {"S": "pending"},
+    "Q3": {"S": "pending"},
+    "Q4": {"S": "pending"}
+  }}
+}

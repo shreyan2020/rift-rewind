@@ -1,0 +1,196 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Rift Rewind — API → FetchQuarter → ProcessQuarter (no LLM yet)
+
+Globals:
+  Function:
+    Runtime: python3.11
+    Timeout: 120
+    MemorySize: 1024
+    Tracing: Active
+    Environment:
+      Variables:
+        TABLE_NAME: !Ref JobsTable
+        BUCKET_NAME: !Ref DataBucket
+        FETCH_QUEUE_URL: !Ref FetchQueue
+        PROCESS_QUEUE_URL: !Ref ProcessQueue
+        RIOT_API_KEY: "RGAPI-82650f00-053c-4a87-9687-9fb719afc6fd"
+        MAX_CONCURRENCY: "8"
+        REGION_HINT: !Ref AWS::Region
+        DDB_ENDPOINT: ""
+
+Resources:
+  # -------- Storage --------
+  DataBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub rift-rewind-data-${AWS::AccountId}-${AWS::Region}
+      CorsConfiguration:
+        CorsRules:
+          - AllowedOrigins: ['*']
+            AllowedHeaders: ['*']
+            AllowedMethods: ['GET','HEAD']
+
+  JobsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub rift-rewind-jobs-${AWS::AccountId}
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: jobId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: jobId
+          KeyType: HASH
+
+  # -------- Queues --------
+  FetchQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub rift-rewind-fetch-${AWS::AccountId}
+      VisibilityTimeout: 1800   # > fetch lambda timeout
+      MessageRetentionPeriod: 86400  # 24 hours
+      ReceiveMessageWaitTimeSeconds: 20  # Long polling
+
+  ProcessQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub rift-rewind-process-${AWS::AccountId}
+      VisibilityTimeout: 300    # > process lambda timeout
+      MessageRetentionPeriod: 86400  # 24 hours
+      ReceiveMessageWaitTimeSeconds: 20  # Long polling
+
+  # -------- HTTP API (renamed to avoid reserved ID) --------
+  RiftHttpApi:
+    Type: AWS::Serverless::HttpApi
+    Properties:
+      CorsConfiguration:
+        AllowOrigins: ['*']
+        AllowHeaders: ['*']
+        AllowMethods: ['*']
+
+  # -------- API Lambda --------
+  ApiFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: rift-rewind-api
+      CodeUri: src/
+      Handler: api.handler
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref JobsTable
+        - SQSSendMessagePolicy:
+            QueueName: !GetAtt FetchQueue.QueueName
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - secretsmanager:GetSecretValue
+              Resource: !Sub 'arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:RiotApiKey-*'
+      Events:
+        HttpAny:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref RiftHttpApi
+            Path: /{proxy+}
+            Method: ANY
+
+  # -------- Fetch quarter worker --------
+  FetchQuarterFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: rift-rewind-fetch-quarter
+      CodeUri: src/
+      Handler: fetch_quarter.handler
+      Timeout: 900
+      MemorySize: 1536
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref JobsTable
+        - S3CrudPolicy:
+            BucketName: !Ref DataBucket
+        - SQSPollerPolicy:
+            QueueName: !GetAtt FetchQueue.QueueName
+        - SQSSendMessagePolicy:
+            QueueName: !GetAtt ProcessQueue.QueueName
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - secretsmanager:GetSecretValue
+              Resource: !Sub 'arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:RiotApiKey-*'
+      Events:
+        FromFetchQueue:
+          Type: SQS
+          Properties:
+            Queue: !GetAtt FetchQueue.Arn
+            BatchSize: 1
+            ScalingConfig:
+              MaximumConcurrency: 2   # cap consumers without reserved concurrency
+
+  # -------- Process quarter worker --------
+  ProcessQuarterFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: rift-rewind-process-quarter
+      CodeUri: src/
+      Handler: process_quarter.handler
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref JobsTable
+        - S3CrudPolicy:
+            BucketName: !Ref DataBucket
+        - SQSPollerPolicy:
+            QueueName: !GetAtt ProcessQueue.QueueName
+        - SQSSendMessagePolicy:
+            QueueName: !GetAtt FetchQueue.QueueName
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - secretsmanager:GetSecretValue
+              Resource: !Sub 'arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:RiotApiKey-*'
+            - Effect: Allow
+              Action:
+                - bedrock:InvokeModel
+              Resource: 
+                - !Sub 'arn:aws:bedrock:${AWS::Region}::foundation-model/mistral.mistral-7b-instruct-v0:2'
+      Events:
+        FromProcessQueue:
+          Type: SQS
+          Properties:
+            Queue: !GetAtt ProcessQueue.Arn
+            BatchSize: 1
+
+  # -------- Log retention --------
+  ApiLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: /aws/lambda/rift-rewind-api
+      RetentionInDays: 7
+
+  FetchLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: /aws/lambda/rift-rewind-fetch-quarter
+      RetentionInDays: 7
+
+  ProcessLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: /aws/lambda/rift-rewind-process-quarter
+      RetentionInDays: 7
+
+Outputs:
+  ApiUrl:
+    Description: Base API URL
+    Value: !Sub "https://${RiftHttpApi}.execute-api.${AWS::Region}.amazonaws.com"
+  DataBucketName:
+    Description: S3 bucket for cached match data
+    Value: !Ref DataBucket
+  FetchQueueUrl:
+    Description: URL of the fetch queue
+    Value: !Ref FetchQueue
+  ProcessQueueUrl:
+    Description: URL of the process queue
+    Value: !Ref ProcessQueue

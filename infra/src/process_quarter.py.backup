@@ -1,0 +1,84 @@
+import os, json, boto3
+from common import to_regional, parse_riot_id, get_puuid
+from stats_inference import (
+    bundles_from_participant, score_values, zscore_rows, aggregate_mean,
+    universalism_bonus, chapter_stats
+)
+
+# Get config from env
+REGION = os.environ.get("REGION_HINT", "eu-west-1")
+DDB_ENDPOINT = os.environ.get("DDB_ENDPOINT")
+S3_ENDPOINT = os.environ.get("S3_ENDPOINT")
+
+# Initialize clients with optional endpoints
+_ddb_kwargs = {"region_name": REGION}
+if DDB_ENDPOINT:
+    _ddb_kwargs["endpoint_url"] = DDB_ENDPOINT
+DDB = boto3.resource("dynamodb", **_ddb_kwargs).Table(os.environ["TABLE_NAME"])
+
+_s3_kwargs = {"region_name": REGION}
+if S3_ENDPOINT:
+    _s3_kwargs["endpoint_url"] = S3_ENDPOINT
+S3 = boto3.client("s3", **_s3_kwargs)
+
+BUCKET = os.environ["BUCKET_NAME"]
+
+def _s3_read_json(key): 
+    obj = S3.get_object(Bucket=BUCKET, Key=key)
+    return json.loads(obj["Body"].read().decode("utf-8"))
+
+def _s3_write_json(key, obj):
+    S3.put_object(Bucket=BUCKET, Key=key, Body=json.dumps(obj).encode("utf-8"),
+                  ContentType="application/json")
+
+def _update_job(jobId, **fields):
+    expr = "SET " + ", ".join(f"#{k} = :{k}" for k in fields)
+    names = {f"#{k}": k for k in fields}
+    vals  = {f":{k}": v for k,v in fields.items()}
+    DDB.update_item(Key={"jobId": jobId}, UpdateExpression=expr,
+                    ExpressionAttributeNames=names, ExpressionAttributeValues=vals)
+
+def handler(event, context):
+    for rec in event["Records"]:
+        msg = json.loads(rec["body"])
+        job_id  = msg["jobId"]; label = msg["quarter"]
+        item = DDB.get_item(Key={"jobId": job_id}).get("Item")
+        if not item: 
+            continue
+        platform = item["platform"]; riot_id = item["riotId"]; s3_base = item["s3Base"]
+
+        regional = to_regional(platform)
+        game, tag = parse_riot_id(riot_id)
+        puuid = get_puuid(regional, game, tag)
+        if not puuid:
+            qmap = item.get("quarters", {"Q1":"pending","Q2":"pending","Q3":"pending","Q4":"pending"})
+            qmap[label] = "error"; _update_job(job_id, quarters=qmap); 
+            continue
+
+        index_key = f"{s3_base}{label}/index.json"
+        index = _s3_read_json(index_key)
+        matches = [_s3_read_json(it["s3Key"]) for it in index.get("items", [])]
+
+        bundles = []
+        for mj in matches:
+            parts = (mj.get("info") or {}).get("participants") or []
+            you = next((p for p in parts if p.get("puuid")==puuid), None)
+            if you: bundles.append(bundles_from_participant(you))
+
+        raw = score_values(bundles)
+        norm = zscore_rows(raw)
+        values = aggregate_mean(norm)
+        values["Universalism"] = values.get("Universalism", 0.0) + universalism_bonus(bundles)
+        stats = chapter_stats(bundles)
+
+        top_values = sorted(values.items(), key=lambda kv: kv[1], reverse=True)[:5]
+        lore = f"{label}: Foundations locked. Macro patterns emerging. Next: tempo and vision pivots."
+        reflection = "Raise vision score/min by 0.2 and stabilize CS/min pre-10 by lane goals."
+
+        story = {"quarter": label, "values": values, "top_values": top_values, "stats": stats,
+                 "lore": lore, "reflection": reflection}
+        _s3_write_json(f"{s3_base}{label}/story.json", story)
+
+        qmap = item.get("quarters", {"Q1":"pending","Q2":"pending","Q3":"pending","Q4":"pending"})
+        qmap[label] = "ready"
+        _update_job(job_id, quarters=qmap)
