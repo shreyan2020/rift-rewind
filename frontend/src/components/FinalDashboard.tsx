@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { useState, useMemo } from 'react';
-import type { Quarter } from '../api';
+import type { Quarter, Finale } from '../api';
 import { VALUE_DESCRIPTIONS } from '../constants/valueDescriptions';
 import React from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
@@ -8,10 +8,11 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 interface FinalDashboardProps {
   quarters: Record<string, Quarter>;
   riotId: string;
+  finaleData: Finale | null;
   onNewJourney?: () => void;
 }
 
-const FinalDashboard: React.FC<FinalDashboardProps> = ({ quarters, riotId, onNewJourney }) => {
+const FinalDashboard: React.FC<FinalDashboardProps> = ({ quarters, riotId, finaleData, onNewJourney }) => {
   const quarterKeys = useMemo(() => ['Q1', 'Q2', 'Q3', 'Q4'], []);
 
   // State for selected value in dropdown
@@ -81,14 +82,16 @@ const FinalDashboard: React.FC<FinalDashboardProps> = ({ quarters, riotId, onNew
   avgStats.vision_score_per_min /= 4;
   avgStats.ping_rate_per_min /= 4;
   
-  // Generate final lore
-  const finalLore = `Your journey through Runeterra comes to a close. From the first steps in Q1 to the final battles of Q4, you've carved a unique path across the Rift. The data reveals not just numbers, but a story of growth, adaptation, and perseverance. As the season ends, your legend in Runeterra is etched into the annals of the Rift. What will your next chapter hold?`;
+  // Use finale lore if available, otherwise fallback
+  const finalLore = finaleData?.lore || `Your journey through Runeterra comes to a close. From the first steps in Q1 to the final battles of Q4, you've carved a unique path across the Rift. The data reveals not just numbers, but a story of growth, adaptation, and perseverance. As the season ends, your legend in Runeterra is etched into the annals of the Rift. What will your next chapter hold?`;
   
-  // Consolidate all reflections
-  const consolidatedReflection = quarterKeys
+  console.log('FinalDashboard - finaleData:', finaleData);
+  console.log('FinalDashboard - finalLore:', finalLore);
+  
+  // Use finale reflection if available, otherwise consolidate quarter reflections
+  const consolidatedReflection = finaleData?.final_reflection || quarterKeys
     .map(qKey => quarters[qKey]?.reflection)
-    .filter(Boolean)
-    .join(' • ');
+    .filter(Boolean);
 
   return (
     <div className="min-h-screen p-8">
@@ -187,10 +190,21 @@ const FinalDashboard: React.FC<FinalDashboardProps> = ({ quarters, riotId, onNew
           transition={{ delay: 0.8 }}
           className="bg-gradient-to-br from-runeterra-dark/40 to-runeterra-purple/10 backdrop-blur-sm border border-runeterra-purple/30 rounded-lg p-8 mb-12"
         >
-          <h3 className="text-2xl font-bold text-runeterra-purple mb-4 text-center">Growth & Improvement</h3>
-          <p className="text-runeterra-gold-light text-base leading-relaxed text-center max-w-4xl mx-auto">
-            {consolidatedReflection}
-          </p>
+          <h3 className="text-2xl font-bold text-runeterra-purple mb-4 text-center">Growth & Reflection</h3>
+          {Array.isArray(consolidatedReflection) ? (
+            <ul className="text-runeterra-gold-light text-base leading-relaxed max-w-4xl mx-auto space-y-3">
+              {consolidatedReflection.map((reflection, index) => (
+                <li key={index} className="flex items-start gap-3">
+                  <span className="text-runeterra-purple text-xl mt-0.5">•</span>
+                  <span>{reflection}</span>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="text-runeterra-gold-light text-base leading-relaxed text-center max-w-4xl mx-auto">
+              {consolidatedReflection}
+            </p>
+          )}
         </motion.div>
 
         {/* Call to Action */}

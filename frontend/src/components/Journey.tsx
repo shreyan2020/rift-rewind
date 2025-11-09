@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
-import { getJobStatus, getQuarterStory, type JobStatus, type Quarter } from '../api';
+import { getJobStatus, getQuarterStory, getFinale, type JobStatus, type Quarter, type Finale } from '../api';
 import ChapterView from './ChapterView';
 import FinalDashboard from './FinalDashboard';
 
@@ -14,6 +14,7 @@ const Journey: React.FC<JourneyProps> = ({ jobId, riotId, onReset }) => {
   const [jobStatus, setJobStatus] = useState<JobStatus | null>(null);
   const [currentChapter, setCurrentChapter] = useState<string | null>(null);
   const [chapterData, setChapterData] = useState<Record<string, Quarter>>({});
+  const [finaleData, setFinaleData] = useState<Finale | null>(null);
 
   const loadChapter = useCallback(async (quarter: string, s3Base: string) => {
     if (chapterData[quarter]) return; // Already loaded
@@ -74,6 +75,27 @@ const Journey: React.FC<JourneyProps> = ({ jobId, riotId, onReset }) => {
     return jobStatus?.quarters[quarter as keyof typeof jobStatus.quarters] === 'ready';
   };
 
+  // Check if all quarters are ready and loaded
+  const allQuartersReady = ['Q1', 'Q2', 'Q3', 'Q4'].every(q => isQuarterReady(q));
+  const allQuartersLoaded = ['Q1', 'Q2', 'Q3', 'Q4'].every(q => chapterData[q]);
+  
+  // Load finale data when all quarters are ready
+  useEffect(() => {
+    const loadFinale = async () => {
+      if (allQuartersReady && !finaleData && jobStatus) {
+        try {
+          console.log('Loading finale from:', jobStatus.s3Base);
+          const finale = await getFinale(jobStatus.s3Base);
+          console.log('Finale loaded:', finale);
+          setFinaleData(finale);
+        } catch (error) {
+          console.error('Failed to load finale:', error);
+        }
+      }
+    };
+    loadFinale();
+  }, [allQuartersReady, finaleData, jobStatus]);
+
   // Show loading until Q1 is ready
   if (!jobStatus || jobStatus.quarters.Q1 !== 'ready') {
     return (
@@ -102,10 +124,6 @@ const Journey: React.FC<JourneyProps> = ({ jobId, riotId, onReset }) => {
     setCurrentChapter('Q1');
     loadChapter('Q1', jobStatus.s3Base);
   }
-
-  // Check if all quarters are ready and loaded
-  const allQuartersReady = ['Q1', 'Q2', 'Q3', 'Q4'].every(q => isQuarterReady(q));
-  const allQuartersLoaded = ['Q1', 'Q2', 'Q3', 'Q4'].every(q => chapterData[q]);
   
   // Show final dashboard if user is viewing Q4 and all quarters are complete
   if (currentChapter === 'Q4' && allQuartersReady && allQuartersLoaded) {
@@ -153,7 +171,7 @@ const Journey: React.FC<JourneyProps> = ({ jobId, riotId, onReset }) => {
   
   // Show final dashboard
   if (currentChapter === 'FINAL' && allQuartersLoaded) {
-    return <FinalDashboard quarters={chapterData} riotId={riotId} onNewJourney={onReset} />;
+    return <FinalDashboard quarters={chapterData} riotId={riotId} finaleData={finaleData} onNewJourney={onReset} />;
   }
 
   return null;

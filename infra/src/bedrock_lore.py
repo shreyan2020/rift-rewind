@@ -68,23 +68,64 @@ Keep it under 100 words. Make it feel connected to the previous events."""
         return f"{quarter}: Your journey through {region_arc} has shaped your path. The Rift remembers."
 
 
-def generate_quarter_reflection(quarter: str, stats: Dict[str, float], 
+def generate_quarter_reflection(quarter: str, stats: dict, 
                                 top_values: List[tuple]) -> str:
     """
     Generate actionable reflection/tips for a quarter
     """
+    # Get actual role from match data
+    role = stats.get('primary_role', 'UNKNOWN')
+    
+    # Build role-specific stats display
+    base_stats = f"""Games: {stats.get('games', 0)}
+KDA: {stats.get('kda_proxy', 0):.2f}
+Kill Participation: {stats.get('kill_participation', 0):.1f}%
+Vision/min: {stats.get('vision_score_per_min', 0):.2f}
+Gold/min: {stats.get('gold_per_min', 0):.0f}"""
+    
+    # Add role-specific context and stats
+    if role in ["UTILITY", "SUPPORT"]:
+        role_context = "\n\nRole: SUPPORT"
+        role_stats = f"""Control Wards/game: {stats.get('control_wards_per_game', 0):.1f}
+CS/min: {stats.get('cs_per_min', 0):.2f} (low CS is normal for supports)"""
+        focus_areas = "Focus on vision control, roaming timing, engage/disengage mechanics, and peel for carries."
+    elif role == "JUNGLE":
+        role_context = "\n\nRole: JUNGLE"
+        role_stats = f"""Objective Damage/min: {stats.get('obj_damage_per_min', 0):.0f}
+CS/min: {stats.get('cs_per_min', 0):.2f} (includes jungle camps)"""
+        focus_areas = "Focus on clear speed, gank timing, objective control, and jungle tracking."
+    elif role == "TOP":
+        role_context = "\n\nRole: TOP"
+        role_stats = f"""CS/min: {stats.get('cs_per_min', 0):.2f}
+Objective Damage/min: {stats.get('obj_damage_per_min', 0):.0f}"""
+        focus_areas = "Focus on wave management, split pushing, TP usage, and teamfight positioning."
+    elif role == "MIDDLE":
+        role_context = "\n\nRole: MID"
+        role_stats = f"""CS/min: {stats.get('cs_per_min', 0):.2f}
+Objective Damage/min: {stats.get('obj_damage_per_min', 0):.0f}"""
+        focus_areas = "Focus on roaming, wave priority, jungle coordination, and teamfight impact."
+    elif role == "BOTTOM":
+        role_context = "\n\nRole: ADC"
+        role_stats = f"""CS/min: {stats.get('cs_per_min', 0):.2f}
+Objective Damage/min: {stats.get('obj_damage_per_min', 0):.0f}"""
+        focus_areas = "Focus on CS, positioning, objective damage, and teamfight output."
+    else:
+        role_context = f"\n\nRole: {role}"
+        role_stats = f"""CS/min: {stats.get('cs_per_min', 0):.2f}"""
+        focus_areas = "Focus on improving fundamentals and role-specific mechanics."
+    
     prompt = f"""You are a League of Legends coach analyzing a player's performance.
 
-Quarter: {quarter}
-Games: {stats.get('games', 0)}
-KDA Proxy: {stats.get('kda_proxy', 0):.2f}
-CS/min: {stats.get('cs_per_min', 0):.2f}
-Vision/min: {stats.get('vision_score_per_min', 0):.2f}
-Gold/min: {stats.get('gold_per_min', 0):.0f}
-Pings/min: {stats.get('ping_rate_per_min', 0):.2f}
+Quarter: {quarter}{role_context}
+
+Performance Stats:
+{base_stats}
+{role_stats}
+
+{focus_areas}
 
 Provide ONE specific, actionable tip to improve their gameplay (1 sentence, under 25 words).
-Focus on the weakest stat or area for improvement. Be direct and specific with numbers."""
+Focus on the weakest stat or biggest opportunity for improvement. Be direct and specific with numbers."""
 
     body = {
         "prompt": prompt,
@@ -165,23 +206,34 @@ def generate_finale_reflection(all_quarters_data: List[Dict[str, Any]]) -> List[
     Generate 3-4 key takeaways and forward-looking tips for the finale
     """
     stats_summary = []
+    total_cs = 0
+    total_vision = 0
+    
     for i, q in enumerate(all_quarters_data):
         stats = q.get('stats', {})
+        total_cs += stats.get('cs_per_min', 0)
+        total_vision += stats.get('vision_score_per_min', 0)
         stats_summary.append(
             f"Q{i+1}: {stats.get('games', 0)} games, "
             f"{stats.get('kda_proxy', 0):.2f} KDA, "
+            f"{stats.get('cs_per_min', 0):.2f} CS/min, "
             f"{stats.get('vision_score_per_min', 0):.2f} vision/min"
         )
     
-    prompt = f"""You are a League of Legends coach providing a season summary and future goals.
+    avg_cs = total_cs / 4
+    avg_vision = total_vision / 4
+    likely_support = avg_cs < 1.0 and avg_vision > 1.5
+    role_context = " (Appears to be a Support player - focus on vision, roaming, and team utility)" if likely_support else ""
+    
+    prompt = f"""You are a League of Legends coach providing a season summary and future goals.{role_context}
 
 Season Summary:
 {chr(10).join(stats_summary)}
 
 Provide 3-4 key bullet points that:
 1. Highlight the biggest strength shown across the season
-2. Identify the main area for improvement
-3. Give 1-2 specific, measurable goals for next season (with numbers)
+2. Identify the main area for improvement (considering their role)
+3. Give 1-2 specific, measurable goals for next season (with numbers appropriate for their role)
 
 Each bullet should be 1 sentence, under 20 words. Be specific and actionable.
 Format as a simple list without bullet symbols or numbers."""

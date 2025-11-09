@@ -23,14 +23,13 @@ def _getc(d: dict, key: str, default=0.0):
 def _mins(p: dict) -> float:
     """
     Robust minutes:
-    - Prefer challenges.gameLength if present.
-    - If it's large (>1800), assume seconds → /60.
-    - Else, fallback to participant.timePlayed (seconds).
+    - Prefer challenges.gameLength if present (always in seconds from Riot API).
+    - Fallback to participant.timePlayed (seconds).
     - Clamp to >= 1.0 to avoid division by zero.
     """
     gl = _getc(p, "gameLength", 0.0)
     if _is_num(gl) and gl > 0:
-        m = gl / 60.0 if gl > 1800 else gl  # tolerate both units
+        m = gl / 60.0  # gameLength is always in seconds
     else:
         m = _num(_get(p, "timePlayed", 0.0)) / 60.0
     return max(1.0, float(m) if _is_num(m) else 1.0)
@@ -183,7 +182,7 @@ def universalism_mapping(p: dict) -> dict:
         "championId": int(_get(p, 'championId', 0))
     }
 
-def bundles_from_participant(p: dict) -> Dict[str, dict]:
+def bundles_from_participant(p: dict) -> dict:
     return {
         "power": power_mapping(p),
         "achiev": achievement_mapping(p),
@@ -195,6 +194,7 @@ def bundles_from_participant(p: dict) -> Dict[str, dict]:
         "conf": conformity_mapping(p),
         "secs": security_mapping(p),
         "univ": universalism_mapping(p),
+        "role": p.get("teamPosition") or p.get("individualPosition") or "UNKNOWN",
     }
 
 # =========================
@@ -308,7 +308,7 @@ def universalism_bonus(participant_bundles: List[dict]) -> float:
 # =========================
 # Chapter-level stats
 # =========================
-def chapter_stats(participant_bundles: List[dict]) -> Dict[str, float]:
+def chapter_stats(participant_bundles: List[dict]) -> dict:
     if not participant_bundles:
         return {
             "games": 0,
@@ -316,7 +316,11 @@ def chapter_stats(participant_bundles: List[dict]) -> Dict[str, float]:
             "cs_per_min": 0.0,
             "gold_per_min": 0.0,
             "vision_score_per_min": 0.0,
-            "ping_rate_per_min": 0.0
+            "ping_rate_per_min": 0.0,
+            "primary_role": "UNKNOWN",
+            "obj_damage_per_min": 0.0,
+            "kill_participation": 0.0,
+            "control_wards_per_game": 0.0
         }
     deaths = [_num(_get(b.get("bene", {}), "deaths", _get(b.get("secs", {}), "deaths", 0.0))) for b in participant_bundles]
     tdowns = [_num(_get(b.get("bene", {}), "takedowns", 0.0)) for b in participant_bundles]
@@ -324,11 +328,28 @@ def chapter_stats(participant_bundles: List[dict]) -> Dict[str, float]:
     cs_pm = [_num(_get(b.get("trad", {}), "csPerMin", 0.0)) for b in participant_bundles]
     gpm   = [_num(_get(b.get("power", {}), "goldEarnedperMin", 0.0)) for b in participant_bundles]
     vspm  = [_num(_get(b.get("secs", {}), "visionScorePerMinute", 0.0)) for b in participant_bundles]
+    
+    # Role-specific stats
+    obj_dmg = [_num(_get(b.get("bene", {}), "damageDealtToObjectives", 0.0)) for b in participant_bundles]
+    kp = [_num(_get(b.get("bene", {}), "killParticipation", 0.0)) for b in participant_bundles]
+    control_wards = [_num(_get(b.get("bene", {}), "controlWardsPlaced", 0.0)) for b in participant_bundles]
+    
+    # Calculate per-minute objective damage
+    game_lengths = [_num(_get(b.get("trad", {}), "gameLength", 1800.0)) / 60.0 for b in participant_bundles]
+    obj_dmg_per_min = [dmg / max(1.0, length) for dmg, length in zip(obj_dmg, game_lengths)]
+    
     # aggregate ping rate: sum of all ping types per minute
     pr_all = []
     for b in participant_bundles:
         pr = b.get("power", {}).get("pingsPerMin", {}) or {}
         pr_all.append(sum(_num(v, 0.0) for v in pr.values()))
+    
+    # Find most played role
+    from collections import Counter
+    roles = [b.get("role", "UNKNOWN") for b in participant_bundles]
+    role_counts = Counter(roles)
+    primary_role = role_counts.most_common(1)[0][0] if role_counts else "UNKNOWN"
+    
     _avg = lambda xs: (mean(xs) if xs else 0.0)
     return {
         "games": len(participant_bundles),
@@ -336,5 +357,9 @@ def chapter_stats(participant_bundles: List[dict]) -> Dict[str, float]:
         "cs_per_min": _avg(cs_pm),
         "gold_per_min": _avg(gpm),
         "vision_score_per_min": _avg(vspm),
-        "ping_rate_per_min": _avg(pr_all)
+        "ping_rate_per_min": _avg(pr_all),
+        "primary_role": primary_role,
+        "obj_damage_per_min": _avg(obj_dmg_per_min),
+        "kill_participation": _avg(kp) * 100,  # Convert to percentage
+        "control_wards_per_game": _avg(control_wards)
     }

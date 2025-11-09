@@ -1,5 +1,4 @@
 import { motion } from 'framer-motion';
-import { useState } from 'react';
 import type { Quarter } from '../api';
 import { VALUE_DESCRIPTIONS } from '../constants/valueDescriptions';
 
@@ -93,18 +92,12 @@ interface ValueBarProps {
 }
 
 const ValueBar: React.FC<ValueBarProps> = ({ name, value, rank, delay }) => {
-  const [showTooltip, setShowTooltip] = useState(false);
-  
   return (
-    <div 
-      className="flex items-center gap-3 relative"
-      onMouseEnter={() => setShowTooltip(true)}
-      onMouseLeave={() => setShowTooltip(false)}
-    >
+    <div className="flex items-center gap-3">
       <span className="text-runeterra-gold font-bold w-6 text-sm">#{rank}</span>
       <div className="flex-1">
         <div className="flex justify-between mb-1">
-          <span className="text-runeterra-gold-light font-medium text-sm cursor-help">{name}</span>
+          <span className="text-runeterra-gold-light font-medium text-sm">{name}</span>
           <span className="text-gray-400 text-xs">{Number(value).toFixed(2)}</span>
         </div>
         <div className="h-1.5 bg-gray-700 rounded-full overflow-hidden">
@@ -116,19 +109,6 @@ const ValueBar: React.FC<ValueBarProps> = ({ name, value, rank, delay }) => {
           />
         </div>
       </div>
-      
-      {/* Tooltip */}
-      {showTooltip && (
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="absolute left-0 right-0 top-full mt-2 z-10 bg-runeterra-darker border border-runeterra-blue/50 rounded-lg p-3 shadow-xl"
-        >
-          <p className="text-runeterra-gold-light text-xs leading-relaxed">
-            {VALUE_DESCRIPTIONS[name] || 'A measure of your playstyle.'}
-          </p>
-        </motion.div>
-      )}
     </div>
   );
 };
@@ -216,10 +196,22 @@ const ChapterView: React.FC<ChapterViewProps> = ({ quarter, data, riotId, onNext
             className="bg-runeterra-dark/50 backdrop-blur-sm border border-runeterra-blue/30 rounded-lg p-6"
           >
             <h3 className="text-xl font-bold text-runeterra-blue mb-4 text-center">Playstyle Values</h3>
-            <div className="space-y-3">
+            <div className="space-y-3 mb-4">
               {data.top_values.slice(0, 5).map(([name, value], index) => (
                 <ValueBar key={name} name={name} value={value} rank={index + 1} delay={0.7 + index * 0.1} />
               ))}
+            </div>
+            {/* Value Descriptions Legend */}
+            <div className="mt-6 pt-4 border-t border-runeterra-blue/20">
+              <h4 className="text-xs font-semibold text-runeterra-blue/70 uppercase tracking-wider mb-3">What These Mean</h4>
+              <div className="space-y-2">
+                {data.top_values.slice(0, 5).map(([name]) => (
+                  <div key={`desc-${name}`} className="text-xs">
+                    <span className="font-semibold text-runeterra-gold-light">{name}:</span>
+                    <span className="text-gray-400 ml-1">{VALUE_DESCRIPTIONS[name] || 'A measure of your playstyle.'}</span>
+                  </div>
+                ))}
+              </div>
             </div>
           </motion.div>
         </div>
