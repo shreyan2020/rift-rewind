@@ -3,7 +3,7 @@ import logging
 from botocore.exceptions import ClientError
 
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from common import to_regional, parse_riot_id, get_puuid, get_ids_window, fetch_match, regional_for_match
+from common import to_regional, parse_riot_id, get_puuid, fetch_match, regional_for_match
 
 # Setup logging
 # Force update: 2025-01-08 17:42 UTC - Added 50 match limit for testing
@@ -34,6 +34,7 @@ if SQS_ENDPOINT:
 SQS = boto3.client("sqs", **_sqs_kwargs)
 
 BUCKET = os.environ["BUCKET_NAME"]
+FETCH_QUEUE_URL = os.environ.get("FETCH_QUEUE_URL", "")
 PROCESS_QUEUE_URL = os.environ.get("PROCESS_QUEUE_URL", "")
 MAX_CONCURRENCY = int(os.getenv("MAX_CONCURRENCY","8"))
 
@@ -144,9 +145,25 @@ def handler(event, context):
         process_fetch(msg)
 
 def process_fetch(msg):
-    job_id  = msg["jobId"]; label = msg["quarter"]; st = msg["start"]; et = msg["end"]
+    job_id  = msg["jobId"]
     force   = bool(msg.get("force", False))
     
+    # Check if this is a special "discover_and_divide" task
+    task = msg.get("task")
+    if task == "discover_and_divide":
+        LOG.info(f"Processing discover_and_divide for jobId={job_id}")
+        item = DDB.get_item(Key={"jobId": job_id}).get("Item")
+        if not item:
+            LOG.warning(f"Job not found: {job_id}")
+            return
+        platform = item["platform"]
+        riot_id = item["riotId"]
+        s3_base = item["s3Base"]
+        process_fetch_all(job_id, platform, riot_id, s3_base, force)
+        return
+    
+    # Normal quarter processing
+    label   = msg["quarter"]
     LOG.info(f"Processing fetch for jobId={job_id}, quarter={label}")
     
     item = DDB.get_item(Key={"jobId": job_id}).get("Item")
@@ -154,11 +171,15 @@ def process_fetch(msg):
         LOG.warning(f"Job not found: {job_id}")
         return
     
-    platform = item["platform"]; riot_id = item["riotId"]; s3_base = item["s3Base"]
-
+    platform = item["platform"]
+    riot_id = item["riotId"]
+    s3_base = item["s3Base"]
+    
+    # Handle normal quarter fetching (Q1, Q2, Q3, Q4)
     qmap = item.get("quarters", {"Q1":"pending","Q2":"pending","Q3":"pending","Q4":"pending"})
-    qmap[label] = "fetching"; update_job(job_id, quarters=qmap, status="running")
-
+    qmap[label] = "fetching"
+    update_job(job_id, quarters=qmap, status="running")
+    
     regional = to_regional(platform)
     game, tag = parse_riot_id(riot_id)
     
@@ -166,50 +187,60 @@ def process_fetch(msg):
     puuid = get_puuid(regional, game, tag)
     if not puuid:
         LOG.error(f"Failed to get PUUID for {game}#{tag} - marking quarter as error")
-        qmap[label] = "error"; update_job(job_id, quarters=qmap); return
-
+        qmap[label] = "error"
+        update_job(job_id, quarters=qmap)
+        return
+    
+    # Get the match IDs for this quarter from the quarterMatches map
+    quarter_matches = item.get("quarterMatches", {})
+    match_ids_for_quarter = quarter_matches.get(label, [])
+    
+    if not match_ids_for_quarter:
+        LOG.warning(f"No matches found for {label} in quarterMatches map")
+        qmap[label] = "error"
+        update_job(job_id, quarters=qmap)
+        return
+    
+    LOG.info(f"Fetching {len(match_ids_for_quarter)} matches for {label}")
+    
     # Cache-first: if index.json exists and not forceReload, skip network
     index_key = f"{s3_base}{label}/index.json"
     if s3_exists(index_key) and not force:
-        # still enqueue processing (skip if no queue URL, for local testing)
+        # still enqueue processing
         if PROCESS_QUEUE_URL:
             SQS.send_message(QueueUrl=PROCESS_QUEUE_URL, MessageBody=json.dumps({
                 "jobId": job_id, "quarter": label
             }))
-        qmap[label] = "fetched"; update_job(job_id, quarters=qmap)
+        qmap[label] = "fetched"
+        update_job(job_id, quarters=qmap)
         return
-
-    # Otherwise build current known set, do incremental fetch
+    
+    # Fetch all matches for this quarter
     existing_keys = set(s3_list_prefix(f"{s3_base}{label}/"))
     existing_ids = set()
     for k in existing_keys:
-        # keys look like: <jobId>/<Qn>/<name>_<MATCH_ID>.json
         if k.endswith(".json") and "_EU" in k or "_NA" in k or "_KR" in k:
             mid = k.rsplit("/",1)[-1].split("_",1)[-1].removesuffix(".json")
             existing_ids.add(mid)
-
-    # Fetch full ID list, then diff
-    all_ids = get_ids_window(regional, puuid, st, et)
-    missing = [mid for mid in all_ids if mid not in existing_ids]
     
-    # TESTING: Limit to 50 matches per quarter
-    if len(missing) > 50:
-        LOG.info(f"Limiting fetch to 50 matches (found {len(missing)} total)")
-        missing = missing[:50]
-
+    missing = [mid for mid in match_ids_for_quarter if mid not in existing_ids]
+    
+    LOG.info(f"Need to fetch {len(missing)} new matches for {label}")
+    
     results = {}
     with ThreadPoolExecutor(max_workers=MAX_CONCURRENCY) as pool:
         futs = {pool.submit(fetch_match, regional_for_match(mid), mid): mid for mid in missing}
         for fut in as_completed(futs):
-            mid = futs[fut]; data = fut.result()
-            if data is None: continue
+            mid = futs[fut]
+            data = fut.result()
+            if data is None:
+                continue
             key = f"{s3_base}{label}/{riot_id.split('#',1)[0]}_{mid}.json"
-            # Idempotent write: skip if already there
             if not s3_exists(key):
                 s3_write_json(key, data)
             results[mid] = key
-
-    # Merge index with existing if present
+    
+    # Build index
     merged_items = []
     if s3_exists(index_key):
         try:
@@ -217,23 +248,72 @@ def process_fetch(msg):
             merged_items.extend(old.get("items", []))
         except Exception:
             pass
-    # add any new items not present
+    
     old_ids = {it.get("matchId") for it in merged_items}
-    for m,k in results.items():
+    for m, k in results.items():
         if m not in old_ids:
             merged_items.append({"matchId": m, "s3Key": k})
-    # also add any files that existed before but not in old index
+    
     for k in existing_keys:
         if k.endswith(".json") and "/index.json" not in k and "/story.json" not in k:
             mid = k.rsplit("/",1)[-1].split("_",1)[-1].removesuffix(".json")
             if mid not in {it["matchId"] for it in merged_items}:
                 merged_items.append({"matchId": mid, "s3Key": k})
-
+    
     s3_write_json(index_key, {"count": len(merged_items), "items": merged_items})
-
-    # enqueue processing (skip if no queue URL, for local testing)
+    
+    # enqueue processing
     if PROCESS_QUEUE_URL:
         SQS.send_message(QueueUrl=PROCESS_QUEUE_URL, MessageBody=json.dumps({
             "jobId": job_id, "quarter": label
         }))
-    qmap[label] = "fetched"; update_job(job_id, quarters=qmap)
+    qmap[label] = "fetched"
+    update_job(job_id, quarters=qmap)
+
+
+def process_fetch_all(job_id, platform, riot_id, s3_base, force):
+    """
+    Fetch ALL 2025 matches, divide them into quarters by position,
+    then enqueue Q1-Q4 fetch tasks.
+    """
+    LOG.info(f"Fetching all 2025 matches for {riot_id}")
+    
+    regional = to_regional(platform)
+    game, tag = parse_riot_id(riot_id)
+    
+    puuid = get_puuid(regional, game, tag)
+    if not puuid:
+        LOG.error(f"Failed to get PUUID for {game}#{tag}")
+        update_job(job_id, status="error")
+        return
+    
+    # Import the new functions from common
+    from common import get_all_ids_2025, divide_matches_into_quarters, MAX_MATCHES_PER_QUARTER
+    
+    # Fetch all match IDs from 2025
+    all_match_ids = get_all_ids_2025(regional, puuid)
+    
+    if not all_match_ids:
+        LOG.warning(f"No matches found for {riot_id} in 2025")
+        update_job(job_id, status="error", quarters={
+            "Q1": "error", "Q2": "error", "Q3": "error", "Q4": "error"
+        })
+        return
+    
+    # Divide into quarters (max 50 matches per quarter by default)
+    quarters_map = divide_matches_into_quarters(all_match_ids, max_per_quarter=MAX_MATCHES_PER_QUARTER)
+    
+    # Store the quarter divisions in DynamoDB
+    update_job(job_id, quarterMatches=quarters_map)
+    
+    # Enqueue Q1 first (sequential processing)
+    if PROCESS_QUEUE_URL:
+        SQS.send_message(QueueUrl=FETCH_QUEUE_URL, MessageBody=json.dumps({
+            "jobId": job_id,
+            "platform": platform,
+            "riotId": riot_id,
+            "quarter": "Q1",
+            "force": force
+        }))
+    
+    LOG.info(f"Enqueued Q1 for processing ({len(quarters_map['Q1'])} matches)")

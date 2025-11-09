@@ -83,3 +83,6 @@ sam-install/
 *.tmp
 *.temp
 .cache/
+bucket-policy.json
+*.old.md
+*.code-workspace

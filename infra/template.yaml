@@ -15,6 +15,7 @@ Globals:
         FETCH_QUEUE_URL: !Ref FetchQueue
         PROCESS_QUEUE_URL: !Ref ProcessQueue
         RIOT_API_KEY: "RGAPI-82650f00-053c-4a87-9687-9fb719afc6fd"
+        MAX_MATCHES_PER_QUARTER: "50"
         MAX_CONCURRENCY: "8"
         REGION_HINT: !Ref AWS::Region
         DDB_ENDPOINT: ""
@@ -110,6 +111,8 @@ Resources:
         - S3CrudPolicy:
             BucketName: !Ref DataBucket
         - SQSPollerPolicy:
+            QueueName: !GetAtt FetchQueue.QueueName
+        - SQSSendMessagePolicy:
             QueueName: !GetAtt FetchQueue.QueueName
         - SQSSendMessagePolicy:
             QueueName: !GetAtt ProcessQueue.QueueName

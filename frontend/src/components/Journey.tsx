@@ -84,9 +84,7 @@ const Journey: React.FC<JourneyProps> = ({ jobId, riotId, onReset }) => {
     const loadFinale = async () => {
       if (allQuartersReady && !finaleData && jobStatus) {
         try {
-          console.log('Loading finale from:', jobStatus.s3Base);
           const finale = await getFinale(jobStatus.s3Base);
-          console.log('Finale loaded:', finale);
           setFinaleData(finale);
         } catch (error) {
           console.error('Failed to load finale:', error);

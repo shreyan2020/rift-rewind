@@ -85,9 +85,6 @@ const FinalDashboard: React.FC<FinalDashboardProps> = ({ quarters, riotId, final
   // Use finale lore if available, otherwise fallback
   const finalLore = finaleData?.lore || `Your journey through Runeterra comes to a close. From the first steps in Q1 to the final battles of Q4, you've carved a unique path across the Rift. The data reveals not just numbers, but a story of growth, adaptation, and perseverance. As the season ends, your legend in Runeterra is etched into the annals of the Rift. What will your next chapter hold?`;
   
-  console.log('FinalDashboard - finaleData:', finaleData);
-  console.log('FinalDashboard - finalLore:', finalLore);
-  
   // Use finale reflection if available, otherwise consolidate quarter reflections
   const consolidatedReflection = finaleData?.final_reflection || quarterKeys
     .map(qKey => quarters[qKey]?.reflection)

@@ -127,6 +127,9 @@ const ChapterView: React.FC<ChapterViewProps> = ({ quarter, data, riotId, onNext
   const regionArc = data.region_arc || 'Runeterra';
   const theme = REGION_THEMES[regionArc] || REGION_THEMES['Runeterra'];
   
+  // Convert Q1 → Chapter 1, Q2 → Chapter 2, etc.
+  const chapterNumber = quarter.replace('Q', 'Chapter ');
+  
   return (
     <div className={`min-h-screen p-8 flex items-center justify-center bg-gradient-to-br ${theme.bg}`}>
       <motion.div
@@ -141,13 +144,15 @@ const ChapterView: React.FC<ChapterViewProps> = ({ quarter, data, riotId, onNext
             animate={{ opacity: 1, y: 0 }}
             className="mb-2"
           >
-            <span className={`text-sm font-medium bg-gradient-to-r ${theme.accent} bg-clip-text text-transparent uppercase tracking-wider`}>
-              {regionArc}
-            </span>
-            <p className="text-xs text-gray-400 italic mt-1">{theme.description}</p>
+            <div className="bg-black/60 backdrop-blur-sm border border-runeterra-gold/30 rounded-lg px-6 py-4 inline-block mb-2">
+              <span className={`text-2xl font-bold bg-gradient-to-r ${theme.accent} bg-clip-text text-transparent uppercase tracking-wider block`}>
+                {regionArc}
+              </span>
+              <p className="text-sm text-runeterra-gold-light mt-1">{theme.description}</p>
+            </div>
           </motion.div>
           <h1 className="text-6xl font-bold text-runeterra-gold mb-3 animate-glow">
-            {quarter}
+            {chapterNumber}
           </h1>
           <p className="text-runeterra-gold-light text-xl">{riotId}'s Journey Through Runeterra</p>
         </div>

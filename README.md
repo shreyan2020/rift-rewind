@@ -1,321 +1,417 @@
-# 🎮 Rift Rewind
+# Rift Rewind v2 🎮
 
-**A League of Legends Journey Through Runeterra**
+**A League of Legends journey through Runeterra** - An AI-powered narrative experience that transforms your 2025 ranked season into an epic saga across the regions of Runeterra.
 
-Rift Rewind is a personalized League of Legends analytics platform that transforms your gameplay data into an epic narrative journey through the regions of Runeterra. Track your quarterly progress, discover your playstyle values, and watch your story unfold with AI-generated lore.
+![Rift Rewind Banner](https://img.shields.io/badge/League%20of%20Legends-Season%202025-gold?style=for-the-badge)
+![AWS](https://img.shields.io/badge/AWS-Serverless-orange?style=for-the-badge&logo=amazonaws)
+![React](https://img.shields.io/badge/React-18-blue?style=for-the-badge&logo=react)
 
-![Rift Rewind Banner](https://img.shields.io/badge/League%20of%20Legends-Analytics-blue)
-![AWS](https://img.shields.io/badge/AWS-Lambda%20%7C%20S3%20%7C%20DynamoDB-orange)
-![React](https://img.shields.io/badge/React-18-61dafb)
-![Python](https://img.shields.io/badge/Python-3.11-3776ab)
+## 🌟 Overview
 
-## ✨ Features
+Rift Rewind v2 analyzes your League of Legends ranked matches from 2025 and creates a personalized narrative journey through Runeterra. Each quarter of the year corresponds to a different region, dynamically selected based on your playstyle and performance.
 
-### 📊 Quarterly Analytics
-- **Q1-Q4 Breakdown**: Analyze your performance across each quarter of the year
-- **Value-Based Insights**: Discover your playstyle through 10 Schwartz Values (Benevolence, Power, Achievement, etc.)
-- **Dynamic Stats**: Track KDA, CS/min, vision score, gold efficiency, and more
-- **Champion Mastery**: See your most-played champions each quarter
+### Key Features
 
-### 🗺️ Journey Through Runeterra
-- **Region-Based Narrative**: Each quarter maps to a different region based on your dominant values
-  - Demacia (Benevolence) → Honor and teamwork
-  - Noxus (Power) → Strength and dominance
-  - Ionia (Self-Direction) → Balance and independence
-  - Piltover (Achievement) → Progress and innovation
-  - And 6 more regions!
-- **Dynamic Backgrounds**: Each chapter features region-specific themes and colors
-- **Continuous Story**: Your journey flows seamlessly from one region to the next
-
-### 🤖 AI-Generated Lore
-- **Powered by Amazon Bedrock (Mistral 7B)**: Every quarter gets personalized narrative lore
-- **Story Continuity**: Each chapter builds on the previous one
-- **Epic Finale**: A grand conclusion that ties all 4 quarters together
-- **Actionable Insights**: AI-generated coaching tips for improvement
-
-### 📈 Interactive Visualizations
-- **Timeline Charts**: Track value progression across quarters (powered by Recharts)
-- **Value Comparison**: See how your playstyle evolves over time
-- **Real-time Updates**: Watch your journey process quarter by quarter
+- **🤖 AI-Generated Narratives**: Powered by Amazon Bedrock (Mistral 7B Instruct)
+- **📊 Quarterly Analysis**: Automatic segmentation into Q1, Q2, Q3, Q4
+- **🗺️ Dynamic Region Mapping**: Runeterra regions chosen based on your top stats
+- **🎯 Role-Specific Insights**: Tailored feedback for each position (Support, Jungle, ADC, etc.)
+- **📈 Performance Tracking**: Visual progression of key metrics across quarters
+- **⚡ Serverless Architecture**: AWS Lambda, DynamoDB, S3, SQS
 
 ## 🏗️ Architecture
 
-### Backend (AWS SAM)
 ```
-┌─────────────┐
-│   API GW    │ ← POST /journey, GET /status/{jobId}
-└──────┬──────┘
-       │
-       ▼
-┌─────────────┐      ┌──────────────┐
-│  Lambda API │─────▶│  DynamoDB    │ (Job tracking)
-└──────┬──────┘      └──────────────┘
-       │
-       ▼
-┌─────────────┐      ┌──────────────┐
-│ SQS: Fetch  │─────▶│ Lambda Fetch │ (Riot API calls)
-└─────────────┘      └──────┬───────┘
-                            │
-                            ▼
-┌─────────────┐      ┌──────────────┐      ┌──────────────┐
-│SQS: Process │─────▶│Lambda Process│─────▶│   Bedrock    │ (AI lore)
-└─────────────┘      └──────┬───────┘      └──────────────┘
-                            │
-                            ▼
-                     ┌──────────────┐
-                     │   S3 Bucket  │ (Match data + stories)
-                     └──────────────┘
-```
-
-### Frontend (React + Vite)
-```
-Frontend (S3 Static Website)
-├── Journey Submission Form
-├── Real-time Status Tracking
-├── Chapter View (Q1-Q4)
-│   ├── Dynamic Region Backgrounds
-│   ├── AI-Generated Lore
-│   └── Stats & Values Display
-└── Final Dashboard
-    ├── Timeline Chart (Recharts)
-    ├── Finale Lore
-    └── Season Reflections
+┌─────────────────┐
+│   Frontend      │  React + Vite + TypeScript
+│   (S3 Static)   │  Tailwind CSS + Framer Motion
+└────────┬────────┘
+         │
+         ▼
+┌─────────────────┐
+│   API Gateway   │  HTTP API with CORS
+└────────┬────────┘
+         │
+         ▼
+┌─────────────────┐     ┌──────────────┐
+│  API Lambda     │────▶│  DynamoDB    │
+│  (Journey CRUD) │     │  (Job Status)│
+└────────┬────────┘     └──────────────┘
+         │
+         ▼
+┌─────────────────┐     ┌──────────────┐
+│  SQS Queues     │────▶│  S3 Bucket   │
+│  Fetch/Process  │     │  (Matches)   │
+└────────┬────────┘     └──────────────┘
+         │
+         ▼
+┌─────────────────┐     ┌──────────────┐
+│ Worker Lambdas  │────▶│   Bedrock    │
+│ Fetch/Process   │     │  (Mistral)   │
+└─────────────────┘     └──────────────┘
 ```
 
-## 🚀 Getting Started
+### Components
 
-### Prerequisites
+1. **Frontend** (`/frontend`)
+   - React 18 SPA with TypeScript
+   - Hosted on S3 as static website
+   - Real-time polling for job status
+   - Interactive chapter navigation
+
+2. **Backend** (`/infra`)
+   - **API Lambda**: Handles journey creation, status checks
+   - **Fetch Lambda**: Retrieves match data from Riot API
+   - **Process Lambda**: Generates stats, AI lore, and reflections
+   - **DynamoDB**: Tracks job status and quarter completion
+   - **S3**: Stores match data and generated stories
+   - **SQS**: Queue-based processing (Fetch → Process)
+
+3. **AI Generation**
+   - Amazon Bedrock with Mistral 7B Instruct
+   - Contextual lore generation based on region
+   - Role-specific performance reflections
+   - Story continuity across quarters
+
+## 🚀 Prerequisites
+
 - **AWS Account** with appropriate permissions
-- **AWS CLI** configured
-- **AWS SAM CLI** installed
 - **Node.js** 18+ and npm
 - **Python** 3.11+
+- **AWS CLI** configured
+- **SAM CLI** for backend deployment
 - **Riot Games API Key** ([Get one here](https://developer.riotgames.com/))
+
+## 📦 Installation
+
+### 1. Clone the Repository
+
+```bash
+git clone <repository-url>
+cd rift-rewind-v2
+```
+
+### 2. Backend Setup
+
+```bash
+cd infra
+
+# Install Python dependencies locally (for development)
+pip install -r src/requirements.txt
+
+# Configure your Riot API key (see API Key Management below)
+# Edit infra/secret.json with your API key
+```
+
+### 3. Frontend Setup
+
+```bash
+cd frontend
+npm install
+```
+
+## 🔑 API Key Management
+
+### Updating Riot API Key
+
+Riot API keys expire periodically. To update:
+
+1. **Get a new key** from [Riot Developer Portal](https://developer.riotgames.com/)
+
+2. **Update the secret file**:
+
+```bash
+cd infra
+
+# Edit secret.json
+cat > secret.json << EOF
+{
+  "RIOT_API_KEY": "RGAPI-your-new-key-here"
+}
+EOF
+```
+
+3. **Redeploy the backend**:
+
+```bash
+sam build
+sam deploy --no-confirm-changeset
+```
+
+The key is stored in AWS Secrets Manager and automatically injected into Lambda functions.
+
+### Security Notes
+
+- ✅ `secret.json` is gitignored
+- ✅ API key stored in AWS Secrets Manager
+- ✅ Lambda functions fetch key at runtime
+- ⚠️ Never commit API keys to version control
+
+## 🎯 Deployment
 
 ### Backend Deployment
 
-1. **Clone the repository**
-   ```bash
-   git clone git@github.com:shreyan2020/rift-rewind.git
-   cd rift-rewind
-   ```
+```bash
+cd infra
 
-2. **Set up Riot API Key**
-   ```bash
-   cd infra
-   # Update template.yaml with your Riot API key (line 17)
-   # Or store in AWS Secrets Manager
-   ```
+# Build Lambda functions
+sam build
 
-3. **Enable Amazon Bedrock Access**
-   - Go to AWS Console → Amazon Bedrock → Model access
-   - Request access to **Mistral 7B Instruct**
-   - Wait for approval (usually instant)
+# Deploy to AWS (first time - creates resources)
+sam deploy --guided
 
-4. **Deploy with SAM**
-   ```bash
-   sam build
-   sam deploy --guided
-   ```
-   - Follow prompts to configure stack name, region, etc.
-   - Note the API endpoint URL from outputs
+# Subsequent deployments
+sam deploy --no-confirm-changeset
+```
+
+**What gets deployed:**
+- 3 Lambda functions (API, FetchQuarter, ProcessQuarter)
+- DynamoDB table for job tracking
+- S3 bucket for match data and stories
+- 2 SQS queues (FetchQueue, ProcessQueue)
+- API Gateway HTTP API
+- IAM roles and policies
 
 ### Frontend Deployment
 
-1. **Build the frontend**
-   ```bash
-   cd frontend
-   npm install
-   npm run build
-   ```
+```bash
+cd frontend
 
-2. **Create S3 bucket**
-   ```bash
-   aws s3 mb s3://rift-rewind-frontend-YOUR-ACCOUNT-ID
-   ```
+# Build for production
+npm run build
 
-3. **Configure static website hosting**
-   ```bash
-   aws s3 website s3://rift-rewind-frontend-YOUR-ACCOUNT-ID \
-     --index-document index.html \
-     --error-document index.html
-   ```
-
-4. **Set bucket policy for public access**
-   ```bash
-   aws s3api put-bucket-policy --bucket rift-rewind-frontend-YOUR-ACCOUNT-ID \
-     --policy '{
-       "Version": "2012-10-17",
-       "Statement": [{
-         "Sid": "PublicReadGetObject",
-         "Effect": "Allow",
-         "Principal": "*",
-         "Action": "s3:GetObject",
-         "Resource": "arn:aws:s3:::rift-rewind-frontend-YOUR-ACCOUNT-ID/*"
-       }]
-     }'
-   ```
-
-5. **Disable public access block**
-   ```bash
-   aws s3api delete-public-access-block --bucket rift-rewind-frontend-YOUR-ACCOUNT-ID
-   ```
-
-6. **Deploy frontend**
-   ```bash
-   aws s3 sync dist/ s3://rift-rewind-frontend-YOUR-ACCOUNT-ID --delete
-   ```
-
-7. **Access your site**
-   ```
-   http://rift-rewind-frontend-YOUR-ACCOUNT-ID.s3-website-REGION.amazonaws.com
-   ```
-
-## 🎯 Usage
-
-1. **Enter your Riot ID** (e.g., `Summoner#EUW`)
-2. **Select region** (e.g., EUW1, NA1, KR)
-3. **Submit** and watch the magic happen!
-4. **Track progress** as each quarter processes
-5. **Explore your journey** through the chapters
-6. **View finale** after Q4 completes
-
-## 🔧 Configuration
-
-### Environment Variables (Backend)
-- `RIOT_API_KEY`: Your Riot Games API key
-- `TABLE_NAME`: DynamoDB table for job tracking
-- `BUCKET_NAME`: S3 bucket for data storage
-- `FETCH_QUEUE_URL`: SQS queue for fetch operations
-- `PROCESS_QUEUE_URL`: SQS queue for processing
-- `MAX_CONCURRENCY`: Parallel match fetching (default: 8)
-
-### Frontend Configuration
-Update `frontend/src/api.ts`:
-```typescript
-const API_BASE_URL = import.meta.env.DEV 
-  ? '/api' 
-  : 'https://YOUR-API-GATEWAY-URL.amazonaws.com';
+# Deploy to S3 (replace bucket name with yours)
+aws s3 sync dist/ s3://rift-rewind-frontend-<your-account-id> --delete --region <your-region>
 ```
+
+**Note:** Update `src/api.ts` with your actual API Gateway URL before building.
+
+### S3 Bucket Policy
+
+Ensure the data bucket allows public read for story files:
+
+```bash
+cd rift-rewind-v2
+
+# Apply the bucket policy
+aws s3api put-bucket-policy \
+  --bucket rift-rewind-data-<your-account-id>-<your-region> \
+  --region <your-region> \
+  --policy file://bucket-policy.json
+```
+
+## 🎮 Usage
+
+### For End Users
+
+1. **Visit the website**: Your S3 static website URL
+
+2. **Enter your details**:
+   - Summoner Name (e.g., `Faker#KR1`)
+   - Region (EUW, NA, KR, etc.)
+   - Archetype (Explorer, Warrior, Sage, Guardian)
+
+3. **Start Journey**: Click "Begin Journey"
+
+4. **Watch the magic happen**:
+   - System fetches your 2025 ranked matches
+   - Quarters are processed sequentially (Q1 → Q2 → Q3 → Q4)
+   - Each quarter generates:
+     - Region-specific lore
+     - Performance stats
+     - Role-specific reflection
+     - Playstyle values
+
+5. **Navigate chapters**: Progress through Q1, Q2, Q3, Q4, then view Final Summary
+
+### API Endpoints
+
+**Base URL**: `https://<api-id>.execute-api.<region>.amazonaws.com/`
+
+#### Create Journey
+```bash
+POST /journey
+Content-Type: application/json
+
+{
+  "platform": "euw1",
+  "riotId": "PlayerName#TAG",
+  "archetype": "explorer",
+  "bypassCache": false
+}
+
+Response: { "jobId": "uuid" }
+```
+
+#### Check Status
+```bash
+GET /journey/{jobId}
+
+Response:
+{
+  "jobId": "uuid",
+  "riotId": "PlayerName#TAG",
+  "platform": "euw1",
+  "status": "processing",
+  "s3Base": "jobId/",
+  "quarters": {
+    "Q1": "ready",
+    "Q2": "processing",
+    "Q3": "pending",
+    "Q4": "pending"
+  }
+}
+```
+
+## 📊 Data Flow
+
+1. **User submits journey request** → API Lambda creates job in DynamoDB
+2. **API Lambda enqueues Q1** → SQS FetchQueue
+3. **Fetch Lambda polls FetchQueue** → Retrieves matches from Riot API → Saves to S3 → Enqueues ProcessQueue
+4. **Process Lambda polls ProcessQueue** → Calculates stats → Generates AI lore/reflection → Saves to S3 → Updates DynamoDB status → Enqueues next quarter
+5. **Frontend polls status** → Loads story.json from S3 → Displays chapter
+6. **After Q4 completes** → Process Lambda generates finale.json with consolidated reflection
+
+## 🧪 Development
+
+### Local Development
+
+**Backend (Lambda functions)**:
+```bash
+cd infra
+
+# Test locally with SAM
+sam local start-api --port 3001
+
+# Invoke specific function
+sam local invoke ApiFunction --event events/test-event.json
+```
+
+**Frontend**:
+```bash
+cd frontend
+
+# Start dev server
+npm run dev
+
+# Update API endpoint in src/api.ts for local testing
+```
+
+### Testing
+
+```bash
+# Test with a real summoner
+curl -X POST https://your-api-url.amazonaws.com/journey \
+  -H "Content-Type: application/json" \
+  -d '{
+    "platform": "euw1",
+    "riotId": "TestPlayer#EUW",
+    "archetype": "explorer"
+  }'
+
+# Check status
+curl https://your-api-url.amazonaws.com/journey/{jobId}
+```
+
+## 🐛 Troubleshooting
+
+### Issue: Quarters stuck on "fetching" or "fetched"
+
+**Cause**: DynamoDB status not updating, or Lambda execution failed
+
+**Solution**:
+1. Check CloudWatch logs for FetchQuarter and ProcessQuarter Lambdas
+2. Manually update DynamoDB status if needed:
+```bash
+aws dynamodb update-item \
+  --table-name RiftRewindJobs \
+  --key '{"jobId": {"S": "your-job-id"}}' \
+  --update-expression "SET quarters.Q1 = :status" \
+  --expression-attribute-values '{":status": {"S": "ready"}}' \
+  --region <your-region>
+```
+
+### Issue: Finale shows hardcoded text
+
+**Cause**: S3 bucket policy doesn't allow public read for finale.json
+
+**Solution**: Apply the bucket policy (see Deployment section)
+
+### Issue: API Key expired
+
+**Cause**: Riot API keys expire every 24 hours (dev keys)
+
+**Solution**: Update `infra/secret.json` and redeploy backend (see API Key Management)
+
+### Issue: Stats look incorrect (CS/min too low)
+
+**Cause**: Old cached job data (before bug fix)
+
+**Solution**: Use "Force refresh (bypass cache)" checkbox when creating journey
 
 ## 📁 Project Structure
 
 ```
 rift-rewind-v2/
-├── infra/                    # AWS SAM backend
+├── frontend/                 # React frontend
 │   ├── src/
-│   │   ├── api.py           # API Gateway handler
-│   │   ├── fetch_quarter.py # Riot API fetcher
-│   │   ├── process_quarter.py # Stats processor
-│   │   ├── bedrock_lore.py  # AI lore generator
-│   │   ├── stats_inference.py # Value calculations
-│   │   └── common.py        # Shared utilities
-│   └── template.yaml        # SAM template
-├── frontend/                 # React + Vite frontend
-│   ├── src/
-│   │   ├── components/
-│   │   │   ├── Journey.tsx
-│   │   │   ├── ChapterView.tsx
-│   │   │   └── FinalDashboard.tsx
-│   │   ├── api.ts
+│   │   ├── components/       # React components
+│   │   │   ├── Journey.tsx   # Main journey orchestrator
+│   │   │   ├── ChapterView.tsx   # Individual quarter view
+│   │   │   └── FinalDashboard.tsx # Final summary
+│   │   ├── api.ts           # API client
+│   │   ├── constants/       # Region themes, value descriptions
 │   │   └── App.tsx
 │   ├── package.json
 │   └── vite.config.ts
+├── infra/                    # SAM backend
+│   ├── src/
+│   │   ├── api.py           # API Lambda handler
+│   │   ├── fetch_quarter.py # Fetch Lambda handler
+│   │   ├── process_quarter.py # Process Lambda handler
+│   │   ├── stats_inference.py # Stats calculation
+│   │   ├── bedrock_lore.py  # AI generation
+│   │   └── requirements.txt
+│   ├── template.yaml        # SAM template
+│   ├── samconfig.toml       # SAM config
+│   ├── key.json             # Public config
+│   └── secret.json          # API key (gitignored)
+├── .github/
+│   └── copilot-instructions.md
+├── bucket-policy.json       # S3 policy for public read
 ├── .gitignore
-└── README.md
+└── README.md                # This file
 ```
-
-## 🎨 Customization
-
-### Adding New Regions
-Edit `infra/src/process_quarter.py`:
-```python
-REGION_ARC_MAP = {
-    "YourValue": "YourRegion",
-    # Add more mappings
-}
-```
-
-### Adjusting AI Prompts
-Edit `infra/src/bedrock_lore.py`:
-```python
-def generate_quarter_lore(...):
-    prompt = f"""Your custom prompt here"""
-```
-
-### Changing Region Themes
-Edit `frontend/src/components/ChapterView.tsx`:
-```typescript
-const REGION_THEMES = {
-  'YourRegion': {
-    bg: 'from-color-to-color',
-    accent: 'from-accent-to-accent',
-    // ...
-  }
-}
-```
-
-## 🧪 Testing
-
-### Backend Tests
-```bash
-cd infra
-python test_bedrock.py        # Test Bedrock connection
-python test_bedrock_integration.py  # Full integration test
-```
-
-### Frontend Tests
-```bash
-cd frontend
-npm run dev  # Local development server
-```
-
-## 💰 Cost Estimate
-
-**Per User Journey (4 quarters):**
-- Lambda executions: ~$0.01
-- DynamoDB: ~$0.001
-- S3 storage & requests: ~$0.001
-- Bedrock (Mistral 7B): ~$0.005
-- **Total: < $0.02 per user**
-
-**Monthly (1000 users):**
-- ~$20/month
-
-## 🔒 Security
-
-- ✅ API keys stored securely (AWS Secrets Manager recommended)
-- ✅ CORS properly configured
-- ✅ S3 bucket policies restrict access
-- ✅ Lambda functions use least-privilege IAM roles
-- ✅ No sensitive data in Git repository
 
 ## 🤝 Contributing
 
-Contributions are welcome! Please:
 1. Fork the repository
-2. Create a feature branch
-3. Commit your changes
-4. Push to the branch
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
-## 📝 License
+## 📜 License
 
-This project is licensed under the MIT License.
+This project is for educational purposes. League of Legends and Riot Games are trademarks or registered trademarks of Riot Games, Inc.
 
 ## 🙏 Acknowledgments
 
-- **Riot Games** for the League of Legends API
-- **Amazon Web Services** for infrastructure
-- **Anthropic/Mistral** for AI capabilities
-- **League of Legends** lore and universe
+- **Riot Games** for the comprehensive API
+- **Amazon Bedrock** for AI capabilities
+- **Runeterra** lore and regions for narrative inspiration
+- **React** and **Vite** for amazing developer experience
 
-## 📞 Contact
+## 📞 Support
 
-**Shreyan** - [@shreyan2020](https://github.com/shreyan2020)
-
-Project Link: [https://github.com/shreyan2020/rift-rewind](https://github.com/shreyan2020/rift-rewind)
+For issues and questions:
+- Check CloudWatch logs for Lambda errors
+- Verify S3 bucket policies
+- Ensure API key is valid and updated
+- Review DynamoDB job status
 
 ---
 
-⚡ **Built with AWS SAM, React, and AI** ⚡
+**Built with ❤️ for League of Legends players**
+
+*Transform your matches into an epic journey through Runeterra!*

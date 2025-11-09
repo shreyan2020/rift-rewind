@@ -112,6 +112,22 @@ def create_job(body: dict):
     if "#" not in riot_id or not platform:
         return _resp(400, {"error": "platform and riotId='Game#Tag' required"})
 
+    # Parse riot ID
+    game_name, tag_line = riot_id.split("#", 1)
+    
+    # Get regional routing
+    from common import PLATFORM_TO_REGION, get_puuid
+    regional = PLATFORM_TO_REGION.get(platform, "europe")
+    
+    # Get PUUID
+    try:
+        puuid = get_puuid(regional, game_name, tag_line)
+        if not puuid:
+            return _resp(404, {"error": "Summoner not found"})
+    except Exception as e:
+        LOG.error("Failed to get PUUID: %s", e, exc_info=True)
+        return _resp(500, {"error": f"Failed to fetch summoner: {str(e)}"})
+
     # Check for existing completed job (cache lookup) - unless bypassed
     if not bypass_cache:
         try:
@@ -170,17 +186,18 @@ def create_job(body: dict):
         # In local mode do not hit real SQS. Return the job id so you can poll /status locally or drive next steps manually.
         return _resp(200, {"jobId": job_id, "queued": False, "note": "local mode, SQS not used"})
 
-    # Enqueue only Q1 initially - sequential processing
-    quarters = q_ranges_for_year(datetime.now(timezone.utc))
-    first_quarter = quarters[0]  # Q1
-    label, st, et = first_quarter
+    # Phase 1: Discovery - Enqueue a special task to discover all matches and divide them
+    # This will:
+    # 1. Fetch ALL 2025 match IDs from Riot API
+    # 2. Divide them into 4 equal quarters by position (not time)
+    # 3. Store the division in DynamoDB
+    # 4. Enqueue Q1, Q2, Q3, Q4 for actual fetching
     _safe_sqs_send(FETCH_QUEUE_URL, {
         "jobId": job_id,
+        "task": "discover_and_divide",  # Special task
         "platform": platform,
-        "riotId": riot_id,
-        "quarter": label,
-        "start": int(st),
-        "end": int(et),
+        "puuid": puuid,
+        "archetype": archetype,
     })
 
     return _resp(200, {"jobId": job_id, "queued": True})
