@@ -71,7 +71,8 @@ def power_mapping(p: dict) -> dict:
     # damage
     for k in [
         'magicDamageDealt','magicDamageDealtToChampions','magicDamageTaken',
-        'physicalDamageDealt','physicalDamageDealtToChampions','physicalDamageTaken'
+        'physicalDamageDealt','physicalDamageDealtToChampions','physicalDamageTaken',
+        'totalDamageDealtToChampions'
     ]:
         out[k] = _num(_get(p, k, 0))
     # mitigation surfaced for other bundles
@@ -157,6 +158,11 @@ def tradition_mapping(p: dict) -> dict:
         "totalTimeSpentDead":    _num(_get(p, "totalTimeSpentDead", 0)),
         "perfectGame":           _bool01(_getc(p, "perfectGame", False)),
         "gameLength":            _num(_getc(p, "gameLength", 0)),
+        # Add raw combat stats for analytics
+        "kills": _num(_get(p, "kills", 0)),
+        "deaths": _num(_get(p, "deaths", 0)),
+        "assists": _num(_get(p, "assists", 0)),
+        "kda": _num(_getc(p, "kda", 0)),
     }
     total_cs = _num(_get(p, 'totalAllyJungleMinionsKilled', 0)) + _num(_get(p, 'totalEnemyJungleMinionsKilled', 0)) + _num(_get(p, 'totalMinionsKilled', 0))
     out["csPerMin"]      = _per_min(total_cs, m)

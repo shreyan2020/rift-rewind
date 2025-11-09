@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { getJobStatus, getQuarterStory, getFinale, type JobStatus, type Quarter, type Finale } from '../api';
 import ChapterView from './ChapterView';
 import FinalDashboard from './FinalDashboard';
+import InsightsView from './InsightsView';
 
 interface JourneyProps {
   jobId: string;
@@ -85,6 +86,8 @@ const Journey: React.FC<JourneyProps> = ({ jobId, riotId, onReset }) => {
       if (allQuartersReady && !finaleData && jobStatus) {
         try {
           const finale = await getFinale(jobStatus.s3Base);
+          console.log('Loaded finale data:', finale);
+          console.log('Has insights:', finale.insights);
           setFinaleData(finale);
         } catch (error) {
           console.error('Failed to load finale:', error);
@@ -169,7 +172,29 @@ const Journey: React.FC<JourneyProps> = ({ jobId, riotId, onReset }) => {
   
   // Show final dashboard
   if (currentChapter === 'FINAL' && allQuartersLoaded) {
-    return <FinalDashboard quarters={chapterData} riotId={riotId} finaleData={finaleData} onNewJourney={onReset} />;
+    return (
+      <FinalDashboard 
+        quarters={chapterData} 
+        riotId={riotId} 
+        finaleData={finaleData} 
+        onNewJourney={onReset}
+        onViewAnalytics={() => setCurrentChapter('INSIGHTS')}
+      />
+    );
+  }
+
+  // Show insights/analytics view
+  if (currentChapter === 'INSIGHTS' && finaleData) {
+    return (
+      <InsightsView
+        insights={finaleData.insights || []}
+        trends={finaleData.trends}
+        highlights={finaleData.highlights}
+        championAnalysis={finaleData.champion_analysis}
+        yearSummary={finaleData.year_summary}
+        onBack={() => setCurrentChapter('FINAL')}
+      />
+    );
   }
 
   return null;

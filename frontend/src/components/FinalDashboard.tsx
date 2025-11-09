@@ -10,10 +10,18 @@ interface FinalDashboardProps {
   riotId: string;
   finaleData: Finale | null;
   onNewJourney?: () => void;
+  onViewAnalytics?: () => void;
 }
 
-const FinalDashboard: React.FC<FinalDashboardProps> = ({ quarters, riotId, finaleData, onNewJourney }) => {
+const FinalDashboard: React.FC<FinalDashboardProps> = ({ quarters, riotId, finaleData, onNewJourney, onViewAnalytics }) => {
   const quarterKeys = useMemo(() => ['Q1', 'Q2', 'Q3', 'Q4'], []);
+
+  // Debug logging
+  React.useEffect(() => {
+    console.log('FinalDashboard - finaleData:', finaleData);
+    console.log('FinalDashboard - has insights:', finaleData?.insights);
+    console.log('FinalDashboard - onViewAnalytics:', onViewAnalytics);
+  }, [finaleData, onViewAnalytics]);
 
   // State for selected value in dropdown
   const [selectedValue, setSelectedValue] = useState<string | null>(null);
@@ -218,16 +226,28 @@ const FinalDashboard: React.FC<FinalDashboardProps> = ({ quarters, riotId, final
             Keep climbing, Summoner. The Rift awaits your return.
           </p>
           
-          {onNewJourney && (
-            <motion.button
-              onClick={onNewJourney}
-              className="px-8 py-4 rounded-lg font-bold text-lg bg-gradient-to-r from-runeterra-gold to-runeterra-gold-light text-runeterra-darker hover:shadow-lg hover:shadow-runeterra-gold/50 transition-all"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              🔍 Analyze Another Summoner
-            </motion.button>
-          )}
+          <div className="flex gap-4 justify-center">
+            {finaleData?.insights && finaleData.insights.length > 0 && onViewAnalytics && (
+              <motion.button
+                onClick={onViewAnalytics}
+                className="px-8 py-4 rounded-lg font-bold text-lg bg-gradient-to-r from-runeterra-blue to-runeterra-blue-light text-white hover:shadow-lg hover:shadow-runeterra-blue/50 transition-all"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                📊 View Advanced Analytics
+              </motion.button>
+            )}
+            {onNewJourney && (
+              <motion.button
+                onClick={onNewJourney}
+                className="px-8 py-4 rounded-lg font-bold text-lg bg-gradient-to-r from-runeterra-gold to-runeterra-gold-light text-runeterra-darker hover:shadow-lg hover:shadow-runeterra-gold/50 transition-all"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                🔍 Analyze Another Summoner
+              </motion.button>
+            )}
+          </div>
         </motion.div>
       </div>
     </div>
@@ -357,7 +377,9 @@ const TimelineChart: React.FC<TimelineChartProps> = ({ selectedValue, quarters, 
       </div>
     </div>
   );
-};interface ValueTooltipWrapperProps {
+};
+
+interface ValueTooltipWrapperProps {
   valueName: string;
   children: React.ReactNode;
 }

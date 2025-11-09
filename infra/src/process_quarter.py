@@ -9,6 +9,10 @@ from bedrock_lore import (
     generate_quarter_lore, generate_quarter_reflection,
     generate_finale_lore, generate_finale_reflection
 )
+from advanced_analytics import (
+    calculate_trends, extract_best_moments, analyze_champion_pool,
+    generate_insights, analyze_comebacks, generate_year_summary
+)
 
 # Map values to Runeterra regions
 REGION_ARC_MAP = {
@@ -173,6 +177,9 @@ def handler(event, context):
 
         top_values = sorted(values.items(), key=lambda kv: kv[1], reverse=True)[:5]
         
+        # Save participant bundles for advanced analytics
+        _s3_write_json(f"{s3_base}{label}/participant_bundles.json", bundles)
+        
         # Dynamically determine region arc based on values and quarter progression
         quarter_num = int(label[1])  # Extract number from "Q1", "Q2", etc.
         prev_values = None
@@ -244,25 +251,50 @@ def handler(event, context):
             try:
                 # Collect all quarter data
                 all_quarters_data = []
+                all_participant_bundles = []
                 for q in ["Q1", "Q2", "Q3", "Q4"]:
                     quarter_story = _s3_read_json(f"{s3_base}{q}/story.json")
                     if quarter_story:
                         all_quarters_data.append(quarter_story)
+                    
+                    # Collect participant bundles for detailed analysis
+                    quarter_bundles = _s3_read_json(f"{s3_base}{q}/participant_bundles.json")
+                    if quarter_bundles:
+                        all_participant_bundles.append(quarter_bundles)  # Changed from extend to append
                 
                 # Calculate total games across all quarters
                 total_games = sum(q["stats"].get("games", 0) for q in all_quarters_data)
                 
-                # Generate finale lore and reflection
+                # Generate basic lore and reflection
                 player_name = riot_id.split("#")[0] if "#" in riot_id else riot_id
                 finale_lore = generate_finale_lore(all_quarters_data, player_name, total_games)
                 finale_reflection = generate_finale_reflection(all_quarters_data)
                 
-                # Save finale
+                # Generate advanced analytics
+                print(f"Generating advanced analytics for {job_id}...")
+                trends = calculate_trends(all_quarters_data)
+                highlights = extract_best_moments(all_quarters_data, all_participant_bundles)
+                champion_analysis = analyze_champion_pool(all_participant_bundles)
+                comebacks = analyze_comebacks(all_participant_bundles)
+                insights = generate_insights(all_quarters_data, trends, champion_analysis)
+                year_summary = generate_year_summary(
+                    all_quarters_data, trends, highlights, 
+                    champion_analysis, comebacks, insights
+                )
+                
+                # Save comprehensive finale
                 finale = {
                     "lore": finale_lore,
                     "final_reflection": finale_reflection,
                     "total_games": total_games,
-                    "quarters": all_quarters_data
+                    "quarters": all_quarters_data,
+                    # Advanced analytics
+                    "trends": trends,
+                    "highlights": highlights,
+                    "champion_analysis": champion_analysis,
+                    "comebacks": comebacks,
+                    "insights": insights,
+                    "year_summary": year_summary
                 }
                 _s3_write_json(f"{s3_base}finale.json", finale)
                 print(f"Generated finale for {job_id}")
