@@ -162,7 +162,7 @@ const ChapterView: React.FC<ChapterViewProps> = ({ quarter, data, riotId, onNext
               <StatCard label="CS/min" value={data.stats.cs_per_min.toFixed(2)} />
               <StatCard label="Gold/min" value={data.stats.gold_per_min.toFixed(0)} />
               <StatCard label="Vision/min" value={data.stats.vision_score_per_min.toFixed(2)} />
-              <StatCard label="Pings/min" value={data.stats.ping_rate_per_min.toFixed(2)} />
+              {/* <StatCard label="Pings/min" value={data.stats.ping_rate_per_min.toFixed(2)} /> */}
             </div>
           </motion.div>
 

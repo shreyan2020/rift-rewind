@@ -63,7 +63,7 @@ const FinalDashboard: React.FC<FinalDashboardProps> = ({ quarters, riotId, final
     cs_per_min: 0,
     gold_per_min: 0,
     vision_score_per_min: 0,
-    ping_rate_per_min: 0,
+    // ping_rate_per_min: 0,
   };
   
   quarterKeys.forEach(qKey => {
@@ -74,7 +74,7 @@ const FinalDashboard: React.FC<FinalDashboardProps> = ({ quarters, riotId, final
       avgStats.cs_per_min += q.stats.cs_per_min;
       avgStats.gold_per_min += q.stats.gold_per_min;
       avgStats.vision_score_per_min += q.stats.vision_score_per_min;
-      avgStats.ping_rate_per_min += q.stats.ping_rate_per_min;
+      // avgStats.ping_rate_per_min += q.stats.ping_rate_per_min;
     }
   });
   
@@ -83,7 +83,7 @@ const FinalDashboard: React.FC<FinalDashboardProps> = ({ quarters, riotId, final
   avgStats.cs_per_min /= 4;
   avgStats.gold_per_min /= 4;
   avgStats.vision_score_per_min /= 4;
-  avgStats.ping_rate_per_min /= 4;
+  // avgStats.ping_rate_per_min /= 4;
   
   // Use finale lore if available, otherwise fallback
   const finalLore = finaleData?.lore || `Your journey through Runeterra comes to a close. From the first steps in Q1 to the final battles of Q4, you've carved a unique path across the Rift. The data reveals not just numbers, but a story of growth, adaptation, and perseverance. As the season ends, your legend in Runeterra is etched into the annals of the Rift. What will your next chapter hold?`;
@@ -140,7 +140,7 @@ const FinalDashboard: React.FC<FinalDashboardProps> = ({ quarters, riotId, final
             <StatCard label="Avg CS/min" value={avgStats.cs_per_min.toFixed(2)} />
             <StatCard label="Avg Gold/min" value={avgStats.gold_per_min.toFixed(0)} />
             <StatCard label="Avg Vision/min" value={avgStats.vision_score_per_min.toFixed(2)} />
-            <StatCard label="Avg Pings/min" value={avgStats.ping_rate_per_min.toFixed(2)} />
+            {/* <StatCard label="Avg Pings/min" value={avgStats.ping_rate_per_min.toFixed(2)} /> */}
           </div>
         </motion.div>
 

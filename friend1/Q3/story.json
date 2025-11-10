@@ -22,17 +22,17 @@
     "avg_kill_participation": 0.508,
     "ping_rate_per_min": 0.0
   },
-  "lore": "As the sun set over the Noxian battlefields, the summoner's tent stood proudly amidst the chaos. The ground shook with the thunderous roar of the Noxian military, their iron will and unyielding resolve echoing in every heartbeat. The summoner, a master of power, knew the value of security in a land torn apart by war. As they prepared their next summon, a sense of tradition washed over them, the weight of Noxus' history pressing upon their shoulders. The summoner closed their eyes, focusing on the essence of the Runes, the lifeblood of their power. The world around them faded, replaced by the ethereal realm of the Rune Wars, where the fate of Runeterra was decided, one battle at a time.",
-  "reflection": "Based on the provided performance stats, the player's low CS/min (1.27) is a significant area for improvement. To boost their CS/min, they should practice last-hitting effectively and focus on securing CS efficiently in lanes and during team fights.",
-  "region_arc": "Noxus",
+  "lore": "In the heart of Piltover, our summoner found solace amidst the city's perpetual hum of innovation. With a Self-Directed spirit, they built a small laboratory, nestled between the towering hextech spires. Benevolent at heart, they shared their discoveries, teaching local scholars and inventors. Tradition bound, they respected the ancient knowledge of the Piltover Academy, merging it with their own groundbreaking research. Amidst the clatter of gears and the hiss of steam, our summoner's lab became a beacon of progress and unity.",
+  "reflection": "Based on the given performance stats, the player's CS/min is the weakest stat, indicating they may need to focus on last-hitting and farming efficiently. Try to improve CS/min by 0.2 every game to reach a consistent 1.5 CS/min.",
+  "region_arc": "Piltover",
   "top_values": [
     [
-      "Power",
-      7205.34
+      "Self-Direction",
+      81.87
     ],
     [
-      "Security",
-      5312.93
+      "Benevolence",
+      6.74
     ],
     [
       "Tradition",

@@ -322,7 +322,7 @@ def chapter_stats(participant_bundles: List[dict]) -> dict:
             "cs_per_min": 0.0,
             "gold_per_min": 0.0,
             "vision_score_per_min": 0.0,
-            "ping_rate_per_min": 0.0,
+            # "ping_rate_per_min": 0.0,
             "primary_role": "UNKNOWN",
             "obj_damage_per_min": 0.0,
             "kill_participation": 0.0,
@@ -363,7 +363,7 @@ def chapter_stats(participant_bundles: List[dict]) -> dict:
         "cs_per_min": _avg(cs_pm),
         "gold_per_min": _avg(gpm),
         "vision_score_per_min": _avg(vspm),
-        "ping_rate_per_min": _avg(pr_all),
+        # "ping_rate_per_min": _avg(pr_all),
         "primary_role": primary_role,
         "obj_damage_per_min": _avg(obj_dmg_per_min),
         "kill_participation": _avg(kp) * 100,  # Convert to percentage

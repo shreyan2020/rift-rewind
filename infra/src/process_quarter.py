@@ -246,7 +246,7 @@ def handler(event, context):
 
         # Get top 5 values by z-score (which values this player expresses most strongly)
         # But store the RAW scores for display and cross-player comparison
-        top_by_zscore = sorted(values_normalized.items(), key=lambda kv: kv[1], reverse=True)[:5]
+        top_by_zscore = sorted(values_normalized.items(), key=lambda kv: kv[1], reverse=True)[:3]
         top_values = [(name, values_raw[name]) for name, _ in top_by_zscore]
         
         # Save participant bundles for advanced analytics

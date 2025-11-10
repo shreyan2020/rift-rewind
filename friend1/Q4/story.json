@@ -22,8 +22,8 @@
     "avg_kill_participation": 0.528,
     "ping_rate_per_min": 0.0
   },
-  "lore": "---\n\nIn the heart of Noxus, where the clashing of steel and the thunderous roar of war drums echoed through the streets, a young summoner named Seraphine found her footing. Her power-hungry summon, Rell, at her side, she embraced the raw might and unyielding traditions of her homeland. As she honed her skills, Seraphine's every spell cast reverberated through the war-torn land, a testament to Noxus' unwavering resolve and the unbreakable bond between its people and their champions.",
-  "reflection": "Improve your last-hitting by practicing in custom games and aiming for 3 CS/min to increase your gold income and overall impact on the game.",
+  "lore": "In the heart of Noxus, the summoner, fueled by a burning desire for power and self-direction, found themselves in the bustling military city of Ionia. The clash of Noxus' militaristic might and Ionia's serene culture stirred a tempest within, as the summoner honed their craft, seeking to secure their position amidst the ever-shifting tides of Runeterra's political landscape. Their KDA grew, their vision sharpened, and the whispers of their power echoed through the halls of the League of Legends, a testament to their unwavering resolve.",
+  "reflection": "Based on the provided performance stats, I recommend focusing on improving CS/min to at least 2.5 to effectively contribute to team fights and secure gold advantage.",
   "region_arc": "Noxus",
   "top_values": [
     [
@@ -31,12 +31,12 @@
       7138.97
     ],
     [
-      "Security",
-      5467.95
+      "Self-Direction",
+      85.73
     ],
     [
-      "Tradition",
-      112.59
+      "Security",
+      5467.95
     ]
   ]
 }

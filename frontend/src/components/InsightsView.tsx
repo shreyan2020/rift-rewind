@@ -431,7 +431,9 @@ const InsightsView: React.FC<InsightsProps> = ({
                 <div className="bg-gradient-to-br from-runeterra-gold/10 to-runeterra-gold/20 border border-runeterra-gold/30 rounded-xl p-6">
                   <div className="text-runeterra-gold font-bold text-sm mb-2">💥 MOST DAMAGE</div>
                   <div className="text-3xl font-bold text-runeterra-gold mb-2">
-                    {highlights.most_damage_game.damage}k
+                    {typeof highlights.most_damage_game.damage === 'number'
+                      ? `${(highlights.most_damage_game.damage)}k`
+                      : 'N/A'}
                   </div>
                   <div className="text-runeterra-gold-light text-sm">
                     {highlights.most_damage_game.champion}
@@ -461,7 +463,11 @@ const InsightsView: React.FC<InsightsProps> = ({
                   <div className="space-y-1 text-sm">
                     <div className="text-runeterra-gold-light">{champ.games} games</div>
                     <div className="text-runeterra-gold-light">{champ.avg_cs_per_min?.toFixed(1)} CS/min</div>
-                    <div className="text-runeterra-gold-light">{champ.avg_damage}k dmg</div>
+                    <div className="text-runeterra-gold-light">
+                      {typeof champ.avg_damage === 'number'
+                        ? `${(champ.avg_damage / 1000).toFixed(2)}k dmg`
+                        : 'N/A'}
+                    </div>
                   </div>
                 </div>
               ))}

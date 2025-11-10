@@ -235,10 +235,10 @@ function App() {
                 onChange={(e) => setFormData({ ...formData, archetype: e.target.value })}
                 className="w-full px-4 py-3 bg-runeterra-darker border border-runeterra-gold/30 rounded-lg text-runeterra-gold-light focus:outline-none focus:border-runeterra-gold transition-colors"
               >
-                <option value="explorer">Explorer</option>
-                <option value="warrior">Warrior</option>
-                <option value="sage">Sage</option>
-                <option value="guardian">Guardian</option>
+                <option value="explorer" className="bg-zinc-800 text-zinc-100">Explorer</option>
+                <option value="warrior" className="bg-zinc-800 text-zinc-100">Warrior</option>
+                <option value="sage" className="bg-zinc-800 text-zinc-100">Sage</option>
+                <option value="guardian" className="bg-zinc-800 text-zinc-100">Guardian</option>
               </select>
             </div>
 
@@ -334,10 +334,10 @@ function App() {
                   onChange={(e) => setFormData({ ...formData, archetype: e.target.value })}
                   className="w-full px-4 py-3 bg-runeterra-darker border border-runeterra-gold/30 rounded-lg text-runeterra-gold-light focus:outline-none focus:border-runeterra-gold transition-colors"
                 >
-                  <option value="explorer">Explorer</option>
-                  <option value="warrior">Warrior</option>
-                  <option value="sage">Sage</option>
-                  <option value="guardian">Guardian</option>
+                  <option value="explorer" className="bg-zinc-800 text-zinc-100">Explorer</option>
+                  <option value="warrior" className="bg-zinc-800 text-zinc-100">Warrior</option>
+                  <option value="sage" className="bg-zinc-800 text-zinc-100">Sage</option>
+                  <option value="guardian" className="bg-zinc-800 text-zinc-100">Guardian</option>
                 </select>
               </div>
 
