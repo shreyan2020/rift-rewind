@@ -1,0 +1,592 @@
+{
+  "metadata": {
+    "playerName": "timmy1691#EUW",
+    "archetype": "explorer",
+    "totalGames": 136,
+    "generatedAt": "2025-11-10T15:30:44.220054",
+    "quarters": {
+      "Q1": 34,
+      "Q2": 34,
+      "Q3": 34,
+      "Q4": 34
+    }
+  },
+  "quarters": {
+    "Q1": {
+      "quarter": "Q1",
+      "date_range": "Feb 15, 2025 - Apr 01, 2025",
+      "values": {
+        "Achievement": 0.0,
+        "Benevolence": 0.0,
+        "Conformity": -0.0,
+        "Hedonism": 0.0,
+        "Power": 47.8,
+        "Security": 100.0,
+        "Self-Direction": 0.6,
+        "Stimulation": 0.4,
+        "Tradition": 0.7,
+        "Universalism": 0.0
+      },
+      "stats": {
+        "games": 34,
+        "kda_proxy": 1.02,
+        "cs_per_min": 5.44,
+        "gold_per_min": 357.3,
+        "vision_score_per_min": 0.66,
+        "avg_kill_participation": 0.327,
+        "ping_rate_per_min": 0.0
+      },
+      "lore": "As the sun set over the towering walls of Demacia's capital city, Boram Darkwill sat in the crowded tavern, quill in hand. The parchment before him, filled with intricate runes, bore testament to the summoner's dedication to security and tradition. With a heavy heart, he sent forth his wards into the night, their golden glow casting a warm, protective light on the bustling city streets. Amidst the clamor of the tavern, Boram's mind was focused on the power of his summoned champions, ready to defend his homeland against any threat.",
+      "reflection": "Improve your CS by practicing last-hitting under turret and aim for 6-7 CS per minute to contribute effectively to your team's gold generation.",
+      "region_arc": "Demacia",
+      "top_values": [
+        [
+          "Security",
+          100.0
+        ],
+        [
+          "Power",
+          47.8
+        ],
+        [
+          "Tradition",
+          0.7
+        ]
+      ]
+    },
+    "Q2": {
+      "quarter": "Q2",
+      "date_range": "Apr 01, 2025 - Aug 02, 2025",
+      "values": {
+        "Achievement": 0.0,
+        "Benevolence": 0.0,
+        "Conformity": -0.0,
+        "Hedonism": 0.0,
+        "Power": 49.0,
+        "Security": 100.0,
+        "Self-Direction": 0.6,
+        "Stimulation": 0.3,
+        "Tradition": 0.7,
+        "Universalism": 0.0
+      },
+      "stats": {
+        "games": 34,
+        "kda_proxy": 0.59,
+        "cs_per_min": 7.19,
+        "gold_per_min": 376.1,
+        "vision_score_per_min": 0.6,
+        "avg_kill_participation": 0.209,
+        "ping_rate_per_min": 0.0
+      },
+      "lore": "As the sun set over the mighty Ironspike Wall, a young summoner named Elara stood atop its battlements, her eyes scanning the horizon for any sign of the enemy. She had come to Demacia, seeking the protection and stability she had long craved. Elara's playstyle echoed the values of her new homeland: security and power. With each cast of her spells, she fortified the city's defenses, warding against potential threats. The tradition of Demacia's ancient magic resonated within her, fueling her determination to safeguard her newfound family and the land she had sworn to defend.",
+      "reflection": "Based on the provided performance stats, I would suggest focusing on improving CS/min by practicing last-hitting in custom games and paying close attention to minion wave management to increase overall gold earned per minute.",
+      "region_arc": "Demacia",
+      "top_values": [
+        [
+          "Security",
+          100.0
+        ],
+        [
+          "Power",
+          49.0
+        ],
+        [
+          "Tradition",
+          0.7
+        ]
+      ]
+    },
+    "Q3": {
+      "quarter": "Q3",
+      "date_range": "Aug 03, 2025 - Sep 07, 2025",
+      "values": {
+        "Achievement": 0.0,
+        "Benevolence": 0.0,
+        "Conformity": -0.0,
+        "Hedonism": 0.0,
+        "Power": 48.0,
+        "Security": 100.0,
+        "Self-Direction": 0.5,
+        "Stimulation": 0.4,
+        "Tradition": 0.6,
+        "Universalism": 0.0
+      },
+      "stats": {
+        "games": 34,
+        "kda_proxy": 1.13,
+        "cs_per_min": 6.57,
+        "gold_per_min": 393.1,
+        "vision_score_per_min": 0.63,
+        "avg_kill_participation": 0.322,
+        "ping_rate_per_min": 0.0
+      },
+      "lore": "As the sun set over the Demacian plains, the summoner, a devoted guardian of tradition and security, settled in for the night at the Temple of the Solar Disc. The sacred halls echoed with the rhythmic chants of the clerics, their voices a soothing balm against the encroaching darkness. The summoner, ever mindful of Demacia's unyielding commitment to order and power, prepared for the coming battles, their actions resonating with the unwavering spirit of their homeland.",
+      "reflection": "Based on the provided stats, focus on improving CS/min by at least 1.5 CS per minute to contribute more to the team's gold generation and overall performance.",
+      "region_arc": "Demacia",
+      "top_values": [
+        [
+          "Security",
+          100.0
+        ],
+        [
+          "Power",
+          48.0
+        ],
+        [
+          "Tradition",
+          0.6
+        ]
+      ]
+    },
+    "Q4": {
+      "quarter": "Q4",
+      "date_range": "Sep 07, 2025 - Nov 10, 2025",
+      "values": {
+        "Achievement": 0.0,
+        "Benevolence": 0.0,
+        "Conformity": -0.0,
+        "Hedonism": 0.0,
+        "Power": 73.6,
+        "Security": 100.0,
+        "Self-Direction": 0.7,
+        "Stimulation": 0.7,
+        "Tradition": 0.7,
+        "Universalism": 0.0
+      },
+      "stats": {
+        "games": 34,
+        "kda_proxy": 1.08,
+        "cs_per_min": 6.04,
+        "gold_per_min": 415.8,
+        "vision_score_per_min": 0.74,
+        "avg_kill_participation": 0.382,
+        "ping_rate_per_min": 0.0
+      },
+      "lore": "As the sun rose over the imposing walls of Demacia, a young summoner named Elara began her journey. She had heard tales of the great heroes who had defended the realm from the forces of darkness. With a sense of duty instilled by her upbringing and a thirst for power to protect those she loved, Elara sought to make her mark on the world. She delved deep into the arcane arts, her studies reflecting the values of her homeland: security and power. As she honed her skills, she left a trail of vision wards behind, ensuring that her allies would never be caught unawares. The land of Demacia, with its unyielding spirit and rich history, would be the foundation of Elara's journey into the world of Runeterra.",
+      "reflection": "Based on the given performance stats, the player's poor CS/min (6.04) indicates a need for improvement in last-hitting and farming efficiency. Practice last-hitting in custom games and pay close attention to minion movements and attack timings to increase CS/min.",
+      "region_arc": "Demacia",
+      "top_values": [
+        [
+          "Security",
+          100.0
+        ],
+        [
+          "Power",
+          73.6
+        ],
+        [
+          "Self-Direction",
+          0.7
+        ]
+      ]
+    }
+  },
+  "finale": {
+    "lore": "As the sun rose over the ancient city of Demacia, a new dawn broke for Elara, the once-hesitant summoner. Through trials and tribulations, she had honed her powers, learned the value of tradition, and embraced her role as a guardian of security and power. Recalling the tales of ancient heroes like Shen and Leona, she stood tall and proud, her heart aflame with determination. The echoes of Boram Darkwill's wisdom, the strength of Elara's own resolve, and the unwavering support of her fellow summoners formed an unbreakable alliance. But as the shadows of the past receded, new challenges loomed on the horizon. The fate of Runeterra hung in the balance, and Elara, the Demacian Guardian, would face them all, her quill poised and ready to write the next chapter in the annals of summoning lore.",
+    "reflection": [
+      "---",
+      "1. Consistently maintained a high CS/min average throughout the season, demonstrating strong laning and last-hitting skills.",
+      "2. Significant decrease in KDA in Q2, indicating a need to improve map awareness, decision making, and champion selection.",
+      "3. Aim to increase KDA by 0.25 next season, focusing on vision control, warding, and communication with teammates."
+    ],
+    "trends": {
+      "kda": {
+        "values": [
+          1.02,
+          0.59,
+          1.13,
+          1.08
+        ],
+        "direction": "improving",
+        "change_pct": 5.8823529411764754,
+        "best_quarter": "Q3"
+      },
+      "cs_per_min": {
+        "values": [
+          5.44,
+          7.19,
+          6.57,
+          6.04
+        ],
+        "direction": "improving",
+        "change_pct": 11.029411764705875,
+        "best_quarter": "Q2"
+      },
+      "gold_per_min": {
+        "values": [
+          357.3,
+          376.1,
+          393.1,
+          415.8
+        ],
+        "direction": "improving",
+        "change_pct": 16.3727959697733,
+        "best_quarter": "Q4"
+      },
+      "vision_score": {
+        "values": [
+          0.66,
+          0.6,
+          0.63,
+          0.74
+        ],
+        "direction": "improving",
+        "change_pct": 12.121212121212114,
+        "best_quarter": "Q4"
+      },
+      "kill_participation": {
+        "values": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "direction": "stable",
+        "change_pct": 0,
+        "best_quarter": "Q1"
+      },
+      "overall": {
+        "improving_metrics": 4,
+        "declining_metrics": 0,
+        "summary": "improving"
+      },
+      "available": true
+    },
+    "highlights": {
+      "best_kda_game": {
+        "index": 124,
+        "champion": "LeeSin",
+        "value": 23.0
+      },
+      "most_kills_game": {
+        "index": 28,
+        "champion": "Amumu",
+        "kills": 15
+      },
+      "most_damage_game": {
+        "index": 58,
+        "champion": "Yasuo",
+        "damage": 62.2
+      },
+      "perfect_games": [],
+      "first_bloods": 10,
+      "pentakills": 0,
+      "quadrakills": 0,
+      "comeback_wins": [],
+      "highest_cs_game": {
+        "index": 60,
+        "champion": "Irelia",
+        "cs_per_min": 9.46
+      },
+      "most_gold_game": null,
+      "best_vision_game": null,
+      "clutch_steals": 2,
+      "fountain_kills": 1
+    },
+    "champion_analysis": {
+      "available": true,
+      "total_unique_champions": 25,
+      "most_played": [
+        {
+          "name": "Sion",
+          "games": 37,
+          "avg_damage": 23.9,
+          "avg_gold_per_min": 419.8,
+          "avg_cs_per_min": 7.4,
+          "avg_vision_score": 0.54
+        },
+        {
+          "name": "Irelia",
+          "games": 15,
+          "avg_damage": 16.5,
+          "avg_gold_per_min": 416.6,
+          "avg_cs_per_min": 7.8,
+          "avg_vision_score": 0.54
+        },
+        {
+          "name": "Yasuo",
+          "games": 14,
+          "avg_damage": 19.1,
+          "avg_gold_per_min": 390.5,
+          "avg_cs_per_min": 7.6,
+          "avg_vision_score": 0.61
+        },
+        {
+          "name": "Amumu",
+          "games": 14,
+          "avg_damage": 15.5,
+          "avg_gold_per_min": 350.3,
+          "avg_cs_per_min": 3.9,
+          "avg_vision_score": 0.85
+        },
+        {
+          "name": "Ornn",
+          "games": 13,
+          "avg_damage": 15.2,
+          "avg_gold_per_min": 319.8,
+          "avg_cs_per_min": 6.2,
+          "avg_vision_score": 0.46
+        }
+      ],
+      "one_tricks": [],
+      "versatility_score": 77.6,
+      "all_champions": [
+        {
+          "name": "Sion",
+          "games": 37,
+          "avg_damage": 23.9,
+          "avg_gold_per_min": 419.8,
+          "avg_cs_per_min": 7.4,
+          "avg_vision_score": 0.54
+        },
+        {
+          "name": "Irelia",
+          "games": 15,
+          "avg_damage": 16.5,
+          "avg_gold_per_min": 416.6,
+          "avg_cs_per_min": 7.8,
+          "avg_vision_score": 0.54
+        },
+        {
+          "name": "Yasuo",
+          "games": 14,
+          "avg_damage": 19.1,
+          "avg_gold_per_min": 390.5,
+          "avg_cs_per_min": 7.6,
+          "avg_vision_score": 0.61
+        },
+        {
+          "name": "Amumu",
+          "games": 14,
+          "avg_damage": 15.5,
+          "avg_gold_per_min": 350.3,
+          "avg_cs_per_min": 3.9,
+          "avg_vision_score": 0.85
+        },
+        {
+          "name": "Ornn",
+          "games": 13,
+          "avg_damage": 15.2,
+          "avg_gold_per_min": 319.8,
+          "avg_cs_per_min": 6.2,
+          "avg_vision_score": 0.46
+        },
+        {
+          "name": "DrMundo",
+          "games": 7,
+          "avg_damage": 15.9,
+          "avg_gold_per_min": 354.2,
+          "avg_cs_per_min": 7.6,
+          "avg_vision_score": 0.53
+        },
+        {
+          "name": "Nautilus",
+          "games": 6,
+          "avg_damage": 12.5,
+          "avg_gold_per_min": 288.5,
+          "avg_cs_per_min": 2.1,
+          "avg_vision_score": 1.59
+        },
+        {
+          "name": "Maokai",
+          "games": 6,
+          "avg_damage": 21.2,
+          "avg_gold_per_min": 363.9,
+          "avg_cs_per_min": 6.1,
+          "avg_vision_score": 0.59
+        },
+        {
+          "name": "Zed",
+          "games": 4,
+          "avg_damage": 42.9,
+          "avg_gold_per_min": 564.0,
+          "avg_cs_per_min": 5.8,
+          "avg_vision_score": 0.59
+        },
+        {
+          "name": "Kayn",
+          "games": 3,
+          "avg_damage": 27.1,
+          "avg_gold_per_min": 428.3,
+          "avg_cs_per_min": 6.6,
+          "avg_vision_score": 0.68
+        },
+        {
+          "name": "LeeSin",
+          "games": 2,
+          "avg_damage": 15.2,
+          "avg_gold_per_min": 400.9,
+          "avg_cs_per_min": 2.7,
+          "avg_vision_score": 0.63
+        },
+        {
+          "name": "JarvanIV",
+          "games": 2,
+          "avg_damage": 15.1,
+          "avg_gold_per_min": 380.5,
+          "avg_cs_per_min": 6.5,
+          "avg_vision_score": 0.59
+        },
+        {
+          "name": "Lillia",
+          "games": 1,
+          "avg_damage": 6.5,
+          "avg_gold_per_min": 305.5,
+          "avg_cs_per_min": 6.8,
+          "avg_vision_score": 0.65
+        },
+        {
+          "name": "Diana",
+          "games": 1,
+          "avg_damage": 2.1,
+          "avg_gold_per_min": 305.8,
+          "avg_cs_per_min": 5.6,
+          "avg_vision_score": 0.67
+        },
+        {
+          "name": "Malphite",
+          "games": 1,
+          "avg_damage": 12.7,
+          "avg_gold_per_min": 329.0,
+          "avg_cs_per_min": 6.2,
+          "avg_vision_score": 0.56
+        },
+        {
+          "name": "Jax",
+          "games": 1,
+          "avg_damage": 11.9,
+          "avg_gold_per_min": 343.7,
+          "avg_cs_per_min": 6.6,
+          "avg_vision_score": 0.36
+        },
+        {
+          "name": "MonkeyKing",
+          "games": 1,
+          "avg_damage": 8.6,
+          "avg_gold_per_min": 299.1,
+          "avg_cs_per_min": 5.4,
+          "avg_vision_score": 0.48
+        },
+        {
+          "name": "Leona",
+          "games": 1,
+          "avg_damage": 9.7,
+          "avg_gold_per_min": 348.3,
+          "avg_cs_per_min": 1.1,
+          "avg_vision_score": 1.43
+        },
+        {
+          "name": "Akali",
+          "games": 1,
+          "avg_damage": 17.5,
+          "avg_gold_per_min": 343.5,
+          "avg_cs_per_min": 7.0,
+          "avg_vision_score": 0.47
+        },
+        {
+          "name": "Shen",
+          "games": 1,
+          "avg_damage": 35.0,
+          "avg_gold_per_min": 431.9,
+          "avg_cs_per_min": 5.4,
+          "avg_vision_score": 0.41
+        },
+        {
+          "name": "Veigar",
+          "games": 1,
+          "avg_damage": 8.7,
+          "avg_gold_per_min": 271.2,
+          "avg_cs_per_min": 1.8,
+          "avg_vision_score": 1.63
+        },
+        {
+          "name": "Galio",
+          "games": 1,
+          "avg_damage": 24.2,
+          "avg_gold_per_min": 284.8,
+          "avg_cs_per_min": 1.1,
+          "avg_vision_score": 1.4
+        },
+        {
+          "name": "Yone",
+          "games": 1,
+          "avg_damage": 45.8,
+          "avg_gold_per_min": 522.1,
+          "avg_cs_per_min": 7.4,
+          "avg_vision_score": 0.41
+        },
+        {
+          "name": "KSante",
+          "games": 1,
+          "avg_damage": 26.2,
+          "avg_gold_per_min": 385.2,
+          "avg_cs_per_min": 6.4,
+          "avg_vision_score": 0.38
+        },
+        {
+          "name": "Poppy",
+          "games": 1,
+          "avg_damage": 41.4,
+          "avg_gold_per_min": 461.9,
+          "avg_cs_per_min": 1.8,
+          "avg_vision_score": 2.57
+        }
+      ]
+    },
+    "insights": [
+      {
+        "category": "Combat",
+        "priority": "high",
+        "insight": "Your KDA of 1.08 suggests frequent deaths. Focus on positioning and map awareness.",
+        "action": "Try to identify your death patterns - are you dying in lane, during team fights, or while split pushing?"
+      },
+      {
+        "category": "Vision",
+        "priority": "medium",
+        "insight": "Vision score of 0.74/min is low. Better vision control wins games.",
+        "action": "Buy and place more control wards. Aim for 1.5+ vision score per minute."
+      },
+      {
+        "category": "Progress",
+        "priority": "positive",
+        "insight": "Your KDA improved by 5.9% over the year!",
+        "action": "You're on the right track. Keep analyzing what's working."
+      },
+      {
+        "category": "Champion Pool",
+        "priority": "medium",
+        "insight": "You played 25 different champions. That's very diverse!",
+        "action": "Consider focusing on 3-5 champions to build deeper mastery."
+      },
+      {
+        "category": "Champion Mastery",
+        "priority": "info",
+        "insight": "Sion is your most played with 37 games.",
+        "action": "Your average stats on Sion: 24 dmg, 7.4 CS/min"
+      }
+    ],
+    "year_summary": {
+      "total_games": 136.0,
+      "year_avg_kda": 0.95,
+      "year_avg_cs_per_min": 6.3,
+      "year_avg_vision_score": 0.66,
+      "total_unique_champions": 25,
+      "most_played_champion": "Sion",
+      "achievements": [
+        "🎯 10 First Bloods",
+        "🐉 2 Objective Steals",
+        "💀 1 Fountain Takedowns"
+      ],
+      "strengths": [
+        "Your KDA improved by 5.9% over the year!"
+      ],
+      "growth_areas": [
+        "Your KDA of 1.08 suggests frequent deaths. Focus on positioning and map awareness."
+      ],
+      "overall_trend": "improving",
+      "best_quarter": "Q3"
+    }
+  },
+  "version": "1.0",
+  "type": "complete-journey"
+}

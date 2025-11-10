@@ -3,8 +3,9 @@ import { motion } from 'framer-motion';
 import { Upload } from 'lucide-react';
 import { createJourney, createJourneyFromUpload, type JourneyRequest } from './api';
 import Journey from './components/Journey';
+import FriendComparison from './components/FriendComparison';
 
-type Mode = 'api' | 'upload';
+type Mode = 'api' | 'upload' | 'compare';
 
 function App() {
   const [mode, setMode] = useState<Mode>('api');
@@ -123,6 +124,10 @@ function App() {
     />;
   }
 
+  if (mode === 'compare') {
+    return <FriendComparison onBack={() => setMode('api')} />;
+  }
+
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
       <motion.div
@@ -168,6 +173,16 @@ function App() {
           >
             <Upload size={18} />
             Upload Data
+          </button>
+          <button
+            onClick={() => setMode('compare')}
+            className={`flex-1 py-3 rounded-lg font-medium transition-all flex items-center justify-center gap-2 ${
+              mode === 'compare'
+                ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white'
+                : 'bg-runeterra-dark/50 text-runeterra-gold-light border border-purple-500/30'
+            }`}
+          >
+            🤝 Compare with Friend
           </button>
         </div>
 
