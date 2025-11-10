@@ -1,10 +1,10 @@
 {
-  "lore": "As the sun set upon the Iron Temple, the once unwavering summoner, their heart now filled with a newfound sense of balance and purpose, summoned forth a celestial host to illuminate the darkened battlefield. The divine light of their champions pierced through the veil of darkness, reminding all present of the inherent beauty within the very fabric of Runeterra.\n\nReflecting upon their journey through the hallowed halls of Demacia, the fiery trials of Noxus, and the ancient wisdom of the Shadow Isles, the summoner knew that their transformation was not yet complete. With renewed resolve, they vowed to continue their quest for enlightenment, to unite the fractured lands of Runeterra under the banner of harmony and understanding.\n\nAnd so, as the first stars began to twinkle in the twilight sky, the summoner looked out upon the horizon, their spirit soaring with the knowledge that the true power of Runeterra lay not within the hands of those who sought to dominate, but within the hearts of those who dared to dream, to unite, and to heal.",
+  "lore": "The sun set on the shattered battlefields of Noxus, the land of war and strife, as our summoner, now a seasoned warrior and enlightened sorcerer, stood tall amidst the ruins. The echoes of past battles reverberated through the air, a testament to the trials and tribulations endured in the name of justice and order. From the hallowed halls of Demacia, through the fiery crucible of Noxus, the summoner's journey had come full circle. Empowered by the knowledge gained and the bonds forged, they prepared to face the challenges yet to come, with the unwavering resolve to protect and serve Runeterra, the land of legends.",
   "reflection": [
-    "1. Consistently high KDA and vision score, demonstrating strong map awareness and champion mastery.",
-    "2. CS/min below league average, focus on improving last-hitting and overall farming efficiency.",
-    "3. Increase CS/min by 0.15 for a total of 1.40 CS/min, and maintain KDA above 1.65.",
-    "4. Implement champion specialization strategy, mastering 3 champions to a high level for maximum impact."
+    "1. Consistently high KDA and vision control, especially in the mid lane.",
+    "2. Improve CS/min to reach 2.5 and maintain it, increasing overall damage output.",
+    "3. Master a new champion in the mid lane, such as Yasuo or Yone, for greater champion pool depth.",
+    "4. Focus on map awareness and roaming to create more opportunities for teammates."
   ],
   "trends": {
     "kda": {
@@ -582,54 +582,30 @@
       }
     ]
   },
-  "comebacks": {
-    "count": 1,
-    "games": [
-      {
-        "index": 945,
-        "champion": "Nami",
-        "had_open_nexus": false,
-        "description": "Comeback victory despite early struggles"
-      }
-    ],
-    "resilience_score": 0.10319917440660474
-  },
   "insights": [
+    {
+      "category": "Combat",
+      "priority": "high",
+      "insight": "Your KDA of 1.72 suggests frequent deaths. Focus on positioning and map awareness.",
+      "action": "Try to identify your death patterns - are you dying in lane, during team fights, or while split pushing?"
+    },
     {
       "category": "Farming",
       "priority": "high",
-      "insight": "CS per minute average of 1.25 is significantly below competitive standards, even for support-focused gameplay.",
-      "action": "Spend 15 minutes in practice tool daily focusing on last-hitting, aiming to double your CS score to at least 2.5 per minute in your next 20 games."
-    },
-    {
-      "category": "Combat",
-      "priority": "medium",
-      "insight": "KDA of 1.72 shows room for improvement in survivability while maintaining impact, though the stable trend indicates consistency.",
-      "action": "Review your last 5 deaths per game in replays, focusing on positioning mistakes and identifying safer engagement distances."
+      "insight": "CS/min of 1.2 is below average. Improving farm will significantly increase your gold income.",
+      "action": "Practice last-hitting in Practice Tool. Aim for 7+ CS/min in laning phase."
     },
     {
       "category": "Champion Pool",
-      "priority": "positive",
-      "insight": "Strong champion versatility score (75.2) and wide pool (54 champions) shows good adaptability and game knowledge.",
-      "action": "Continue mastering your top 3 champions while maintaining 2-3 comfort picks for each role."
-    },
-    {
-      "category": "Vision",
       "priority": "medium",
-      "insight": "Vision score of 2.16 per minute is decent but could be optimized for better map control.",
-      "action": "Place defensive wards during laning phase and shift to aggressive vision control around objectives 1 minute before they spawn."
+      "insight": "You played 54 different champions. That's very diverse!",
+      "action": "Consider focusing on 3-5 champions to build deeper mastery."
     },
     {
       "category": "Champion Mastery",
-      "priority": "high",
-      "insight": "High games on Teemo (211) but relatively low damage output (21.7k) suggests suboptimal damage trading patterns.",
-      "action": "Practice Teemo's trading patterns in normals, focusing on maximizing poison damage and safe auto-attack harass during laning phase."
-    },
-    {
-      "category": "Progress",
       "priority": "info",
-      "insight": "Stable trends across all metrics indicate consistent but non-improving gameplay patterns.",
-      "action": "Set specific improvement goals for each metric (KDA >2.0, CS >2.0, Vision >2.5) and track progress weekly."
+      "insight": "Teemo is your most played with 211 games.",
+      "action": "Your average stats on Teemo: 22 dmg, 1.5 CS/min"
     }
   ],
   "year_summary": {
@@ -639,19 +615,15 @@
     "year_avg_vision_score": 2.14,
     "total_unique_champions": 54,
     "most_played_champion": "Teemo",
-    "comeback_victories": 1,
-    "resilience_score": 0.1,
     "achievements": [
       "🎯 75 First Bloods",
       "🐉 6 Objective Steals",
       "💀 2 Fountain Takedowns"
     ],
-    "strengths": [
-      "Strong champion versatility score (75.2) and wide pool (54 champions) shows good adaptability and game knowledge."
-    ],
+    "strengths": [],
     "growth_areas": [
-      "CS per minute average of 1.25 is significantly below competitive standards, even for support-focused gameplay.",
-      "High games on Teemo (211) but relatively low damage output (21.7k) suggests suboptimal damage trading patterns."
+      "Your KDA of 1.72 suggests frequent deaths. Focus on positioning and map awareness.",
+      "CS/min of 1.2 is below average. Improving farm will significantly increase your gold income."
     ],
     "overall_trend": "stable",
     "best_quarter": "Q4"

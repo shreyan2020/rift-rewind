@@ -4,6 +4,7 @@ import type { Quarter, Finale } from '../api';
 import { VALUE_DESCRIPTIONS } from '../constants/valueDescriptions';
 import React from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import ShareableReport from './ShareableReport';
 
 interface FinalDashboardProps {
   quarters: Record<string, Quarter>;
@@ -25,6 +26,7 @@ const FinalDashboard: React.FC<FinalDashboardProps> = ({ quarters, riotId, final
 
   // State for selected value in dropdown
   const [selectedValue, setSelectedValue] = useState<string | null>(null);
+  const [showShareReport, setShowShareReport] = useState(false);
   
   // Get all unique values from all quarters for dropdown
   const allValueNames = useMemo(() => {
@@ -226,7 +228,15 @@ const FinalDashboard: React.FC<FinalDashboardProps> = ({ quarters, riotId, final
             Keep climbing, Summoner. The Rift awaits your return.
           </p>
           
-          <div className="flex gap-4 justify-center">
+          <div className="flex gap-4 justify-center flex-wrap">
+            <motion.button
+              onClick={() => setShowShareReport(true)}
+              className="px-8 py-4 rounded-lg font-bold text-lg bg-gradient-to-r from-emerald-600 to-teal-600 text-white hover:shadow-lg hover:shadow-emerald-500/50 transition-all"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              📄 Export Your Journey Report
+            </motion.button>
             {finaleData && onViewAnalytics && (
               <motion.button
                 onClick={onViewAnalytics}
@@ -250,6 +260,16 @@ const FinalDashboard: React.FC<FinalDashboardProps> = ({ quarters, riotId, final
           </div>
         </motion.div>
       </div>
+
+      {/* Shareable Report Modal */}
+      {showShareReport && (
+        <ShareableReport
+          quarters={quarters}
+          riotId={riotId}
+          finaleData={finaleData}
+          onClose={() => setShowShareReport(false)}
+        />
+      )}
     </div>
   );
 };
