@@ -3,7 +3,7 @@ from datetime import datetime, timezone
 from common import to_regional, parse_riot_id, get_puuid
 from stats_inference import (
     bundles_from_participant, score_values, aggregate_mean,
-    universalism_bonus, chapter_stats
+    universalism_bonus, chapter_stats, zscore_rows
 )
 from bedrock_lore import (
     generate_quarter_lore, generate_quarter_reflection,
@@ -227,35 +227,32 @@ def handler(event, context):
                 you = next((p for p in parts if p.get("puuid")==puuid), None)
                 if you: bundles.append(bundles_from_participant(you))
 
-        # Calculate raw scores and average them (don't z-score within single player)
-        raw = score_values(bundles)
-        values = aggregate_mean(raw)
+        # Calculate Schwartz values
+        raw_per_game = score_values(bundles)  # List of dicts, one per game
         
-        # Add universalism bonus
-        values["Universalism"] = values.get("Universalism", 0.0) + universalism_bonus(bundles)
+        # Z-score per value across all games (removes scale differences)
+        # This shows which values the player expressed most consistently and strongly
+        zscored_per_game = zscore_rows(raw_per_game)
         
-        # Scale to 0-100 range for readability
-        # Find global min/max across all values
-        all_vals = list(values.values())
-        min_val = min(all_vals) if all_vals else 0
-        max_val = max(all_vals) if all_vals else 1
-        val_range = max_val - min_val
+        # Average z-scores for each value across all games
+        values_normalized = aggregate_mean(zscored_per_game)
         
-        # Normalize to 0-100 scale
-        if val_range > 0.001:  # Only scale if there's meaningful variation
-            values = {k: ((v - min_val) / val_range) * 100 for k, v in values.items()}
-        else:
-            # If all values are similar, distribute evenly around 50
-            values = {k: 50.0 for k in values.keys()}
+        # Also calculate raw scores for display and cross-player comparison
+        raw_aggregated = aggregate_mean(raw_per_game)
+        raw_aggregated["Universalism"] = raw_aggregated.get("Universalism", 0.0) + universalism_bonus(bundles)
+        values_raw = {k: round(v, 2) for k, v in raw_aggregated.items()}
         
         stats = chapter_stats(bundles)
 
-        top_values = sorted(values.items(), key=lambda kv: kv[1], reverse=True)[:5]
+        # Get top 5 values by z-score (which values this player expresses most strongly)
+        # But store the RAW scores for display and cross-player comparison
+        top_by_zscore = sorted(values_normalized.items(), key=lambda kv: kv[1], reverse=True)[:5]
+        top_values = [(name, values_raw[name]) for name, _ in top_by_zscore]
         
         # Save participant bundles for advanced analytics
         _s3_write_json(f"{s3_base}{label}/participant_bundles.json", bundles)
         
-        # Dynamically determine region arc based on values and quarter progression
+        # Dynamically determine region arc based on normalized values (what player expresses most)
         quarter_num = int(label[1])  # Extract number from "Q1", "Q2", etc.
         prev_values = None
         
@@ -271,13 +268,13 @@ def handler(event, context):
             except Exception:
                 pass
         
-        region_arc = choose_region_arc(quarter_num, values, prev_values)
+        region_arc = choose_region_arc(quarter_num, values_normalized, prev_values)
         
         # Generate AI-powered lore with continuity from previous quarter
         lore = generate_quarter_lore(label, stats, top_values, region_arc, prev_lore)
         reflection = generate_quarter_reflection(label, stats, top_values)
 
-        story = {"quarter": label, "values": values, "top_values": top_values, "stats": stats,
+        story = {"quarter": label, "values": values_raw, "top_values": top_values, "stats": stats,
                  "lore": lore, "reflection": reflection, "region_arc": region_arc}
         _s3_write_json(f"{s3_base}{label}/story.json", story)
 

@@ -40,7 +40,7 @@ sys.path.insert(0, str(Path(__file__).parent / "infra" / "src"))
 
 try:
     from stats_inference import (
-        score_values, aggregate_mean, universalism_bonus, chapter_stats
+        score_values, aggregate_mean, universalism_bonus, chapter_stats, zscore_rows
     )
     from bedrock_lore import (
         generate_quarter_lore, generate_quarter_reflection,
@@ -225,30 +225,35 @@ def process_quarter_matches(matches: List[dict], quarter_num: int, archetype: st
     
     # Calculate Schwartz values
     print(f"🎯 Calculating Schwartz values...")
-    raw = score_values(bundles)
-    values = aggregate_mean(raw)
+    raw_per_game = score_values(bundles)  # List of dicts, one per game
     
-    # Add universalism bonus
-    values["Universalism"] = values.get("Universalism", 0.0) + universalism_bonus(bundles)
+    # Z-score per value across all games (removes scale differences)
+    # This shows which values the player expressed most consistently and strongly
+    zscored_per_game = zscore_rows(raw_per_game)
     
-    # Scale to 0-100 range
-    max_val = max(values.values()) if values else 1
-    values = {k: round((v / max_val) * 100, 1) for k, v in values.items()}
+    # Average z-scores for each value across all games
+    values_normalized = aggregate_mean(zscored_per_game)
     
-    print(f"   Values: {dict(list(values.items())[:3])}")
+    # Also calculate raw scores for display and cross-player comparison
+    raw_aggregated = aggregate_mean(raw_per_game)
+    raw_aggregated["Universalism"] = raw_aggregated.get("Universalism", 0.0) + universalism_bonus(bundles)
+    values_raw = {k: round(v, 2) for k, v in raw_aggregated.items()}
+    
+    print(f"   Top 3 values (by avg z-score): {dict(list(sorted(values_normalized.items(), key=lambda x: x[1], reverse=True)[:3]))}")
     
     # Calculate stats
     print(f"📈 Calculating stats...")
     stats = calculate_stats_from_preprocessed(matches)
     print(f"   KDA: {stats['kda_proxy']}, CS/min: {stats['cs_per_min']}, Gold/min: {stats['gold_per_min']}")
     
-    # Choose region based on values
-    region_arc = choose_region_arc(values, quarter_num)
+    # Choose region based on normalized values (what player expresses most)
+    region_arc = choose_region_arc(values_normalized, quarter_num)
     print(f"🗺️  Region: {region_arc}")
     
-    # Get top 3 values for lore generation
-    top_values_dict = dict(sorted(values.items(), key=lambda x: x[1], reverse=True)[:3])
-    top_values_list = list(top_values_dict.items())  # Convert to list of tuples for lore function
+    # Get top 3 values by z-score (which values this player expresses most strongly)
+    # But store the RAW scores for display and cross-player comparison
+    top_by_zscore = sorted(values_normalized.items(), key=lambda x: x[1], reverse=True)[:3]
+    top_values_list = [(name, values_raw[name]) for name, _ in top_by_zscore]
     
     # Generate lore
     print(f"📖 Generating lore via AWS Bedrock...")
@@ -277,12 +282,12 @@ def process_quarter_matches(matches: List[dict], quarter_num: int, archetype: st
     story = {
         "quarter": quarter_label,
         "date_range": date_range,
-        "values": values,
+        "values": values_raw,  # Store raw scores for cross-player comparison
         "stats": stats,
         "lore": lore,
         "reflection": reflection,
         "region_arc": region_arc,
-        "top_values": top_values_list  # Store as list of tuples for frontend
+        "top_values": top_values_list  # Top 3 by z-score, displaying raw values
     }
     
     return story
@@ -645,6 +650,7 @@ Examples:
   python create_journey.py ./dataset --player-name "bst#0123"
   python create_journey.py ./my_matches --player-name "Player#TAG" --output my-journey
   python create_journey.py ./dataset --player-name "bst#0123" --archetype guardian
+  python create_journey.py ./dataset --player-name "bst#0123" --upload-file my-journey.json
 
 Archetypes: explorer, guardian, dominator, strategist, supporter
         """
@@ -663,6 +669,10 @@ Archetypes: explorer, guardian, dominator, strategist, supporter
         '--output',
         default='journey-output',
         help='Output folder name (default: journey-output)'
+    )
+    parser.add_argument(
+        '--upload-file',
+        help='Upload JSON filename (default: <output>-upload.json). Specify custom name like "my-journey.json"'
     )
     parser.add_argument(
         '--archetype',
@@ -779,7 +789,7 @@ Archetypes: explorer, guardian, dominator, strategist, supporter
     
     # Auto-package for frontend upload
     print(f"\n📦 Creating upload package...")
-    upload_file = f"{args.output}-upload.json"
+    upload_file = args.upload_file if args.upload_file else f"{args.output}-upload.json"
     package_for_upload(args.output, upload_file)
     
     return 0

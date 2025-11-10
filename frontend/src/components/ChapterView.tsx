@@ -84,34 +84,7 @@ const StatCard: React.FC<StatCardProps> = ({ label, value }) => {
   );
 };
 
-interface ValueBarProps {
-  name: string;
-  value: number;
-  rank: number;
-  delay: number;
-}
-
-const ValueBar: React.FC<ValueBarProps> = ({ name, value, rank, delay }) => {
-  return (
-    <div className="flex items-center gap-3">
-      <span className="text-runeterra-gold font-bold w-6 text-sm">#{rank}</span>
-      <div className="flex-1">
-        <div className="flex justify-between mb-1">
-          <span className="text-runeterra-gold-light font-medium text-sm">{name}</span>
-          <span className="text-gray-400 text-xs">{Number(value).toFixed(2)}</span>
-        </div>
-        <div className="h-1.5 bg-gray-700 rounded-full overflow-hidden">
-          <motion.div
-            className="h-full bg-gradient-to-r from-runeterra-blue to-runeterra-purple"
-            initial={{ width: 0 }}
-            animate={{ width: `${Math.min(100, Math.max(0, (Number(value) + 1) * 50))}%` }}
-            transition={{ delay, duration: 0.5 }}
-          />
-        </div>
-      </div>
-    </div>
-  );
-};
+// Note: Visual value bars were removed in favor of a simple ordered list of names.
 
 interface ChapterViewProps {
   quarter: string;
@@ -202,9 +175,13 @@ const ChapterView: React.FC<ChapterViewProps> = ({ quarter, data, riotId, onNext
           >
             <h3 className="text-xl font-bold text-runeterra-blue mb-4 text-center">Playstyle Values</h3>
             <div className="space-y-3 mb-4">
-              {data.top_values.slice(0, 5).map(([name, value], index) => (
-                <ValueBar key={name} name={name} value={value} rank={index + 1} delay={0.7 + index * 0.1} />
-              ))}
+              <ol className="list-decimal list-inside space-y-1">
+                {data.top_values.slice(0, 5).map(([name]) => (
+                  <li key={name} className="text-runeterra-gold-light font-medium">
+                    {name}
+                  </li>
+                ))}
+              </ol>
             </div>
             {/* Value Descriptions Legend */}
             <div className="mt-6 pt-4 border-t border-runeterra-blue/20">

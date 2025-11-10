@@ -11,4 +11,4 @@ export const VALUE_DESCRIPTIONS: Record<string, string> = {
   'Universalism': 'Champion pool diversity, role flexibility. Your balanced, adaptable playstyle.',
 };
 
-export const VALUE_CALCULATION_EXPLANATION = `Values are calculated from your match performance data and scaled relatively. The highest value in each period is set to 100, with others shown proportionally. This means your dominant playstyle trait becomes 100, and others are shown relative to it. Different periods may have different dominant values as your playstyle evolves.`;
+export const VALUE_CALCULATION_EXPLANATION = `Values are calculated as raw scores from your match performance data - weighted combinations of your in-game behaviors like gold earned, damage dealt, vision control, and teamwork. Higher scores indicate stronger expression of that behavioral trait. Different values naturally have different scales (e.g., Power uses gold amounts ~2000-5000, while Conformity uses ward counts ~-2 to +2), making direct comparisons meaningful when looking at relative patterns over time.`;

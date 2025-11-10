@@ -121,7 +121,6 @@ export const getQuarterStory = async (bucketUrl: string, quarter: string): Promi
   // We'll need to construct the proper URL
   const s3BucketName = 'rift-rewind-data-567020425899-eu-west-1';
   const storyUrl = `https://${s3BucketName}.s3.eu-west-1.amazonaws.com/${bucketUrl}${quarter}/story.json`;
-  console.log('Fetching story from:', storyUrl);
   const response = await axios.get(storyUrl);
   return response.data;
 };
@@ -129,7 +128,6 @@ export const getQuarterStory = async (bucketUrl: string, quarter: string): Promi
 export const getFinale = async (bucketUrl: string): Promise<Finale> => {
   const s3BucketName = 'rift-rewind-data-567020425899-eu-west-1';
   const finaleUrl = `https://${s3BucketName}.s3.eu-west-1.amazonaws.com/${bucketUrl}finale.json`;
-  console.log('Fetching finale from:', finaleUrl);
   const response = await axios.get(finaleUrl);
   return response.data;
 };

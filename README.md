@@ -385,6 +385,51 @@ rift-rewind-v2/
 
 ## 🤝 Contributing
 
+## 🔬 How Playstyle Values are Calculated
+
+This project computes a set of psychological "playstyle values" (inspired by Schwartz values) per quarter to summarize a player's behavioral tendencies across games. The goal is to rank these values fairly so that differences in raw numerical scales don't dominate which values appear as a player's "top" values.
+
+High-level contract
+- Inputs: per-game feature scores (raw numbers derived from match events and stats)
+- Output: per-quarter `values` object (map of value name → numeric aggregate) and `top_values` (array of top N [name, score] pairs)
+- Error modes: missing games → values set to 0; constant values across games → z-score becomes NaN and is handled as 0
+
+Calculation details (what we implemented)
+1. Raw per-game scoring: each game produces a raw score for each value based on heuristics in `infra/src/stats_inference.py`.
+2. Per-value normalization (recommended and implemented): for each value (e.g., Power, Tradition), compute the z-score across the player's games in the quarter. This normalizes each value independently so that a value with naturally large raw magnitudes doesn't always dominate the ranking.
+   - z = (x - mean(value_over_games)) / std(value_over_games)
+   - If std == 0 (constant series), z is treated as 0 to avoid NaNs.
+3. Aggregate per-quarter: average the per-game z-scores for each value to produce an aggregate z-score per value for the quarter.
+4. Ranking / Top-N selection: sort values by their aggregate z-score (descending) and pick the top 3 to populate `top_values`.
+
+Why this approach
+- Prevents scale bias: raw score magnitudes vary widely (e.g., `Power` or `Security` may have much larger numeric ranges). Normalizing per-value gives each value an equal chance to show relative prominence.
+- Interpretable comparison: z-scores express how unusual a player's behavior for that value is relative to their own game-by-game variation.
+
+Frontend display choices
+- We intentionally separate the data (backend produces `[name, numeric_score]`) from presentation. The frontend can show:
+  - Names only (concise and privacy-friendly) — the current default after your recent change.
+  - Names + raw/aggregate score (transparent, useful for debugging or research).
+  - Names + qualitative label (e.g., High / Medium / Low) derived from z-score thresholds (±1 for High/Low, ±0.5 for Medium, else Neutral).
+
+If you'd like, I can add automatic qualitative labeling in the backend (adds a small function to map z → label) or implement it purely in the frontend.
+
+Where to inspect / change the logic
+- Backend implementation: `infra/src/stats_inference.py` (z-score and aggregation code)
+- Per-quarter processing: `infra/src/process_quarter.py` and the local journey generator `create_journey.py`
+- Frontend display: `frontend/src/components/ChapterView.tsx` (shows `top_values`) and `frontend/src/constants/valueDescriptions.ts` for descriptive text
+
+Notes & edge cases
+- Small sample sizes: if a quarter has very few games, z-scores are less reliable — consider combining adjacent quarters or falling back to raw scores for quarters with fewer than N games.
+- Outliers: per-value z-scores are sensitive to outliers; consider winsorizing or using robust z-scores (median + MAD) if outliers are common.
+- Reproducibility: the method is deterministic given the per-game raw scores. If you change the heuristics used to compute raw per-game scores, the downstream z-scores and top values will change accordingly.
+
+Suggested next steps (optional)
+- Add qualitative labels (backend or frontend) so users see "High / Medium / Low" instead of raw numbers.
+- Expose a toggle in the UI to show "Scores" for power users or researchers.
+- Add a small unit test in `infra/` that verifies top-3 selection on contrived data (e.g., ensures per-value z-score ranking differs from raw-ranking when scales differ).
+
+
 1. Fork the repository
 2. Create a feature branch (`git checkout -b feature/amazing-feature`)
 3. Commit your changes (`git commit -m 'Add amazing feature'`)

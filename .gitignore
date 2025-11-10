@@ -71,8 +71,11 @@ coverage/
 # Data files (if you don't want to commit match data)
 *.json.bak
 matches_*.json
-story.json
-datafiles/
+
+# Generated journey output files
+journey-output/
+journey-output-upload*.json
+*-upload.json
 
 # AWS
 .aws/

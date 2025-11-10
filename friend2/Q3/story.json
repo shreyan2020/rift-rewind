@@ -1,0 +1,42 @@
+{
+  "quarter": "Q3",
+  "date_range": "Aug 03, 2025 - Sep 07, 2025",
+  "values": {
+    "Achievement": 0.33,
+    "Benevolence": 1.24,
+    "Conformity": -3.29,
+    "Hedonism": 0.05,
+    "Power": 11010.13,
+    "Security": 22926.32,
+    "Self-Direction": 111.48,
+    "Stimulation": 98.14,
+    "Tradition": 142.77,
+    "Universalism": 0.22
+  },
+  "stats": {
+    "games": 34,
+    "kda_proxy": 1.13,
+    "cs_per_min": 6.57,
+    "gold_per_min": 393.1,
+    "vision_score_per_min": 0.63,
+    "avg_kill_participation": 0.322,
+    "ping_rate_per_min": 0.0
+  },
+  "lore": "In the heart of Demacia, the summoner, a beacon of self-direction amidst the rigid conformity, found solace in the ancient halls of the Scholars of the Round. Their Tradition-bound wisdom resonated with the summoner's thirst for knowledge, as they sought to master the arcane arts. Yet, their unconventional methods, a stark contrast to Demacia's order, stirred whispers and unease. The summoner's vision scores, a testament to their keen perception, illuminated the shadows of the kingdom, offering a glimpse into the untold stories hidden beneath its polished veneer.",
+  "reflection": "Based on the given performance stats, a specific and actionable tip for this player would be:\n\n\"Increase CS per minute by focusing on last-hitting under tower and practicing efficient farming routes to improve overall gold income.\"",
+  "region_arc": "Demacia",
+  "top_values": [
+    [
+      "Conformity",
+      -3.29
+    ],
+    [
+      "Self-Direction",
+      111.48
+    ],
+    [
+      "Tradition",
+      142.77
+    ]
+  ]
+}

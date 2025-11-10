@@ -1,0 +1,42 @@
+{
+  "quarter": "Q4",
+  "date_range": "Sep 05, 2025 - Nov 04, 2025",
+  "values": {
+    "Achievement": 0.35,
+    "Benevolence": 8.17,
+    "Conformity": -1.94,
+    "Hedonism": 0.01,
+    "Power": 7138.97,
+    "Security": 5467.95,
+    "Self-Direction": 85.73,
+    "Stimulation": 61.97,
+    "Tradition": 112.59,
+    "Universalism": 0.08
+  },
+  "stats": {
+    "games": 242,
+    "kda_proxy": 1.72,
+    "cs_per_min": 1.25,
+    "gold_per_min": 315.9,
+    "vision_score_per_min": 2.16,
+    "avg_kill_participation": 0.528,
+    "ping_rate_per_min": 0.0
+  },
+  "lore": "---\n\nIn the heart of Noxus, where the clashing of steel and the thunderous roar of war drums echoed through the streets, a young summoner named Seraphine found her footing. Her power-hungry summon, Rell, at her side, she embraced the raw might and unyielding traditions of her homeland. As she honed her skills, Seraphine's every spell cast reverberated through the war-torn land, a testament to Noxus' unwavering resolve and the unbreakable bond between its people and their champions.",
+  "reflection": "Improve your last-hitting by practicing in custom games and aiming for 3 CS/min to increase your gold income and overall impact on the game.",
+  "region_arc": "Noxus",
+  "top_values": [
+    [
+      "Power",
+      7138.97
+    ],
+    [
+      "Security",
+      5467.95
+    ],
+    [
+      "Tradition",
+      112.59
+    ]
+  ]
+}

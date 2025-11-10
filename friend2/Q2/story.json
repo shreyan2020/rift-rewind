@@ -1,0 +1,42 @@
+{
+  "quarter": "Q2",
+  "date_range": "Apr 01, 2025 - Aug 02, 2025",
+  "values": {
+    "Achievement": 0.24,
+    "Benevolence": 1.64,
+    "Conformity": -4.11,
+    "Hedonism": 0.0,
+    "Power": 9583.27,
+    "Security": 19557.96,
+    "Self-Direction": 109.42,
+    "Stimulation": 59.88,
+    "Tradition": 133.34,
+    "Universalism": 0.25
+  },
+  "stats": {
+    "games": 34,
+    "kda_proxy": 0.59,
+    "cs_per_min": 7.19,
+    "gold_per_min": 376.1,
+    "vision_score_per_min": 0.6,
+    "avg_kill_participation": 0.209,
+    "ping_rate_per_min": 0.0
+  },
+  "lore": "The summoner, a solitary figure, arrives in Piltover, the city of progress. The weight of the world on their shoulders, they seek to harness the power of Runeterra's elements through the arcane arts. In the bustling city, they immerse themselves in the laboratories and workshops, their self-direction driving them to push boundaries, while their thirst for power fuels their relentless pursuit of knowledge. The conformity of Piltover's citizens, however, clashes with their independent spirit, leading to friction and intrigue. The journey begins.",
+  "reflection": "Improve CS/min by practicing last-hitting in custom games and aim for at least 8 CS/min to contribute effectively to team fights.",
+  "region_arc": "Piltover",
+  "top_values": [
+    [
+      "Self-Direction",
+      109.42
+    ],
+    [
+      "Conformity",
+      -4.11
+    ],
+    [
+      "Power",
+      9583.27
+    ]
+  ]
+}

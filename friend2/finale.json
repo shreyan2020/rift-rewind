@@ -1,0 +1,406 @@
+{
+  "lore": "In the ethereal embrace of Ionia's ancient forests, our summoner, once a solitary figure driven by the relentless pursuit of power, now stood as a beacon of harmony, their soul enriched by the tapestry of Runeterra's diverse tapestry. The weight of the city's expectations and their insatiable thirst for knowledge had shaped them, as they traversed the hallowed halls of Piltover's Scholars and the grandeur of Demacia's ancient wisdom. Yet, it was the sacred land of Ionia that taught them the true meaning of balance and unity, the importance of tradition in a world ever-changing. With newfound wisdom, our summoner, Timmy1691#EUW, prepared to embark on the next chapter, to face the untold challenges that awaited in the vast expanse of Runeterra. The ancient magic of Ionia pulsed through their veins, a testament to their growth and a reminder of the infinite possibilities that awaited in their journey to master the arcane arts.",
+  "reflection": [
+    "1. Consistently maintained a high CS/min average, exceeding the league median in all quarters.",
+    "2. Struggled with maintaining a positive KDA in Q2, requiring significant improvement in laning phase decision making.",
+    "3. Aim for a 1.2 KDA and 6.5 CS/min in the upcoming season to better support the team and climb ranks.",
+    "4. Focus on mastering a single champion for each role to increase champion mastery and effectiveness."
+  ],
+  "trends": {
+    "kda": {
+      "values": [
+        1.02,
+        0.59,
+        1.13,
+        1.08
+      ],
+      "direction": "improving",
+      "change_pct": 5.8823529411764754,
+      "best_quarter": "Q3"
+    },
+    "cs_per_min": {
+      "values": [
+        5.44,
+        7.19,
+        6.57,
+        6.04
+      ],
+      "direction": "improving",
+      "change_pct": 11.029411764705875,
+      "best_quarter": "Q2"
+    },
+    "gold_per_min": {
+      "values": [
+        357.3,
+        376.1,
+        393.1,
+        415.8
+      ],
+      "direction": "improving",
+      "change_pct": 16.3727959697733,
+      "best_quarter": "Q4"
+    },
+    "vision_score": {
+      "values": [
+        0.66,
+        0.6,
+        0.63,
+        0.74
+      ],
+      "direction": "improving",
+      "change_pct": 12.121212121212114,
+      "best_quarter": "Q4"
+    },
+    "kill_participation": {
+      "values": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "direction": "stable",
+      "change_pct": 0,
+      "best_quarter": "Q1"
+    },
+    "overall": {
+      "improving_metrics": 4,
+      "declining_metrics": 0,
+      "summary": "improving"
+    },
+    "available": true
+  },
+  "highlights": {
+    "best_kda_game": {
+      "index": 124,
+      "champion": "LeeSin",
+      "value": 23.0
+    },
+    "most_kills_game": {
+      "index": 28,
+      "champion": "Amumu",
+      "kills": 15
+    },
+    "most_damage_game": {
+      "index": 58,
+      "champion": "Yasuo",
+      "damage": 62.2
+    },
+    "perfect_games": [],
+    "first_bloods": 10,
+    "pentakills": 0,
+    "quadrakills": 0,
+    "comeback_wins": [],
+    "highest_cs_game": {
+      "index": 60,
+      "champion": "Irelia",
+      "cs_per_min": 9.46
+    },
+    "most_gold_game": null,
+    "best_vision_game": null,
+    "clutch_steals": 2,
+    "fountain_kills": 1
+  },
+  "champion_analysis": {
+    "available": true,
+    "total_unique_champions": 25,
+    "most_played": [
+      {
+        "name": "Sion",
+        "games": 37,
+        "avg_damage": 23.9,
+        "avg_gold_per_min": 419.8,
+        "avg_cs_per_min": 7.4,
+        "avg_vision_score": 0.54
+      },
+      {
+        "name": "Irelia",
+        "games": 15,
+        "avg_damage": 16.5,
+        "avg_gold_per_min": 416.6,
+        "avg_cs_per_min": 7.8,
+        "avg_vision_score": 0.54
+      },
+      {
+        "name": "Yasuo",
+        "games": 14,
+        "avg_damage": 19.1,
+        "avg_gold_per_min": 390.5,
+        "avg_cs_per_min": 7.6,
+        "avg_vision_score": 0.61
+      },
+      {
+        "name": "Amumu",
+        "games": 14,
+        "avg_damage": 15.5,
+        "avg_gold_per_min": 350.3,
+        "avg_cs_per_min": 3.9,
+        "avg_vision_score": 0.85
+      },
+      {
+        "name": "Ornn",
+        "games": 13,
+        "avg_damage": 15.2,
+        "avg_gold_per_min": 319.8,
+        "avg_cs_per_min": 6.2,
+        "avg_vision_score": 0.46
+      }
+    ],
+    "one_tricks": [],
+    "versatility_score": 77.6,
+    "all_champions": [
+      {
+        "name": "Sion",
+        "games": 37,
+        "avg_damage": 23.9,
+        "avg_gold_per_min": 419.8,
+        "avg_cs_per_min": 7.4,
+        "avg_vision_score": 0.54
+      },
+      {
+        "name": "Irelia",
+        "games": 15,
+        "avg_damage": 16.5,
+        "avg_gold_per_min": 416.6,
+        "avg_cs_per_min": 7.8,
+        "avg_vision_score": 0.54
+      },
+      {
+        "name": "Yasuo",
+        "games": 14,
+        "avg_damage": 19.1,
+        "avg_gold_per_min": 390.5,
+        "avg_cs_per_min": 7.6,
+        "avg_vision_score": 0.61
+      },
+      {
+        "name": "Amumu",
+        "games": 14,
+        "avg_damage": 15.5,
+        "avg_gold_per_min": 350.3,
+        "avg_cs_per_min": 3.9,
+        "avg_vision_score": 0.85
+      },
+      {
+        "name": "Ornn",
+        "games": 13,
+        "avg_damage": 15.2,
+        "avg_gold_per_min": 319.8,
+        "avg_cs_per_min": 6.2,
+        "avg_vision_score": 0.46
+      },
+      {
+        "name": "DrMundo",
+        "games": 7,
+        "avg_damage": 15.9,
+        "avg_gold_per_min": 354.2,
+        "avg_cs_per_min": 7.6,
+        "avg_vision_score": 0.53
+      },
+      {
+        "name": "Nautilus",
+        "games": 6,
+        "avg_damage": 12.5,
+        "avg_gold_per_min": 288.5,
+        "avg_cs_per_min": 2.1,
+        "avg_vision_score": 1.59
+      },
+      {
+        "name": "Maokai",
+        "games": 6,
+        "avg_damage": 21.2,
+        "avg_gold_per_min": 363.9,
+        "avg_cs_per_min": 6.1,
+        "avg_vision_score": 0.59
+      },
+      {
+        "name": "Zed",
+        "games": 4,
+        "avg_damage": 42.9,
+        "avg_gold_per_min": 564.0,
+        "avg_cs_per_min": 5.8,
+        "avg_vision_score": 0.59
+      },
+      {
+        "name": "Kayn",
+        "games": 3,
+        "avg_damage": 27.1,
+        "avg_gold_per_min": 428.3,
+        "avg_cs_per_min": 6.6,
+        "avg_vision_score": 0.68
+      },
+      {
+        "name": "LeeSin",
+        "games": 2,
+        "avg_damage": 15.2,
+        "avg_gold_per_min": 400.9,
+        "avg_cs_per_min": 2.7,
+        "avg_vision_score": 0.63
+      },
+      {
+        "name": "JarvanIV",
+        "games": 2,
+        "avg_damage": 15.1,
+        "avg_gold_per_min": 380.5,
+        "avg_cs_per_min": 6.5,
+        "avg_vision_score": 0.59
+      },
+      {
+        "name": "Lillia",
+        "games": 1,
+        "avg_damage": 6.5,
+        "avg_gold_per_min": 305.5,
+        "avg_cs_per_min": 6.8,
+        "avg_vision_score": 0.65
+      },
+      {
+        "name": "Diana",
+        "games": 1,
+        "avg_damage": 2.1,
+        "avg_gold_per_min": 305.8,
+        "avg_cs_per_min": 5.6,
+        "avg_vision_score": 0.67
+      },
+      {
+        "name": "Malphite",
+        "games": 1,
+        "avg_damage": 12.7,
+        "avg_gold_per_min": 329.0,
+        "avg_cs_per_min": 6.2,
+        "avg_vision_score": 0.56
+      },
+      {
+        "name": "Jax",
+        "games": 1,
+        "avg_damage": 11.9,
+        "avg_gold_per_min": 343.7,
+        "avg_cs_per_min": 6.6,
+        "avg_vision_score": 0.36
+      },
+      {
+        "name": "MonkeyKing",
+        "games": 1,
+        "avg_damage": 8.6,
+        "avg_gold_per_min": 299.1,
+        "avg_cs_per_min": 5.4,
+        "avg_vision_score": 0.48
+      },
+      {
+        "name": "Leona",
+        "games": 1,
+        "avg_damage": 9.7,
+        "avg_gold_per_min": 348.3,
+        "avg_cs_per_min": 1.1,
+        "avg_vision_score": 1.43
+      },
+      {
+        "name": "Akali",
+        "games": 1,
+        "avg_damage": 17.5,
+        "avg_gold_per_min": 343.5,
+        "avg_cs_per_min": 7.0,
+        "avg_vision_score": 0.47
+      },
+      {
+        "name": "Shen",
+        "games": 1,
+        "avg_damage": 35.0,
+        "avg_gold_per_min": 431.9,
+        "avg_cs_per_min": 5.4,
+        "avg_vision_score": 0.41
+      },
+      {
+        "name": "Veigar",
+        "games": 1,
+        "avg_damage": 8.7,
+        "avg_gold_per_min": 271.2,
+        "avg_cs_per_min": 1.8,
+        "avg_vision_score": 1.63
+      },
+      {
+        "name": "Galio",
+        "games": 1,
+        "avg_damage": 24.2,
+        "avg_gold_per_min": 284.8,
+        "avg_cs_per_min": 1.1,
+        "avg_vision_score": 1.4
+      },
+      {
+        "name": "Yone",
+        "games": 1,
+        "avg_damage": 45.8,
+        "avg_gold_per_min": 522.1,
+        "avg_cs_per_min": 7.4,
+        "avg_vision_score": 0.41
+      },
+      {
+        "name": "KSante",
+        "games": 1,
+        "avg_damage": 26.2,
+        "avg_gold_per_min": 385.2,
+        "avg_cs_per_min": 6.4,
+        "avg_vision_score": 0.38
+      },
+      {
+        "name": "Poppy",
+        "games": 1,
+        "avg_damage": 41.4,
+        "avg_gold_per_min": 461.9,
+        "avg_cs_per_min": 1.8,
+        "avg_vision_score": 2.57
+      }
+    ]
+  },
+  "insights": [
+    {
+      "category": "Combat",
+      "priority": "high",
+      "insight": "Your KDA of 1.08 suggests frequent deaths. Focus on positioning and map awareness.",
+      "action": "Try to identify your death patterns - are you dying in lane, during team fights, or while split pushing?"
+    },
+    {
+      "category": "Vision",
+      "priority": "medium",
+      "insight": "Vision score of 0.74/min is low. Better vision control wins games.",
+      "action": "Buy and place more control wards. Aim for 1.5+ vision score per minute."
+    },
+    {
+      "category": "Progress",
+      "priority": "positive",
+      "insight": "Your KDA improved by 5.9% over the year!",
+      "action": "You're on the right track. Keep analyzing what's working."
+    },
+    {
+      "category": "Champion Pool",
+      "priority": "medium",
+      "insight": "You played 25 different champions. That's very diverse!",
+      "action": "Consider focusing on 3-5 champions to build deeper mastery."
+    },
+    {
+      "category": "Champion Mastery",
+      "priority": "info",
+      "insight": "Sion is your most played with 37 games.",
+      "action": "Your average stats on Sion: 24 dmg, 7.4 CS/min"
+    }
+  ],
+  "year_summary": {
+    "total_games": 136.0,
+    "year_avg_kda": 0.95,
+    "year_avg_cs_per_min": 6.3,
+    "year_avg_vision_score": 0.66,
+    "total_unique_champions": 25,
+    "most_played_champion": "Sion",
+    "achievements": [
+      "🎯 10 First Bloods",
+      "🐉 2 Objective Steals",
+      "💀 1 Fountain Takedowns"
+    ],
+    "strengths": [
+      "Your KDA improved by 5.9% over the year!"
+    ],
+    "growth_areas": [
+      "Your KDA of 1.08 suggests frequent deaths. Focus on positioning and map awareness."
+    ],
+    "overall_trend": "improving",
+    "best_quarter": "Q3"
+  }
+}

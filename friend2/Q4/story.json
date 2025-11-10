@@ -1,0 +1,42 @@
+{
+  "quarter": "Q4",
+  "date_range": "Sep 07, 2025 - Nov 10, 2025",
+  "values": {
+    "Achievement": 0.87,
+    "Benevolence": 2.71,
+    "Conformity": -3.25,
+    "Hedonism": 0.0,
+    "Power": 12752.68,
+    "Security": 17331.9,
+    "Self-Direction": 122.63,
+    "Stimulation": 113.69,
+    "Tradition": 128.58,
+    "Universalism": 0.26
+  },
+  "stats": {
+    "games": 34,
+    "kda_proxy": 1.08,
+    "cs_per_min": 6.04,
+    "gold_per_min": 415.8,
+    "vision_score_per_min": 0.74,
+    "avg_kill_participation": 0.382,
+    "ping_rate_per_min": 0.0
+  },
+  "lore": "---\n\nAmidst the tranquil beauty of Ionia's ancient forests, the summoner found solace. Tradition weaved through their every breath, the gentle whispers of ancient spirits resonating within. With each game played, the summoner honored the land's essence, their actions echoing the tales of the past. As they delved deeper into the heart of Ionia's rich culture, their commitment to preserving its traditions only grew stronger. Through the lens of their crystalline orb, they wove the threads of Ionia's history into their own, becoming an integral part of the region's enduring legacy.",
+  "reflection": "Try to increase your CS per minute by focusing on last-hitting and denying enemy minions, aiming for 7 CS/min or more.",
+  "region_arc": "Ionia",
+  "top_values": [
+    [
+      "Tradition",
+      128.58
+    ],
+    [
+      "Hedonism",
+      0.0
+    ],
+    [
+      "Universalism",
+      0.26
+    ]
+  ]
+}

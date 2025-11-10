@@ -32,11 +32,20 @@ const InsightsView: React.FC<InsightsProps> = ({
   };
   
   const priorityColors = {
-    high: 'border-red-500/50 bg-red-500/10',
-    medium: 'border-yellow-500/50 bg-yellow-500/10',
-    low: 'border-blue-500/50 bg-blue-500/10',
-    positive: 'border-green-500/50 bg-green-500/10',
-    info: 'border-purple-500/50 bg-purple-500/10'
+    high: 'border-runeterra-gold/70 bg-runeterra-gold/20',
+    medium: 'border-runeterra-gold/50 bg-runeterra-gold/10',
+    low: 'border-runeterra-gold/30 bg-runeterra-gold/5',
+    positive: 'border-runeterra-gold/50 bg-runeterra-gold/10',
+    info: 'border-runeterra-gold-light/50 bg-runeterra-gold-light/10'
+  };
+
+  // Human-friendly descriptions for priority badges
+  const priorityDescriptions: Record<string, string> = {
+    high: 'Action needed — high impact on performance',
+    medium: 'Worth attention — likely to improve outcomes',
+    low: 'Low priority — optional improvements',
+    positive: 'Positive insight — keep doing this',
+    info: 'Informational — context or background'
   };
 
   // const categoryIcons = {
@@ -50,7 +59,7 @@ const InsightsView: React.FC<InsightsProps> = ({
   // };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-900 via-purple-900/20 to-gray-900 py-12 px-4">
+    <div className="min-h-screen bg-gradient-to-b from-runeterra-dark via-runeterra-darker to-runeterra-dark py-12 px-4">
       <div className="max-w-7xl mx-auto space-y-12">
         
         {/* Back Button */}
@@ -59,7 +68,7 @@ const InsightsView: React.FC<InsightsProps> = ({
             onClick={onBack}
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors"
+            className="flex items-center gap-2 text-runeterra-gold-light hover:text-runeterra-gold transition-colors"
             whileHover={{ x: -5 }}
           >
             <span className="text-2xl">←</span>
@@ -74,29 +83,29 @@ const InsightsView: React.FC<InsightsProps> = ({
             animate={{ opacity: 1, y: 0 }}
             className="text-center space-y-6"
           >
-            <h1 className="text-6xl font-bold bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 bg-clip-text text-transparent">
+            <h1 className="text-6xl font-bold text-runeterra-gold animate-glow">
               Your 2025 Journey
             </h1>
             
             <div className="grid grid-cols-2 md:grid-cols-3 gap-6 mt-8">
-              <div className="bg-black/40 backdrop-blur-sm border border-yellow-500/30 rounded-xl p-6">
-                <div className="text-4xl font-bold text-yellow-400">{yearSummary.total_games}</div>
-                <div className="text-sm text-gray-400 mt-2">Total Games</div>
+              <div className="bg-runeterra-darker/70 backdrop-blur-sm border border-runeterra-gold/30 rounded-xl p-6">
+                <div className="text-4xl font-bold text-runeterra-gold">{yearSummary.total_games}</div>
+                <div className="text-sm text-runeterra-gold-light mt-2">Total Games</div>
               </div>
-              <div className="bg-black/40 backdrop-blur-sm border border-green-500/30 rounded-xl p-6">
-                <div className="text-4xl font-bold text-green-400">{yearSummary.year_avg_kda}</div>
-                <div className="text-sm text-gray-400 mt-2">Average KDA</div>
+              <div className="bg-runeterra-darker/70 backdrop-blur-sm border border-runeterra-gold/30 rounded-xl p-6">
+                <div className="text-4xl font-bold text-runeterra-gold">{yearSummary.year_avg_kda}</div>
+                <div className="text-sm text-runeterra-gold-light mt-2">Average KDA</div>
               </div>
-              <div className="bg-black/40 backdrop-blur-sm border border-blue-500/30 rounded-xl p-6">
-                <div className="text-4xl font-bold text-blue-400">{yearSummary.total_unique_champions}</div>
-                <div className="text-sm text-gray-400 mt-2">Champions Played</div>
+              <div className="bg-runeterra-darker/70 backdrop-blur-sm border border-runeterra-gold/30 rounded-xl p-6">
+                <div className="text-4xl font-bold text-runeterra-gold">{yearSummary.total_unique_champions}</div>
+                <div className="text-sm text-runeterra-gold-light mt-2">Champions Played</div>
               </div>
             </div>
 
             {/* Achievements */}
             {yearSummary.achievements && yearSummary.achievements.length > 0 && (
-              <div className="bg-gradient-to-r from-yellow-500/10 to-orange-500/10 border border-yellow-500/30 rounded-xl p-6 mt-8">
-                <h3 className="text-2xl font-bold text-yellow-400 mb-4 flex items-center gap-2">
+              <div className="bg-gradient-to-r from-runeterra-gold/10 to-runeterra-gold/20 border border-runeterra-gold/30 rounded-xl p-6 mt-8">
+                <h3 className="text-2xl font-bold text-runeterra-gold mb-4 flex items-center gap-2">
                   <Award className="w-6 h-6" />
                   Your Achievements
                 </h3>
@@ -120,16 +129,21 @@ const InsightsView: React.FC<InsightsProps> = ({
             transition={{ delay: 0.2 }}
             className="space-y-6"
           >
-            <h2 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">
-              Your Growth Journey
-            </h2>
+            <div>
+              <h2 className="text-4xl font-bold text-runeterra-gold animate-glow mb-2">
+                Your Growth Journey
+              </h2>
+              <p className="text-runeterra-gold-light text-sm">
+                Your matches divided into 4 equal periods to track progression
+              </p>
+            </div>
             
             <div className="grid md:grid-cols-2 gap-6">
               {/* KDA Trend */}
               {trends.kda && (
-                <div className="bg-black/40 backdrop-blur-sm border border-blue-500/30 rounded-xl p-6">
+                <div className="bg-runeterra-darker/70 backdrop-blur-sm border border-runeterra-gold/30 rounded-xl p-6">
                   <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-xl font-bold text-blue-400">KDA Progress</h3>
+                    <h3 className="text-xl font-bold text-runeterra-gold">KDA Progress</h3>
                     {trends.kda.direction === 'improving' ? (
                       <TrendingUp className="w-6 h-6 text-green-400" />
                     ) : trends.kda.direction === 'declining' ? (
@@ -141,18 +155,18 @@ const InsightsView: React.FC<InsightsProps> = ({
                   <div className="h-24 mb-4">
                     <ResponsiveContainer width="100%" height="100%">
                       <LineChart data={[
-                        { period: 'Period 1', label: getQuarterDateRange('Q1'), value: trends.kda.values[0] },
-                        { period: 'Period 2', label: getQuarterDateRange('Q2'), value: trends.kda.values[1] },
-                        { period: 'Period 3', label: getQuarterDateRange('Q3'), value: trends.kda.values[2] },
-                        { period: 'Period 4', label: getQuarterDateRange('Q4'), value: trends.kda.values[3] }
+                        { period: 'Early Season', label: getQuarterDateRange('Q1'), value: trends.kda.values[0] },
+                        { period: 'Mid Season', label: getQuarterDateRange('Q2'), value: trends.kda.values[1] },
+                        { period: 'Late Season', label: getQuarterDateRange('Q3'), value: trends.kda.values[2] },
+                        { period: 'End of Season', label: getQuarterDateRange('Q4'), value: trends.kda.values[3] }
                       ]}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
-                        <XAxis dataKey="period" stroke="#64748b" style={{ fontSize: '10px' }} />
-                        <YAxis stroke="#64748b" style={{ fontSize: '12px' }} />
+                        <CartesianGrid strokeDasharray="3 3" stroke="rgba(200, 155, 60, 0.2)" />
+                        <XAxis dataKey="period" stroke="#C89B3C" style={{ fontSize: '10px' }} />
+                        <YAxis stroke="#C89B3C" style={{ fontSize: '12px' }} />
                         <Tooltip
                           contentStyle={{
-                            backgroundColor: '#1e293b',
-                            border: '1px solid #475569',
+                            backgroundColor: '#0a1428',
+                            border: '1px solid rgba(200, 155, 60, 0.5)',
                             borderRadius: '8px',
                             fontSize: '12px'
                           }}
@@ -164,23 +178,23 @@ const InsightsView: React.FC<InsightsProps> = ({
                             return label;
                           }}
                         />
-                        <Line type="monotone" dataKey="value" stroke="#60a5fa" strokeWidth={2} dot={{ fill: '#60a5fa', r: 4 }} />
+                        <Line type="monotone" dataKey="value" stroke="#C89B3C" strokeWidth={2} dot={{ fill: '#C89B3C', r: 4 }} />
                       </LineChart>
                     </ResponsiveContainer>
                   </div>
                   
                   <div className="space-y-2">
-                    <div className="text-3xl font-bold text-white">
+                    <div className="text-3xl font-bold text-runeterra-gold">
                       {trends.kda.change_pct > 0 ? '+' : ''}{trends.kda.change_pct.toFixed(1)}%
                     </div>
-                    <div className="text-sm text-gray-400">
+                    <div className="text-sm text-runeterra-gold-light">
                       {trends.kda.direction === 'improving' ? 'Improving' : 
                        trends.kda.direction === 'declining' ? 'Needs Work' : 'Stable'}
                     </div>
-                    <div className="text-xs text-gray-500">
-                      vs Period 1 baseline
+                    <div className="text-xs text-gray-400">
+                      vs Early Season baseline
                     </div>
-                    <div className="text-xs text-gray-400 mt-1">
+                    <div className="text-xs text-runeterra-gold-light mt-1">
                       Best: {getQuarterDateRange(trends.kda.best_quarter)}
                     </div>
                   </div>
@@ -189,9 +203,9 @@ const InsightsView: React.FC<InsightsProps> = ({
 
               {/* CS Trend */}
               {trends.cs_per_min && (
-                <div className="bg-black/40 backdrop-blur-sm border border-green-500/30 rounded-xl p-6">
+                <div className="bg-runeterra-darker/70 backdrop-blur-sm border border-runeterra-gold/30 rounded-xl p-6">
                   <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-xl font-bold text-green-400">CS/min Progress</h3>
+                    <h3 className="text-xl font-bold text-runeterra-gold">CS/min Progress</h3>
                     {trends.cs_per_min.direction === 'improving' ? (
                       <TrendingUp className="w-6 h-6 text-green-400" />
                     ) : trends.cs_per_min.direction === 'declining' ? (
@@ -203,18 +217,18 @@ const InsightsView: React.FC<InsightsProps> = ({
                   <div className="h-24 mb-4">
                     <ResponsiveContainer width="100%" height="100%">
                       <LineChart data={[
-                        { period: 'Period 1', label: getQuarterDateRange('Q1'), value: trends.cs_per_min.values[0] },
-                        { period: 'Period 2', label: getQuarterDateRange('Q2'), value: trends.cs_per_min.values[1] },
-                        { period: 'Period 3', label: getQuarterDateRange('Q3'), value: trends.cs_per_min.values[2] },
-                        { period: 'Period 4', label: getQuarterDateRange('Q4'), value: trends.cs_per_min.values[3] }
+                        { period: 'Early Season', label: getQuarterDateRange('Q1'), value: trends.cs_per_min.values[0] },
+                        { period: 'Mid Season', label: getQuarterDateRange('Q2'), value: trends.cs_per_min.values[1] },
+                        { period: 'Late Season', label: getQuarterDateRange('Q3'), value: trends.cs_per_min.values[2] },
+                        { period: 'End of Season', label: getQuarterDateRange('Q4'), value: trends.cs_per_min.values[3] }
                       ]}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
-                        <XAxis dataKey="period" stroke="#64748b" style={{ fontSize: '10px' }} />
-                        <YAxis stroke="#64748b" style={{ fontSize: '12px' }} />
+                        <CartesianGrid strokeDasharray="3 3" stroke="rgba(200, 155, 60, 0.2)" />
+                        <XAxis dataKey="period" stroke="#C89B3C" style={{ fontSize: '10px' }} />
+                        <YAxis stroke="#C89B3C" style={{ fontSize: '12px' }} />
                         <Tooltip
                           contentStyle={{
-                            backgroundColor: '#1e293b',
-                            border: '1px solid #475569',
+                            backgroundColor: '#0a1428',
+                            border: '1px solid rgba(200, 155, 60, 0.5)',
                             borderRadius: '8px',
                             fontSize: '12px'
                           }}
@@ -226,23 +240,23 @@ const InsightsView: React.FC<InsightsProps> = ({
                             return label;
                           }}
                         />
-                        <Line type="monotone" dataKey="value" stroke="#4ade80" strokeWidth={2} dot={{ fill: '#4ade80', r: 4 }} />
+                        <Line type="monotone" dataKey="value" stroke="#C89B3C" strokeWidth={2} dot={{ fill: '#C89B3C', r: 4 }} />
                       </LineChart>
                     </ResponsiveContainer>
                   </div>
                   
                   <div className="space-y-2">
-                    <div className="text-3xl font-bold text-white">
+                    <div className="text-3xl font-bold text-runeterra-gold">
                       {trends.cs_per_min.change_pct > 0 ? '+' : ''}{trends.cs_per_min.change_pct.toFixed(1)}%
                     </div>
-                    <div className="text-sm text-gray-400">
+                    <div className="text-sm text-runeterra-gold-light">
                       {trends.cs_per_min.direction === 'improving' ? 'Improving' : 
                        trends.cs_per_min.direction === 'declining' ? 'Needs Work' : 'Stable'}
                     </div>
-                    <div className="text-xs text-gray-500">
-                      vs Period 1 baseline
+                    <div className="text-xs text-gray-400">
+                      vs Early Season baseline
                     </div>
-                    <div className="text-xs text-gray-400 mt-1">
+                    <div className="text-xs text-runeterra-gold-light mt-1">
                       Best: {getQuarterDateRange(trends.cs_per_min.best_quarter)}
                     </div>
                   </div>
@@ -251,9 +265,9 @@ const InsightsView: React.FC<InsightsProps> = ({
 
               {/* Vision Trend */}
               {trends.vision_score && (
-                <div className="bg-black/40 backdrop-blur-sm border border-purple-500/30 rounded-xl p-6">
+                <div className="bg-runeterra-darker/70 backdrop-blur-sm border border-runeterra-gold/30 rounded-xl p-6">
                   <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-xl font-bold text-purple-400">Vision Score Progress</h3>
+                    <h3 className="text-xl font-bold text-runeterra-gold">Vision Score Progress</h3>
                     {trends.vision_score.direction === 'improving' ? (
                       <TrendingUp className="w-6 h-6 text-green-400" />
                     ) : trends.vision_score.direction === 'declining' ? (
@@ -265,18 +279,18 @@ const InsightsView: React.FC<InsightsProps> = ({
                   <div className="h-24 mb-4">
                     <ResponsiveContainer width="100%" height="100%">
                       <LineChart data={[
-                        { period: 'Period 1', label: getQuarterDateRange('Q1'), value: trends.vision_score.values[0] },
-                        { period: 'Period 2', label: getQuarterDateRange('Q2'), value: trends.vision_score.values[1] },
-                        { period: 'Period 3', label: getQuarterDateRange('Q3'), value: trends.vision_score.values[2] },
-                        { period: 'Period 4', label: getQuarterDateRange('Q4'), value: trends.vision_score.values[3] }
+                        { period: 'Early Season', label: getQuarterDateRange('Q1'), value: trends.vision_score.values[0] },
+                        { period: 'Mid Season', label: getQuarterDateRange('Q2'), value: trends.vision_score.values[1] },
+                        { period: 'Late Season', label: getQuarterDateRange('Q3'), value: trends.vision_score.values[2] },
+                        { period: 'End of Season', label: getQuarterDateRange('Q4'), value: trends.vision_score.values[3] }
                       ]}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
-                        <XAxis dataKey="period" stroke="#64748b" style={{ fontSize: '10px' }} />
-                        <YAxis stroke="#64748b" style={{ fontSize: '12px' }} />
+                        <CartesianGrid strokeDasharray="3 3" stroke="rgba(200, 155, 60, 0.2)" />
+                        <XAxis dataKey="period" stroke="#C89B3C" style={{ fontSize: '10px' }} />
+                        <YAxis stroke="#C89B3C" style={{ fontSize: '12px' }} />
                         <Tooltip
                           contentStyle={{
-                            backgroundColor: '#1e293b',
-                            border: '1px solid #475569',
+                            backgroundColor: '#0a1428',
+                            border: '1px solid rgba(200, 155, 60, 0.5)',
                             borderRadius: '8px',
                             fontSize: '12px'
                           }}
@@ -288,23 +302,23 @@ const InsightsView: React.FC<InsightsProps> = ({
                             return label;
                           }}
                         />
-                        <Line type="monotone" dataKey="value" stroke="#a78bfa" strokeWidth={2} dot={{ fill: '#a78bfa', r: 4 }} />
+                        <Line type="monotone" dataKey="value" stroke="#C89B3C" strokeWidth={2} dot={{ fill: '#C89B3C', r: 4 }} />
                       </LineChart>
                     </ResponsiveContainer>
                   </div>
                   
                   <div className="space-y-2">
-                    <div className="text-3xl font-bold text-white">
+                    <div className="text-3xl font-bold text-runeterra-gold">
                       {trends.vision_score.change_pct > 0 ? '+' : ''}{trends.vision_score.change_pct.toFixed(1)}%
                     </div>
-                    <div className="text-sm text-gray-400">
+                    <div className="text-sm text-runeterra-gold-light">
                       {trends.vision_score.direction === 'improving' ? 'Improving' : 
                        trends.vision_score.direction === 'declining' ? 'Needs Work' : 'Stable'}
                     </div>
-                    <div className="text-xs text-gray-500">
-                      vs Period 1 baseline
+                    <div className="text-xs text-gray-400">
+                      vs Early Season baseline
                     </div>
-                    <div className="text-xs text-gray-400 mt-1">
+                    <div className="text-xs text-runeterra-gold-light mt-1">
                       Best: {getQuarterDateRange(trends.vision_score.best_quarter)}
                     </div>
                   </div>
@@ -313,9 +327,9 @@ const InsightsView: React.FC<InsightsProps> = ({
 
               {/* Gold/min Trend */}
               {trends.gold_per_min && (
-                <div className="bg-black/40 backdrop-blur-sm border border-yellow-500/30 rounded-xl p-6">
+                <div className="bg-runeterra-darker/70 backdrop-blur-sm border border-runeterra-gold/30 rounded-xl p-6">
                   <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-xl font-bold text-yellow-400">Gold/min Progress</h3>
+                    <h3 className="text-xl font-bold text-runeterra-gold">Gold/min Progress</h3>
                     {trends.gold_per_min.direction === 'improving' ? (
                       <TrendingUp className="w-6 h-6 text-green-400" />
                     ) : trends.gold_per_min.direction === 'declining' ? (
@@ -327,18 +341,18 @@ const InsightsView: React.FC<InsightsProps> = ({
                   <div className="h-24 mb-4">
                     <ResponsiveContainer width="100%" height="100%">
                       <LineChart data={[
-                        { period: 'Period 1', label: getQuarterDateRange('Q1'), value: trends.gold_per_min.values[0] },
-                        { period: 'Period 2', label: getQuarterDateRange('Q2'), value: trends.gold_per_min.values[1] },
-                        { period: 'Period 3', label: getQuarterDateRange('Q3'), value: trends.gold_per_min.values[2] },
-                        { period: 'Period 4', label: getQuarterDateRange('Q4'), value: trends.gold_per_min.values[3] }
+                        { period: 'Early Season', label: getQuarterDateRange('Q1'), value: trends.gold_per_min.values[0] },
+                        { period: 'Mid Season', label: getQuarterDateRange('Q2'), value: trends.gold_per_min.values[1] },
+                        { period: 'Late Season', label: getQuarterDateRange('Q3'), value: trends.gold_per_min.values[2] },
+                        { period: 'End of Season', label: getQuarterDateRange('Q4'), value: trends.gold_per_min.values[3] }
                       ]}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
-                        <XAxis dataKey="period" stroke="#64748b" style={{ fontSize: '10px' }} />
-                        <YAxis stroke="#64748b" style={{ fontSize: '12px' }} />
+                        <CartesianGrid strokeDasharray="3 3" stroke="rgba(200, 155, 60, 0.2)" />
+                        <XAxis dataKey="period" stroke="#C89B3C" style={{ fontSize: '10px' }} />
+                        <YAxis stroke="#C89B3C" style={{ fontSize: '12px' }} />
                         <Tooltip
                           contentStyle={{
-                            backgroundColor: '#1e293b',
-                            border: '1px solid #475569',
+                            backgroundColor: '#0a1428',
+                            border: '1px solid rgba(200, 155, 60, 0.5)',
                             borderRadius: '8px',
                             fontSize: '12px'
                           }}
@@ -350,23 +364,23 @@ const InsightsView: React.FC<InsightsProps> = ({
                             return label;
                           }}
                         />
-                        <Line type="monotone" dataKey="value" stroke="#facc15" strokeWidth={2} dot={{ fill: '#facc15', r: 4 }} />
+                        <Line type="monotone" dataKey="value" stroke="#C89B3C" strokeWidth={2} dot={{ fill: '#C89B3C', r: 4 }} />
                       </LineChart>
                     </ResponsiveContainer>
                   </div>
                   
                   <div className="space-y-2">
-                    <div className="text-3xl font-bold text-white">
+                    <div className="text-3xl font-bold text-runeterra-gold">
                       {trends.gold_per_min.change_pct > 0 ? '+' : ''}{trends.gold_per_min.change_pct.toFixed(1)}%
                     </div>
-                    <div className="text-sm text-gray-400">
+                    <div className="text-sm text-runeterra-gold-light">
                       {trends.gold_per_min.direction === 'improving' ? 'Improving' : 
                        trends.gold_per_min.direction === 'declining' ? 'Needs Work' : 'Stable'}
                     </div>
-                    <div className="text-xs text-gray-500">
-                      vs Period 1 baseline
+                    <div className="text-xs text-gray-400">
+                      vs Early Season baseline
                     </div>
-                    <div className="text-xs text-gray-400 mt-1">
+                    <div className="text-xs text-runeterra-gold-light mt-1">
                       Best: {getQuarterDateRange(trends.gold_per_min.best_quarter)}
                     </div>
                   </div>
@@ -384,42 +398,42 @@ const InsightsView: React.FC<InsightsProps> = ({
             transition={{ delay: 0.3 }}
             className="space-y-6"
           >
-            <h2 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-orange-500">
+            <h2 className="text-4xl font-bold text-runeterra-gold animate-glow">
               Best Moments
             </h2>
             
             <div className="grid md:grid-cols-3 gap-6">
               {highlights.best_kda_game && (
-                <div className="bg-gradient-to-br from-yellow-500/10 to-orange-500/10 border border-yellow-500/30 rounded-xl p-6">
-                  <div className="text-yellow-400 font-bold text-sm mb-2">🏆 BEST KDA</div>
-                  <div className="text-3xl font-bold text-white mb-2">
+                <div className="bg-gradient-to-br from-runeterra-gold/10 to-runeterra-gold/20 border border-runeterra-gold/30 rounded-xl p-6">
+                  <div className="text-runeterra-gold font-bold text-sm mb-2">🏆 BEST KDA</div>
+                  <div className="text-3xl font-bold text-runeterra-gold mb-2">
                     {highlights.best_kda_game.value?.toFixed(1) || 'N/A'}
                   </div>
-                  <div className="text-gray-400 text-sm">
+                  <div className="text-runeterra-gold-light text-sm">
                     {highlights.best_kda_game.champion}
                   </div>
                 </div>
               )}
 
               {highlights.most_kills_game && (
-                <div className="bg-gradient-to-br from-red-500/10 to-pink-500/10 border border-red-500/30 rounded-xl p-6">
-                  <div className="text-red-400 font-bold text-sm mb-2">⚔️ MOST KILLS</div>
-                  <div className="text-3xl font-bold text-white mb-2">
+                <div className="bg-gradient-to-br from-runeterra-gold/10 to-runeterra-gold/20 border border-runeterra-gold/30 rounded-xl p-6">
+                  <div className="text-runeterra-gold font-bold text-sm mb-2">⚔️ MOST KILLS</div>
+                  <div className="text-3xl font-bold text-runeterra-gold mb-2">
                     {highlights.most_kills_game.kills?.toFixed(0) || 'N/A'}
                   </div>
-                  <div className="text-gray-400 text-sm">
+                  <div className="text-runeterra-gold-light text-sm">
                     {highlights.most_kills_game.champion}
                   </div>
                 </div>
               )}
 
               {highlights.most_damage_game && (
-                <div className="bg-gradient-to-br from-purple-500/10 to-pink-500/10 border border-purple-500/30 rounded-xl p-6">
-                  <div className="text-purple-400 font-bold text-sm mb-2">💥 MOST DAMAGE</div>
-                  <div className="text-3xl font-bold text-white mb-2">
+                <div className="bg-gradient-to-br from-runeterra-gold/10 to-runeterra-gold/20 border border-runeterra-gold/30 rounded-xl p-6">
+                  <div className="text-runeterra-gold font-bold text-sm mb-2">💥 MOST DAMAGE</div>
+                  <div className="text-3xl font-bold text-runeterra-gold mb-2">
                     {highlights.most_damage_game.damage}k
                   </div>
-                  <div className="text-gray-400 text-sm">
+                  <div className="text-runeterra-gold-light text-sm">
                     {highlights.most_damage_game.champion}
                   </div>
                 </div>
@@ -436,18 +450,18 @@ const InsightsView: React.FC<InsightsProps> = ({
             transition={{ delay: 0.4 }}
             className="space-y-6"
           >
-            <h2 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-purple-500">
+            <h2 className="text-4xl font-bold text-runeterra-gold animate-glow">
               Champion Mastery
             </h2>
             
             <div className="grid md:grid-cols-5 gap-4">
               {championAnalysis.most_played?.slice(0, 5).map((champ: any, idx: number) => (
-                <div key={idx} className="bg-black/40 backdrop-blur-sm border border-pink-500/30 rounded-xl p-4">
-                  <div className="text-xl font-bold text-pink-400 mb-2">{champ.name}</div>
+                <div key={idx} className="bg-runeterra-darker/70 backdrop-blur-sm border border-runeterra-gold/30 rounded-xl p-4">
+                  <div className="text-xl font-bold text-runeterra-gold mb-2">{champ.name}</div>
                   <div className="space-y-1 text-sm">
-                    <div className="text-gray-400">{champ.games} games</div>
-                    <div className="text-gray-400">{champ.avg_cs_per_min?.toFixed(1)} CS/min</div>
-                    <div className="text-gray-400">{champ.avg_damage}k dmg</div>
+                    <div className="text-runeterra-gold-light">{champ.games} games</div>
+                    <div className="text-runeterra-gold-light">{champ.avg_cs_per_min?.toFixed(1)} CS/min</div>
+                    <div className="text-runeterra-gold-light">{champ.avg_damage}k dmg</div>
                   </div>
                 </div>
               ))}
@@ -479,8 +493,13 @@ const InsightsView: React.FC<InsightsProps> = ({
                   <div className="flex items-start gap-4">
                     <Brain className="w-6 h-6 mt-1 flex-shrink-0" />
                     <div className="space-y-2">
-                      <div className="font-bold text-sm text-gray-400">{insight.priority.toUpperCase()}</div>
-                      <div className="text-white font-semibold">{insight.insight}</div>
+                      <div className="flex items-center gap-3">
+                        <div className={`px-2 py-1 rounded text-xs font-bold uppercase ${priorityColors[insight.priority as keyof typeof priorityColors] || 'border-runeterra-gold/30 bg-runeterra-gold/5'}`}>
+                          {insight.priority}
+                        </div>
+                        <div className="text-xs text-gray-400">{priorityDescriptions[insight.priority] || 'Priority note'}</div>
+                      </div>
+                      <div className="text-white font-semibold mt-2">{insight.insight}</div>
                     </div>
                   </div>
                 </motion.div>
@@ -499,12 +518,12 @@ const InsightsView: React.FC<InsightsProps> = ({
           >
             {/* Strengths */}
             {yearSummary.strengths && yearSummary.strengths.length > 0 && (
-              <div className="bg-gradient-to-br from-green-500/10 to-emerald-500/10 border border-green-500/30 rounded-xl p-6">
-                <h3 className="text-2xl font-bold text-green-400 mb-4">✨ Your Strengths</h3>
+              <div className="bg-gradient-to-br from-runeterra-gold/10 to-runeterra-gold/20 border border-runeterra-gold/30 rounded-xl p-6">
+                <h3 className="text-2xl font-bold text-runeterra-gold mb-4">✨ Your Strengths</h3>
                 <ul className="space-y-3">
                   {yearSummary.strengths.map((strength: string, idx: number) => (
-                    <li key={idx} className="text-gray-300 flex items-start gap-2">
-                      <span className="text-green-400 mt-1">•</span>
+                    <li key={idx} className="text-runeterra-gold-light flex items-start gap-2">
+                      <span className="text-runeterra-gold mt-1">•</span>
                       <span>{strength}</span>
                     </li>
                   ))}
@@ -514,12 +533,12 @@ const InsightsView: React.FC<InsightsProps> = ({
 
             {/* Growth Areas */}
             {yearSummary.growth_areas && yearSummary.growth_areas.length > 0 && (
-              <div className="bg-gradient-to-br from-orange-500/10 to-red-500/10 border border-orange-500/30 rounded-xl p-6">
-                <h3 className="text-2xl font-bold text-orange-400 mb-4">🎯 Focus Areas</h3>
+              <div className="bg-gradient-to-br from-runeterra-gold/10 to-runeterra-gold/20 border border-runeterra-gold/30 rounded-xl p-6">
+                <h3 className="text-2xl font-bold text-runeterra-gold mb-4">🎯 Focus Areas</h3>
                 <ul className="space-y-3">
                   {yearSummary.growth_areas.map((area: string, idx: number) => (
-                    <li key={idx} className="text-gray-300 flex items-start gap-2">
-                      <span className="text-orange-400 mt-1">•</span>
+                    <li key={idx} className="text-runeterra-gold-light flex items-start gap-2">
+                      <span className="text-runeterra-gold mt-1">•</span>
                       <span>{area}</span>
                     </li>
                   ))}

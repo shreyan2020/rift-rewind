@@ -1,0 +1,42 @@
+{
+  "quarter": "Q2",
+  "date_range": "Jul 08, 2025 - Aug 07, 2025",
+  "values": {
+    "Achievement": 0.27,
+    "Benevolence": 6.17,
+    "Conformity": -4.01,
+    "Hedonism": 0.01,
+    "Power": 7434.74,
+    "Security": 6611.12,
+    "Self-Direction": 85.53,
+    "Stimulation": 66.63,
+    "Tradition": 104.68,
+    "Universalism": 0.09
+  },
+  "stats": {
+    "games": 242,
+    "kda_proxy": 1.46,
+    "cs_per_min": 1.65,
+    "gold_per_min": 314.8,
+    "vision_score_per_min": 2.12,
+    "avg_kill_participation": 0.515,
+    "ping_rate_per_min": 0.0
+  },
+  "lore": "As the sun set over the Noxian border, the summoner, a bard by trade, stood atop the ancient wall of Ionia, gazing at the encroaching Noxian forces. With a heavy heart, he played a mournful melody on his lute, the haunting notes echoing across the battlefield. The power-hungry Noxians, driven by their thirst for security and tradition, marched forward, their eyes set on the prized lands of Ionia. The summoner's playstyle mirrored the Noxian ideals, but his heart belonged to the peaceful Ionian people, and he vowed to protect them, no matter the cost.",
+  "reflection": "Based on the provided stats, I would suggest the player focus on improving their CS/min by practicing last-hitting in the practice tool to increase their gold generation and overall impact on the game.",
+  "region_arc": "Noxus",
+  "top_values": [
+    [
+      "Power",
+      7434.74
+    ],
+    [
+      "Security",
+      6611.12
+    ],
+    [
+      "Tradition",
+      104.68
+    ]
+  ]
+}

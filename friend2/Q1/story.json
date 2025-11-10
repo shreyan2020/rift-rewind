@@ -1,0 +1,42 @@
+{
+  "quarter": "Q1",
+  "date_range": "Feb 15, 2025 - Apr 01, 2025",
+  "values": {
+    "Achievement": 0.24,
+    "Benevolence": 1.46,
+    "Conformity": -3.71,
+    "Hedonism": 0.01,
+    "Power": 7736.2,
+    "Security": 16177.48,
+    "Self-Direction": 100.53,
+    "Stimulation": 58.7,
+    "Tradition": 109.6,
+    "Universalism": 0.16
+  },
+  "stats": {
+    "games": 34,
+    "kda_proxy": 1.02,
+    "cs_per_min": 5.44,
+    "gold_per_min": 357.3,
+    "vision_score_per_min": 0.66,
+    "avg_kill_participation": 0.327,
+    "ping_rate_per_min": 0.0
+  },
+  "lore": "As the sun rose over Piltover, the summoner, fueled by their unquenchable thirst for knowledge and power, set out from their humble laboratory in the heart of the city. Their recent experiments with Hextech energy had yielded intriguing results, yet the allure of untapped magical potential called them further. With each step, they left behind the familiar comforts of Piltover, its towering spires and bustling markets a stark contrast to the untamed wilds that awaited. The summoner's determination, fueled by their values of self-direction and power, shone like a beacon in the early morning mist, guiding them towards the unknown, the uncharted territories of Runeterra.",
+  "reflection": "Example: \"Improve last-hitting by focusing on CSing under tower during the first 10 minutes, aiming for 6 CS/min.\"\n\nBased on the given performance stats, here's a tip:\n\n\"Increase CS/min by focusing on last-hitting under tower during the first 10 minutes, aiming for 6 CS/min, and maintaining a consistent CS/min throughout the game.\"",
+  "region_arc": "Piltover",
+  "top_values": [
+    [
+      "Self-Direction",
+      100.53
+    ],
+    [
+      "Power",
+      7736.2
+    ],
+    [
+      "Achievement",
+      0.24
+    ]
+  ]
+}

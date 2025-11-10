@@ -17,13 +17,6 @@ interface FinalDashboardProps {
 const FinalDashboard: React.FC<FinalDashboardProps> = ({ quarters, riotId, finaleData, onNewJourney, onViewAnalytics }) => {
   const quarterKeys = useMemo(() => ['Q1', 'Q2', 'Q3', 'Q4'], []);
 
-  // Debug logging
-  React.useEffect(() => {
-    console.log('FinalDashboard - finaleData:', finaleData);
-    console.log('FinalDashboard - has insights:', finaleData?.insights);
-    console.log('FinalDashboard - onViewAnalytics:', onViewAnalytics);
-  }, [finaleData, onViewAnalytics]);
-
   // State for selected value in dropdown
   const [selectedValue, setSelectedValue] = useState<string | null>(null);
   const [showShareReport, setShowShareReport] = useState(false);
@@ -159,10 +152,15 @@ const FinalDashboard: React.FC<FinalDashboardProps> = ({ quarters, riotId, final
           className="bg-runeterra-dark/50 backdrop-blur-md rounded-2xl border border-runeterra-gold/20 p-8 mb-12"
         >
           <div className="flex items-center justify-between gap-4 mb-6 flex-wrap">
-            <h3 className="text-2xl font-bold text-runeterra-gold flex items-center gap-3">
-              <span className="text-3xl">📈</span>
-              Playstyle Evolution
-            </h3>
+            <div>
+              <h3 className="text-2xl font-bold text-runeterra-gold flex items-center gap-3">
+                <span className="text-3xl">📈</span>
+                Playstyle Evolution
+              </h3>
+              <p className="text-runeterra-gold-light text-xs mt-1 ml-11">
+                Tracking your journey through 4 equal periods of matches
+              </p>
+            </div>
             <div className="flex items-center gap-3">
               <label className="text-runeterra-gold-light text-sm font-medium">
                 Select Value:
@@ -298,12 +296,16 @@ interface TimelineChartProps {
 }
 
 const TimelineChart: React.FC<TimelineChartProps> = ({ selectedValue, quarters, quarterKeys }) => {
-  // Values are already scaled to 0-100 in the backend
-  const values = quarterKeys.map(qKey => quarters[qKey]?.values?.[selectedValue] ?? 50);
+  // Values are raw scores (weighted sums of in-game behaviors)
+  // Different values have different natural scales based on their underlying game statistics
+  const values = quarterKeys.map(qKey => quarters[qKey]?.values?.[selectedValue] ?? 0);
+  
+  // Period labels for display
+  const periodLabels = ['Period 1', 'Period 2', 'Period 3', 'Period 4'];
   
   // Prepare data for Recharts
-  const chartData = quarterKeys.map((qKey, idx) => ({
-    quarter: qKey,
+  const chartData = quarterKeys.map((_, idx) => ({
+    quarter: periodLabels[idx],
     value: values[idx],
   }));
 

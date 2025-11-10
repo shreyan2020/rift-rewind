@@ -21,8 +21,6 @@ const Journey: React.FC<JourneyProps> = ({ jobId, riotId, onReset, uploadedJourn
   // If uploaded journey data is provided, use it directly
   useEffect(() => {
     if (uploadedJourneyData) {
-      console.log('Loading uploaded journey data');
-      
       // Convert uploaded format to expected format
       const quarters: Record<string, Quarter> = {};
       Object.keys(uploadedJourneyData.quarters).forEach(q => {
@@ -131,8 +129,6 @@ const Journey: React.FC<JourneyProps> = ({ jobId, riotId, onReset, uploadedJourn
       if (allQuartersReady && !finaleData && jobStatus) {
         try {
           const finale = await getFinale(jobStatus.s3Base);
-          console.log('Loaded finale data:', finale);
-          console.log('Has insights:', finale.insights);
           setFinaleData(finale);
         } catch (error) {
           console.error('Failed to load finale:', error);

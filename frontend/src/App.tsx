@@ -46,19 +46,15 @@ function App() {
       
       // Check if it's a complete journey package (new format)
       if (data.type === 'complete-journey' && data.metadata && data.quarters && data.finale) {
-        console.log('Complete journey package detected');
         setUploadedFile(data);
         setUploadedJourneyData(data); // Store for direct display
-        console.log('Journey package loaded:', data.metadata);
         return;
       }
       
       // Check if it's the old format (raw matches with Q1-Q4)
       if (data.Q1 || data.Q2 || data.Q3 || data.Q4) {
-        console.log('Raw matches format detected (legacy)');
         setUploadedFile(data);
         setUploadedJourneyData(null); // Will need backend processing
-        console.log('File validated successfully:', Object.keys(data));
         return;
       }
       
@@ -81,7 +77,6 @@ function App() {
 
     // If it's a complete journey package, display it directly
     if (uploadedJourneyData) {
-      console.log('Displaying pre-generated journey package');
       // Create a fake jobId to trigger Journey component
       setJobId('uploaded-journey');
       return;
