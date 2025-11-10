@@ -22,21 +22,21 @@
     "avg_kill_participation": 0.547,
     "ping_rate_per_min": 0.0
   },
-  "lore": "The sun sets over the Demacian walls, casting long shadows upon the cobblestone streets. Amidst the clatter of swords and the rhythmic thump of hammers, a summoner named Kaelin prepares for battle in the King's League. Kaelin, a steadfast champion of tradition and a devoted seeker of power, dons his enchanted armor and readies his spells, the security of his homeland's values fueling his resolve. The scent of roasting meats and the sound of laughter from nearby taverns are but distant memories as Kaelin steps into the Rift, ready to defend Demacia and uphold its proud legacy.",
-  "reflection": "Based on the given performance stats, I would recommend the player focus on improving their CS/min by practicing last-hitting in the practice tool to increase their gold income and overall impact on the game.",
+  "lore": "In the heart of Demacia, our summoner found solace in the regimented life of the city's rigorous training grounds. Their self-direction, a beacon amidst the rigid conformity, led them to forge alliances with like-minded individuals. The stimulation of battle, a stark contrast to the monotonous drills, fueled their passion for the art of war. Yet, their unconventional methods, though effective, raised eyebrows among the traditionalist council. The summoner's journey was just beginning, and the trials ahead would test their resolve.",
+  "reflection": "Improve CS/min by practicing last hitting in custom games and focusing on securing CS in lane during lulls in enemy engagement.",
   "region_arc": "Demacia",
   "top_values": [
     [
-      "Security",
-      7477.3
+      "Conformity",
+      -3.7
     ],
     [
-      "Power",
-      6026.03
+      "Self-Direction",
+      82.64
     ],
     [
-      "Tradition",
-      106.8
+      "Stimulation",
+      59.41
     ]
   ]
 }

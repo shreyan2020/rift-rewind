@@ -22,21 +22,21 @@
     "avg_kill_participation": 0.515,
     "ping_rate_per_min": 0.0
   },
-  "lore": "As the sun set over the Noxian border, the summoner, a bard by trade, stood atop the ancient wall of Ionia, gazing at the encroaching Noxian forces. With a heavy heart, he played a mournful melody on his lute, the haunting notes echoing across the battlefield. The power-hungry Noxians, driven by their thirst for security and tradition, marched forward, their eyes set on the prized lands of Ionia. The summoner's playstyle mirrored the Noxian ideals, but his heart belonged to the peaceful Ionian people, and he vowed to protect them, no matter the cost.",
-  "reflection": "Based on the provided stats, I would suggest the player focus on improving their CS/min by practicing last-hitting in the practice tool to increase their gold generation and overall impact on the game.",
-  "region_arc": "Noxus",
+  "lore": "In the bustling heart of Piltover, our summoner's journey begins. Amidst the clanging machinery and the hum of innovation, our summoner, a self-reliant soul, thrives. Their insatiable thirst for knowledge and mastery drives them to delve deeper into the city's intricacies, unlocking the hidden potential of its arcane infrastructure. With each new discovery, they weave the fabric of Piltover's progress, their every action a testament to their boundless power and determination.",
+  "reflection": "Based on the provided performance stats, I would suggest the player focus on improving their CS/min by practicing last-hitting in the practice tool to increase their gold income and overall impact on the game.",
+  "region_arc": "Piltover",
   "top_values": [
+    [
+      "Self-Direction",
+      85.53
+    ],
+    [
+      "Achievement",
+      0.27
+    ],
     [
       "Power",
       7434.74
-    ],
-    [
-      "Security",
-      6611.12
-    ],
-    [
-      "Tradition",
-      104.68
     ]
   ]
 }
