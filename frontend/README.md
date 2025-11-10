@@ -1,167 +1,298 @@
-# Rift Rewind Frontend# React + TypeScript + Vite
+# Rift Rewind Frontend
 
+React + TypeScript frontend for the Rift Rewind experience - an immersive narrative journey through League of Legends ranked matches, powered by AI.
 
+## 🎨 Tech Stack
 
-React + TypeScript frontend for the Rift Rewind v2 experience - an immersive narrative journey through League of Legends data.This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+- **React 19**: Modern React with hooks and concurrent features
+- **TypeScript**: Type-safe development
+- **Vite**: Lightning-fast build tool and dev server
+- **Tailwind CSS**: Utility-first styling with custom Runeterra theme
+- **Framer Motion**: Smooth animations and transitions
+- **Recharts**: Interactive data visualizations
+- **Axios**: HTTP client for API communication
+- **Lucide React**: Beautiful, consistent icon set
 
+## 📖 Understanding Your Journey
 
+Before diving in, let's clarify the core concepts:
 
-## Tech StackCurrently, two official plugins are available:
+### What is a Quarter?
 
+Your 2025 ranked season is divided into **four quarters** based on the calendar year:
 
+- **Q1** (Chapter 1): **January through March** - Your journey begins
+- **Q2** (Chapter 2): **April through June** - Growth and adaptation
+- **Q3** (Chapter 3): **July through September** - Challenges and trials
+- **Q4** (Chapter 4): **October through December** - Mastery and resolution
 
-- **React 18**: Modern React with hooks- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
+Each quarter represents approximately 3 months of your gameplay and becomes one **chapter** in your Runeterra story.
 
-- **TypeScript**: Type-safe development- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### Quarter = Chapter
 
-- **Vite**: Lightning-fast build tool
+Throughout this documentation, you'll see the terms **"quarter"** and **"chapter"** used interchangeably:
+- **Technical term**: Quarter (Q1, Q2, Q3, Q4)
+- **Narrative term**: Chapter (your story progression)
+- They mean the same thing: a 3-month period of your season that becomes one act in your journey
 
-- **Tailwind CSS**: Utility-first styling## React Compiler
+### Why Quarters?
 
-- **Framer Motion**: Smooth animations
+Dividing your season into quarters provides:
+- **Natural progression**: Each quarter can show growth or change
+- **Manageable analysis**: ~15-50 games per period for meaningful stats
+- **Story structure**: Creates a 4-act narrative arc (Setup → Growth → Challenge → Resolution)
+- **Regional mapping**: Each quarter gets its own Runeterra region based on your evolving playstyle
 
-- **Recharts**: Data visualizationsThe React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### The Journey Flow
 
-- **Axios**: HTTP client
-
-## Expanding the ESLint configuration
-
-## Project Structure
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```
-
-frontend/```js
-
-├── src/export default defineConfig([
-
-│   ├── components/  globalIgnores(['dist']),
-
-│   │   ├── Journey.tsx         # Main orchestrator  {
-
-│   │   ├── ChapterView.tsx     # Individual quarter display    files: ['**/*.{ts,tsx}'],
-
-│   │   └── FinalDashboard.tsx  # Final summary with charts    extends: [
-
-│   ├── constants/      // Other configs...
-
-│   │   ├── regionThemes.ts     # Region-specific theming
-
-│   │   └── valueDescriptions.ts # Playstyle value explanations      // Remove tseslint.configs.recommended and replace with this
-
-│   ├── api.ts                  # API client functions      tseslint.configs.recommendedTypeChecked,
-
-│   ├── App.tsx                 # Entry point      // Alternatively, use this for stricter rules
-
-│   ├── main.tsx                # React DOM root      tseslint.configs.strictTypeChecked,
-
-│   └── index.css               # Global styles + Tailwind      // Optionally, add this for stylistic rules
-
-├── public/                     # Static assets      tseslint.configs.stylisticTypeChecked,
-
-├── index.html                  # HTML entry point
-
-├── package.json                # Dependencies      // Other configs...
-
-├── tsconfig.json               # TypeScript config    ],
-
-├── tailwind.config.js          # Tailwind configuration    languageOptions: {
-
-└── vite.config.ts              # Vite build config      parserOptions: {
-
-```        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-
-        tsconfigRootDir: import.meta.dirname,
-
-## Components      },
-
-      // other options...
-
-### Journey.tsx    },
-
-  },
-
-**Purpose**: Orchestrates the entire user journey from start to finale.])
+Your complete experience follows this path:
 
 ```
+Start → Q1 (Chapter 1) → Q2 (Chapter 2) → Q3 (Chapter 3) → Q4 (Chapter 4) → Finale → Insights
+```
 
-**Responsibilities**:
+Each quarter gives you:
+- A **Runeterra region** (dynamically chosen based on your playstyle)
+- An **AI-generated story** about your time in that region
+- **Performance statistics** for those months
+- **Role-specific feedback** on your gameplay
+- Your **top 3 playstyle values** for that period
 
-- Poll job status every 3 secondsYou can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## ✨ Features
 
-- Load quarter data when ready
+### 1. **Three Usage Modes**
 
-- Manage navigation between chapters```js
+#### Mode 1: Fetch from Riot API
+- Enter summoner name and region
+- Backend fetches ranked matches from 2025
+- Processes quarters sequentially (Q1 → Q2 → Q3 → Q4)
+- Real-time status polling with visual feedback
+- Optional cache bypass for fresh data
 
-- Load finale data after Q4// eslint.config.js
+#### Mode 2: Upload Pre-fetched Matches
+- Upload `journey-upload.json` (generated by local scripts)
+- Supports two formats:
+  - **Complete journey package** (instant display, no backend processing)
+  - **Raw matches** (Q1-Q4 match data sent to backend for processing)
+- Useful for testing or offline processing
 
-- Handle reset/new journeyimport reactX from 'eslint-plugin-react-x'
+#### Mode 3: Friend Comparison
+- Upload two complete journey files
+- Side-by-side statistics comparison
+- AI-generated relationship lore (Allies vs Rivals)
+- Interactive value and stat analysis
+- Exportable comparison reports
 
-import reactDom from 'eslint-plugin-react-dom'
+### 2. **Journey Experience**
 
-**State**:
+- **Quarterly Narratives**: Each quarter mapped to a Runeterra region
+- **AI-Generated Lore**: Contextual stories based on playstyle
+- **Performance Stats**: KDA, CS/min, vision, gold, role-specific metrics
+- **Playstyle Values**: Top 3 psychological values per quarter
+- **Role Reflections**: Personalized feedback for your position
+- **Interactive Navigation**: Progress through Q1 → Q2 → Q3 → Q4 → Finale
 
-- `jobStatus`: Current job status from APIexport default defineConfig([
+### 3. **Final Dashboard**
 
-- `currentChapter`: Active chapter (Q1-Q4 or FINAL)  globalIgnores(['dist']),
+- **Consolidated Finale**: AI-generated season summary
+- **Performance Trends**: Line charts showing progression across quarters
+- **Champion Analysis**: Top champions, versatility, one-tricks
+- **Highlights**: Best games, pentakills, perfect games, first bloods
+- **Comeback Tracking**: Resilience score and comeback victories
+- **Insights**: AI-generated observations and growth areas
+- **Downloadable Report**: Export complete journey as JSON
 
-- `chapterData`: Loaded quarter stories  {
-
-- `finaleData`: Final summary data    files: ['**/*.{ts,tsx}'],
-
-    extends: [
-
-### ChapterView.tsx      // Other configs...
-
-      // Enable lint rules for React
-
-**Purpose**: Display individual quarter with region theme and narrative.      reactX.configs['recommended-typescript'],
-
-      // Enable lint rules for React DOM
-
-**Features**:      reactDom.configs.recommended,
-
-- Region-specific backgrounds (Demacia, Noxus, Ionia, etc.)    ],
-
-- Animated lore text    languageOptions: {
-
-- Performance stats display      parserOptions: {
-
-- Playstyle values visualization        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-
-- Role-specific reflection        tsconfigRootDir: import.meta.dirname,
-
-- Next chapter navigation      },
-
-      // other options...
-
-### FinalDashboard.tsx    },
-
-  },
-
-**Purpose**: Consolidated view of all 4 quarters with progression charts.])
+## 📁 Project Structure
 
 ```
+frontend/
+├── src/
+│   ├── components/
+│   │   ├── Journey.tsx            # Main journey orchestrator
+│   │   ├── ChapterView.tsx        # Individual quarter display
+│   │   ├── FinalDashboard.tsx     # Season finale with charts
+│   │   ├── InsightsView.tsx       # Detailed insights breakdown
+│   │   ├── FriendComparison.tsx   # Friend comparison mode
+│   │   └── ShareableReport.tsx    # Exportable journey report
+│   ├── constants/
+│   │   └── valueDescriptions.ts   # Playstyle value explanations
+│   ├── api.ts                     # API client and type definitions
+│   ├── App.tsx                    # Entry point with mode selection
+│   ├── main.tsx                   # React root
+│   └── index.css                  # Global styles + Tailwind
+├── public/                        # Static assets
+├── index.html                     # HTML entry point
+├── package.json                   # Dependencies
+├── tsconfig.json                  # TypeScript configuration
+├── tailwind.config.js             # Tailwind + custom Runeterra theme
+├── vite.config.ts                 # Vite build configuration
+└── eslint.config.js               # ESLint rules
+```
+
+## 🧩 Key Components
+
+### `App.tsx`
+**Purpose**: Entry point with mode selection and form handling
 
 **Features**:
-- AI-generated finale lore
-- Consolidated reflections (bullet points)
-- Season stats summary
-- Interactive timeline charts
-- Value progression visualization
-- "New Journey" button
+- Mode tabs (API Fetch / Upload / Compare)
+- Summoner input form with region and archetype selection
+- File upload handler with format validation
+- Cache bypass option
+- Journey initialization
 
-## API Integration
+**State Management**:
+- `mode`: Current mode ('api' | 'upload' | 'compare')
+- `jobId`: Active journey job ID
+- `formData`: User input (riotId, platform, archetype)
+- `uploadedFile`: Uploaded match/journey data
+- `bypassCache`: Force fresh data fetch
+
+---
+
+### `Journey.tsx`
+**Purpose**: Orchestrates the entire journey experience from Q1 to finale
+
+**Responsibilities**:
+- Poll job status every 3 seconds (when using API mode)
+- Load quarter data when status changes to 'ready'
+- Handle uploaded journey data (instant display, no polling)
+- Manage chapter navigation
+- Load and display finale after Q4 completion
+- Handle journey reset
+
+**State**:
+- `jobStatus`: Current job and quarter statuses from backend
+- `currentChapter`: Active chapter ('Q1' | 'Q2' | 'Q3' | 'Q4' | 'FINAL' | 'INSIGHTS')
+- `chapterData`: Loaded quarter stories (Record<string, Quarter>)
+- `finaleData`: Final summary data with trends and highlights
+
+**Chapter Flow**:
+```
+Q1 → Q2 → Q3 → Q4 → Final Dashboard → Insights View
+```
+
+---
+
+### `ChapterView.tsx`
+**Purpose**: Display individual quarter with region-specific theming and narrative
+
+**Features**:
+- **Dynamic Region Themes**: Background gradients for Demacia, Noxus, Ionia, Freljord, etc.
+- **Animated Lore**: Typewriter effect for immersive storytelling
+- **Performance Stats Grid**: Games, KDA, CS/min, vision, gold, role-specific metrics
+- **Top Values Display**: 3 key playstyle values with descriptions
+- **Role Reflection**: Position-specific performance feedback
+- **Chapter Navigation**: Progress indicator and next chapter button
+
+**Region Themes**:
+- Demacia: Blue/gold (justice, order)
+- Noxus: Red/black (strength, conquest)
+- Ionia: Pink/purple (balance, spirituality)
+- Piltover: Brass/cyan (progress, innovation)
+- Zaun: Green/toxic (survival, chaos)
+- Freljord: Ice blue (endurance, tradition)
+- Shurima: Golden/sand (glory, legacy)
+- Bilgewater: Teal/pirate (adventure, freedom)
+- Shadow Isles: Dark green/spectral (darkness, haunting)
+- Targon: Purple/celestial (aspiration, divinity)
+
+---
+
+### `FinalDashboard.tsx`
+**Purpose**: Comprehensive season summary with visualizations and final lore
+
+**Features**:
+- **Final Lore**: AI-generated conclusion of the journey
+- **Season Stats Summary**: Total games, averages, best quarter
+- **Trend Charts**: Line graphs for KDA, CS, gold, vision progression
+- **Value Evolution**: Bar chart showing top values across quarters
+- **Champion Analysis**: 
+  - Top champions with games, KDA, win rate
+  - One-tricks identification
+  - Versatility score
+- **Highlights Section**:
+  - Best KDA game
+  - Most kills/damage games
+  - Perfect games (0 deaths)
+  - Pentakills and first bloods
+- **Comeback Analysis**: Resilience score and comeback victories
+- **AI Insights**: High-priority observations and growth areas
+- **Consolidated Reflections**: Bullet-point summaries from all quarters
+- **Export Button**: Download complete journey as JSON
+
+---
+
+### `FriendComparison.tsx`
+**Purpose**: Compare two players' journeys with AI-generated narrative
+
+**Features**:
+- **Dual File Upload**: Upload two journey JSON files
+- **Similarity Calculation**: Cosine similarity of playstyle values
+- **Relationship Type**: Automatically determined (Allies >0.7, Rivals ≤0.7)
+- **AI Comparison Lore**: Generated narrative about the players' relationship
+- **Side-by-Side Stats**: Visual comparison of performance metrics
+- **Interactive Charts**:
+  - Value comparison (spider chart style)
+  - Stats comparison (bar charts)
+  - Trend line comparisons
+- **Export Comparison**: Save comparison report to `friend1/` and `friend2/` folders
+
+**Workflow**:
+1. Upload Player 1's journey JSON
+2. Upload Player 2's journey JSON
+3. System calculates similarity
+4. Generate AI lore about relationship
+5. View interactive comparisons
+6. Export results
+
+---
+
+### `InsightsView.tsx`
+**Purpose**: Detailed breakdown of AI-generated insights and growth areas
+
+**Features**:
+- Priority-sorted insights (high/medium/low)
+- Strengths and achievements
+- Growth areas and recommendations
+- Overall season trend analysis
+- Navigate back to finale
+
+---
+
+### `ShareableReport.tsx`
+**Purpose**: Generate downloadable journey packages
+
+**Features**:
+- Exports complete journey data
+- Includes metadata, quarters, finale
+- Can be re-uploaded for instant viewing
+- Format compatible with friend comparison
+
+## 🔌 API Integration
+
+### Base URL Configuration
+
+Update in `src/api.ts`:
+```typescript
+const API_BASE_URL = 'https://your-api-id.execute-api.your-region.amazonaws.com';
+```
 
 ### Type Definitions
 
 ```typescript
+interface JourneyRequest {
+  platform: string;        // 'euw1', 'na1', 'kr', etc.
+  riotId: string;          // 'Name#TAG'
+  archetype: string;       // 'explorer', 'warrior', 'sage', 'guardian'
+  bypassCache?: boolean;   // Force fresh data fetch
+}
+
 interface Quarter {
-  quarter: string;
-  region: string;
-  lore: string;
-  reflection: string;
+  quarter: string;         // 'Q1', 'Q2', 'Q3', 'Q4'
+  region: string;          // 'Demacia', 'Noxus', etc.
+  lore: string;            // AI-generated narrative
+  reflection: string;      // Role-specific feedback
   stats: {
     games: number;
     kda_proxy: number;
@@ -169,27 +300,133 @@ interface Quarter {
     gold_per_min: number;
     vision_score_per_min: number;
     ping_rate_per_min: number;
-    primary_role: string;
-    obj_damage_per_min: number;
-    kill_participation: number;
-    control_wards_per_game: number;
+    primary_role: string;  // 'SUPPORT', 'JUNGLE', etc.
+    obj_damage_per_min?: number;
+    kill_participation?: number;
+    control_wards_per_game?: number;
   };
-  values: Record<string, number>;
-  top_values: string[];
-  top_champions: Array<{ name: string; games: number }>;
+  values: Record<string, number>;     // All playstyle values
+  top_values: [string, number][];     // Top 3 values with scores
+  top_champions: Array<{
+    name: string;
+    games: number;
+  }>;
 }
 
 interface Finale {
   lore: string;
-  final_reflection: string[];
+  final_reflection: string[];         // Bullet points
   total_games: number;
-  quarters: Quarter[];
+  quarters: Quarter[];                // All 4 quarters
+  
+  // Advanced analytics (optional)
+  trends?: {
+    kda_trend: { direction: string; change_percentage: number; best_quarter: string };
+    cs_trend: { direction: string; change_percentage: number; best_quarter: string };
+    gold_trend: { direction: string; change_percentage: number; best_quarter: string };
+    vision_trend: { direction: string; change_percentage: number; best_quarter: string };
+  };
+  
+  highlights?: {
+    best_kda_game: any;
+    most_kills_game: any;
+    most_damage_game: any;
+    perfect_games: number;
+    first_bloods: number;
+    pentakills: number;
+  };
+  
+  champion_analysis?: {
+    top_champions: Array<{
+      name: string;
+      games: number;
+      avg_kda: number;
+      win_rate: number;
+    }>;
+    one_tricks: string[];
+    versatility_score: number;
+  };
+  
+  comebacks?: {
+    comeback_games: any[];
+    total_comebacks: number;
+    resilience_score: number;
+  };
+  
+  insights?: Array<{
+    insight: string;
+    priority: 'high' | 'medium' | 'low';
+  }>;
+  
+  year_summary?: {
+    total_games: number;
+    year_avg_kda: number;
+    year_avg_cs_per_min: number;
+    year_avg_vision_score: number;
+    total_unique_champions: number;
+    most_played_champion: string;
+    comeback_victories: number;
+    resilience_score: number;
+    achievements: string[];
+    strengths: string[];
+    growth_areas: string[];
+    overall_trend: string;
+    best_quarter: string;
+  };
+}
+
+interface JobStatus {
+  jobId: string;
+  riotId: string;
+  platform: string;
+  archetype: string;
+  status: string;
+  quarters: {
+    Q1: 'pending' | 'fetching' | 'fetched' | 'ready' | 'error';
+    Q2: 'pending' | 'fetching' | 'fetched' | 'ready' | 'error';
+    Q3: 'pending' | 'fetching' | 'fetched' | 'ready' | 'error';
+    Q4: 'pending' | 'fetching' | 'fetched' | 'ready' | 'error';
+  };
+  s3Base: string;
 }
 ```
 
-## Development
+### API Functions
 
-### Setup
+```typescript
+// Create new journey (API fetch mode)
+createJourney(request: JourneyRequest): Promise<{ jobId: string; queued: boolean }>
+
+// Upload pre-fetched matches
+createJourneyFromUpload(request: UploadJourneyRequest): Promise<{ jobId: string; queued: boolean }>
+
+// Poll job status
+getJobStatus(jobId: string): Promise<JobStatus>
+
+// Load quarter story from S3
+getQuarterStory(bucketUrl: string, quarter: string): Promise<Quarter>
+
+// Load finale from S3
+getFinale(bucketUrl: string): Promise<Finale>
+```
+
+### Endpoints
+
+**Backend API** (`infra/src/api.py`):
+- `POST /journey` - Create journey from Riot API
+- `POST /journey/upload` - Create journey from uploaded matches
+- `GET /status/{jobId}` - Get job and quarter statuses
+
+**S3 Bucket** (public read for story files):
+- `https://{bucket}.s3.{region}.amazonaws.com/{jobId}/Q1/story.json`
+- `https://{bucket}.s3.{region}.amazonaws.com/{jobId}/Q2/story.json`
+- `https://{bucket}.s3.{region}.amazonaws.com/{jobId}/Q3/story.json`
+- `https://{bucket}.s3.{region}.amazonaws.com/{jobId}/Q4/story.json`
+- `https://{bucket}.s3.{region}.amazonaws.com/{jobId}/finale.json`
+
+## 🚀 Development
+
+### Installation
 
 ```bash
 cd frontend
@@ -200,15 +437,17 @@ npm install
 
 ```bash
 npm run dev
-# Opens at http://localhost:5173
 ```
 
-### Building
+Opens at `http://localhost:5173`
+
+### Building for Production
 
 ```bash
 npm run build
-# Output in dist/
 ```
+
+Output in `dist/` directory.
 
 ### Linting
 
@@ -216,44 +455,194 @@ npm run build
 npm run lint
 ```
 
-## Configuration
+### Preview Production Build
 
-### API Endpoint
-
-Update in `src/api.ts`:
-
-```typescript
-const BASE_URL = 'https://your-api-gateway-url.amazonaws.com';
+```bash
+npm run preview
 ```
 
-## Deployment
+## 📦 Deployment
 
-### Build for Production
+### Prerequisites
 
+1. Backend deployed and API Gateway URL available
+2. S3 bucket for frontend hosting configured
+3. S3 bucket policy allows public read
+
+### Steps
+
+1. **Update API endpoint** in `src/api.ts`:
+   ```typescript
+   const API_BASE_URL = 'https://your-actual-api-id.execute-api.region.amazonaws.com';
+   ```
+
+2. **Build for production**:
 ```bash
 npm run build
 ```
 
-### Deploy to S3
-
+3. **Deploy to S3**:
 ```bash
 aws s3 sync dist/ s3://your-frontend-bucket --delete --region your-region
 ```
 
-## Troubleshooting
+4. **Configure S3 static website hosting**:
+   - Enable static website hosting
+   - Set index document: `index.html`
+   - Set error document: `index.html` (for SPA routing)
+
+5. **(Optional) Set up CloudFront** for CDN and HTTPS
+
+### Deployment Script
+
+Use the provided deployment scripts:
+
+**Linux/Mac**:
+```bash
+chmod +x deploy.sh
+./deploy.sh
+```
+
+**Windows**:
+```powershell
+.\deploy.ps1
+```
+
+## 🎨 Theming
+
+### Custom Runeterra Colors
+
+Defined in `tailwind.config.js`:
+
+```javascript
+colors: {
+  'runeterra-darker': '#0a0e1a',
+  'runeterra-dark': '#1a1e2e',
+  'runeterra-gold': '#c8aa6e',
+  'runeterra-gold-light': '#f0e6d2',
+  // ... region-specific colors
+}
+```
+
+### Region Background Gradients
+
+Each region has a unique gradient defined in `ChapterView.tsx`:
+- **Demacia**: Blue → Gold
+- **Noxus**: Red → Crimson
+- **Ionia**: Pink → Purple
+- **Piltover**: Bronze → Cyan
+- And more...
+
+## 🐛 Troubleshooting
 
 ### Issue: API calls failing with CORS error
 
-**Solution**: Verify API Gateway CORS settings and bucket policy.
+**Cause**: API Gateway CORS not configured properly
 
-### Issue: Blank page after deployment
-
-**Solution**: Check browser console, ensure S3 error document is `index.html`.
-
-### Issue: Finale not loading (403 error)
-
-**Solution**: Update S3 bucket policy to allow public read for `*/finale.json`.
+**Solution**:
+1. Check `infra/template.yaml` CORS settings
+2. Verify API Gateway allows `*` origins (or specific frontend domain)
+3. Ensure response headers include Access-Control-Allow-Origin
 
 ---
 
-For more information, see the main [README.md](../README.md).
+### Issue: Blank page after deployment
+
+**Cause**: React Router/SPA routing not configured
+
+**Solution**:
+1. Set S3 error document to `index.html`
+2. Ensure Vite base URL is correct in `vite.config.ts`
+3. Check browser console for errors
+
+---
+
+### Issue: Finale not loading (403 Forbidden)
+
+**Cause**: S3 bucket policy doesn't allow public read
+
+**Solution**:
+Apply bucket policy from root `bucket-policy.json`:
+```bash
+aws s3api put-bucket-policy \
+  --bucket rift-rewind-data-{account}-{region} \
+  --policy file://bucket-policy.json
+```
+
+---
+
+### Issue: Friend comparison not generating lore
+
+**Cause**: Backend Bedrock API not invoked or permissions issue
+
+**Solution**:
+1. Check CloudWatch logs for ProcessQuarter Lambda
+2. Verify Bedrock permissions in IAM role
+3. Ensure Mistral model is available in your AWS region
+
+---
+
+### Issue: Upload mode not working
+
+**Cause**: Invalid JSON format or missing required fields
+
+**Solution**:
+Uploaded file must contain either:
+- **Complete journey package**: `{ type: 'complete-journey', metadata: {...}, quarters: {...}, finale: {...} }`
+- **Raw matches**: `{ Q1: [...], Q2: [...], Q3: [...], Q4: [...] }`
+
+---
+
+### Issue: Stats look incorrect or outdated
+
+**Cause**: Cached job data from before bug fixes
+
+**Solution**:
+Check "Force refresh (bypass cache)" when creating journey to fetch fresh data.
+
+## 📚 Related Documentation
+
+- **Backend/Infrastructure**: See [`../infra/README.md`](../infra/README.md) for Lambda functions, API details, and deployment
+- **Main Project**: See [`../README.md`](../README.md) for overall architecture, features, and getting started guide
+
+## 🧪 Testing
+
+### Manual Testing Checklist
+
+- [ ] API Fetch mode with valid summoner
+- [ ] API Fetch with invalid summoner (error handling)
+- [ ] Upload mode with complete journey package
+- [ ] Upload mode with raw matches
+- [ ] Friend comparison with two valid journeys
+- [ ] Cache bypass functionality
+- [ ] Journey export and re-import
+- [ ] Navigation between chapters
+- [ ] Finale visualization and charts
+- [ ] Mobile responsiveness
+
+### Test Data
+
+Use provided test files in project root:
+- `friend1/` - Sample journey for Friend 1
+- `friend2/` - Sample journey for Friend 2
+
+## 🤝 Contributing
+
+When modifying the frontend:
+
+1. Maintain TypeScript types in `api.ts`
+2. Follow existing component patterns
+3. Use Tailwind classes for styling
+4. Test all three modes (API, Upload, Compare)
+5. Ensure mobile responsiveness
+6. Update this README if adding features
+
+## 📄 License
+
+This project is for educational purposes. League of Legends and Riot Games are trademarks of Riot Games, Inc.
+
+---
+
+**Built with ❤️ for League of Legends players**
+
+*Transform your matches into an epic journey through Runeterra!*
