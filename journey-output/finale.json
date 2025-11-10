@@ -1,0 +1,659 @@
+{
+  "lore": "As the sun set upon the Iron Temple, the once unwavering summoner, their heart now filled with a newfound sense of balance and purpose, summoned forth a celestial host to illuminate the darkened battlefield. The divine light of their champions pierced through the veil of darkness, reminding all present of the inherent beauty within the very fabric of Runeterra.\n\nReflecting upon their journey through the hallowed halls of Demacia, the fiery trials of Noxus, and the ancient wisdom of the Shadow Isles, the summoner knew that their transformation was not yet complete. With renewed resolve, they vowed to continue their quest for enlightenment, to unite the fractured lands of Runeterra under the banner of harmony and understanding.\n\nAnd so, as the first stars began to twinkle in the twilight sky, the summoner looked out upon the horizon, their spirit soaring with the knowledge that the true power of Runeterra lay not within the hands of those who sought to dominate, but within the hearts of those who dared to dream, to unite, and to heal.",
+  "reflection": [
+    "1. Consistently high KDA and vision score, demonstrating strong map awareness and champion mastery.",
+    "2. CS/min below league average, focus on improving last-hitting and overall farming efficiency.",
+    "3. Increase CS/min by 0.15 for a total of 1.40 CS/min, and maintain KDA above 1.65.",
+    "4. Implement champion specialization strategy, mastering 3 champions to a high level for maximum impact."
+  ],
+  "trends": {
+    "kda": {
+      "values": [
+        1.67,
+        1.46,
+        1.67,
+        1.72
+      ],
+      "direction": "stable",
+      "change_pct": 2.994011976047907,
+      "best_quarter": "Q4"
+    },
+    "cs_per_min": {
+      "values": [
+        1.26,
+        1.65,
+        1.27,
+        1.25
+      ],
+      "direction": "stable",
+      "change_pct": -0.7936507936507943,
+      "best_quarter": "Q2"
+    },
+    "gold_per_min": {
+      "values": [
+        304.9,
+        314.8,
+        303.9,
+        315.9
+      ],
+      "direction": "stable",
+      "change_pct": 3.607740242702526,
+      "best_quarter": "Q4"
+    },
+    "vision_score": {
+      "values": [
+        2.1,
+        2.12,
+        2.18,
+        2.16
+      ],
+      "direction": "stable",
+      "change_pct": 2.8571428571428594,
+      "best_quarter": "Q3"
+    },
+    "kill_participation": {
+      "values": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "direction": "stable",
+      "change_pct": 0,
+      "best_quarter": "Q1"
+    },
+    "overall": {
+      "improving_metrics": 0,
+      "declining_metrics": 0,
+      "summary": "stable"
+    },
+    "available": true
+  },
+  "highlights": {
+    "best_kda_game": {
+      "index": 657,
+      "champion": "Nami",
+      "value": 31.0
+    },
+    "most_kills_game": {
+      "index": 180,
+      "champion": "JarvanIV",
+      "kills": 19
+    },
+    "most_damage_game": {
+      "index": 921,
+      "champion": "Teemo",
+      "damage": 63.7
+    },
+    "perfect_games": [],
+    "first_bloods": 75,
+    "pentakills": 0,
+    "quadrakills": 0,
+    "comeback_wins": [],
+    "highest_cs_game": {
+      "index": 397,
+      "champion": "Galio",
+      "cs_per_min": 6.98
+    },
+    "most_gold_game": null,
+    "best_vision_game": null,
+    "clutch_steals": 6,
+    "fountain_kills": 2
+  },
+  "champion_analysis": {
+    "available": true,
+    "total_unique_champions": 54,
+    "most_played": [
+      {
+        "name": "Teemo",
+        "games": 211,
+        "avg_damage": 21.7,
+        "avg_gold_per_min": 324.9,
+        "avg_cs_per_min": 1.5,
+        "avg_vision_score": 2.29
+      },
+      {
+        "name": "Nami",
+        "games": 146,
+        "avg_damage": 9.7,
+        "avg_gold_per_min": 291.5,
+        "avg_cs_per_min": 0.9,
+        "avg_vision_score": 2.23
+      },
+      {
+        "name": "Lulu",
+        "games": 71,
+        "avg_damage": 8.0,
+        "avg_gold_per_min": 298.3,
+        "avg_cs_per_min": 0.9,
+        "avg_vision_score": 2.15
+      },
+      {
+        "name": "JarvanIV",
+        "games": 48,
+        "avg_damage": 12.2,
+        "avg_gold_per_min": 339.1,
+        "avg_cs_per_min": 2.0,
+        "avg_vision_score": 2.28
+      },
+      {
+        "name": "Braum",
+        "games": 46,
+        "avg_damage": 7.7,
+        "avg_gold_per_min": 292.9,
+        "avg_cs_per_min": 1.0,
+        "avg_vision_score": 2.03
+      }
+    ],
+    "one_tricks": [],
+    "versatility_score": 75.2,
+    "all_champions": [
+      {
+        "name": "Teemo",
+        "games": 211,
+        "avg_damage": 21.7,
+        "avg_gold_per_min": 324.9,
+        "avg_cs_per_min": 1.5,
+        "avg_vision_score": 2.29
+      },
+      {
+        "name": "Nami",
+        "games": 146,
+        "avg_damage": 9.7,
+        "avg_gold_per_min": 291.5,
+        "avg_cs_per_min": 0.9,
+        "avg_vision_score": 2.23
+      },
+      {
+        "name": "Lulu",
+        "games": 71,
+        "avg_damage": 8.0,
+        "avg_gold_per_min": 298.3,
+        "avg_cs_per_min": 0.9,
+        "avg_vision_score": 2.15
+      },
+      {
+        "name": "JarvanIV",
+        "games": 48,
+        "avg_damage": 12.2,
+        "avg_gold_per_min": 339.1,
+        "avg_cs_per_min": 2.0,
+        "avg_vision_score": 2.28
+      },
+      {
+        "name": "Braum",
+        "games": 46,
+        "avg_damage": 7.7,
+        "avg_gold_per_min": 292.9,
+        "avg_cs_per_min": 1.0,
+        "avg_vision_score": 2.03
+      },
+      {
+        "name": "Pantheon",
+        "games": 38,
+        "avg_damage": 14.7,
+        "avg_gold_per_min": 352.1,
+        "avg_cs_per_min": 1.7,
+        "avg_vision_score": 2.02
+      },
+      {
+        "name": "Nautilus",
+        "games": 32,
+        "avg_damage": 9.2,
+        "avg_gold_per_min": 308.4,
+        "avg_cs_per_min": 1.0,
+        "avg_vision_score": 1.96
+      },
+      {
+        "name": "Brand",
+        "games": 27,
+        "avg_damage": 20.6,
+        "avg_gold_per_min": 331.4,
+        "avg_cs_per_min": 1.7,
+        "avg_vision_score": 2.17
+      },
+      {
+        "name": "FiddleSticks",
+        "games": 27,
+        "avg_damage": 15.3,
+        "avg_gold_per_min": 309.0,
+        "avg_cs_per_min": 1.3,
+        "avg_vision_score": 2.46
+      },
+      {
+        "name": "Alistar",
+        "games": 26,
+        "avg_damage": 7.8,
+        "avg_gold_per_min": 288.2,
+        "avg_cs_per_min": 0.9,
+        "avg_vision_score": 2.18
+      },
+      {
+        "name": "Karma",
+        "games": 25,
+        "avg_damage": 10.5,
+        "avg_gold_per_min": 293.1,
+        "avg_cs_per_min": 1.4,
+        "avg_vision_score": 2.04
+      },
+      {
+        "name": "Ashe",
+        "games": 24,
+        "avg_damage": 14.7,
+        "avg_gold_per_min": 300.6,
+        "avg_cs_per_min": 1.4,
+        "avg_vision_score": 2.25
+      },
+      {
+        "name": "Milio",
+        "games": 23,
+        "avg_damage": 5.0,
+        "avg_gold_per_min": 274.7,
+        "avg_cs_per_min": 0.9,
+        "avg_vision_score": 2.18
+      },
+      {
+        "name": "Leona",
+        "games": 22,
+        "avg_damage": 9.5,
+        "avg_gold_per_min": 286.3,
+        "avg_cs_per_min": 1.1,
+        "avg_vision_score": 2.37
+      },
+      {
+        "name": "Shen",
+        "games": 22,
+        "avg_damage": 11.6,
+        "avg_gold_per_min": 308.4,
+        "avg_cs_per_min": 1.3,
+        "avg_vision_score": 1.99
+      },
+      {
+        "name": "Poppy",
+        "games": 22,
+        "avg_damage": 12.4,
+        "avg_gold_per_min": 316.8,
+        "avg_cs_per_min": 1.2,
+        "avg_vision_score": 2.09
+      },
+      {
+        "name": "Sejuani",
+        "games": 19,
+        "avg_damage": 12.4,
+        "avg_gold_per_min": 306.2,
+        "avg_cs_per_min": 2.0,
+        "avg_vision_score": 1.72
+      },
+      {
+        "name": "Janna",
+        "games": 17,
+        "avg_damage": 9.7,
+        "avg_gold_per_min": 286.0,
+        "avg_cs_per_min": 0.9,
+        "avg_vision_score": 2.18
+      },
+      {
+        "name": "Senna",
+        "games": 13,
+        "avg_damage": 12.4,
+        "avg_gold_per_min": 324.4,
+        "avg_cs_per_min": 1.6,
+        "avg_vision_score": 1.85
+      },
+      {
+        "name": "Soraka",
+        "games": 12,
+        "avg_damage": 5.0,
+        "avg_gold_per_min": 274.0,
+        "avg_cs_per_min": 1.0,
+        "avg_vision_score": 1.8
+      },
+      {
+        "name": "Amumu",
+        "games": 7,
+        "avg_damage": 7.1,
+        "avg_gold_per_min": 290.8,
+        "avg_cs_per_min": 1.5,
+        "avg_vision_score": 1.28
+      },
+      {
+        "name": "Morgana",
+        "games": 7,
+        "avg_damage": 11.2,
+        "avg_gold_per_min": 341.0,
+        "avg_cs_per_min": 1.3,
+        "avg_vision_score": 1.94
+      },
+      {
+        "name": "Annie",
+        "games": 6,
+        "avg_damage": 16.2,
+        "avg_gold_per_min": 328.9,
+        "avg_cs_per_min": 1.4,
+        "avg_vision_score": 2.27
+      },
+      {
+        "name": "Caitlyn",
+        "games": 6,
+        "avg_damage": 9.4,
+        "avg_gold_per_min": 310.0,
+        "avg_cs_per_min": 2.1,
+        "avg_vision_score": 1.42
+      },
+      {
+        "name": "Swain",
+        "games": 5,
+        "avg_damage": 18.4,
+        "avg_gold_per_min": 322.9,
+        "avg_cs_per_min": 2.8,
+        "avg_vision_score": 1.96
+      },
+      {
+        "name": "Blitzcrank",
+        "games": 5,
+        "avg_damage": 6.6,
+        "avg_gold_per_min": 285.2,
+        "avg_cs_per_min": 1.2,
+        "avg_vision_score": 1.8
+      },
+      {
+        "name": "Maokai",
+        "games": 5,
+        "avg_damage": 17.0,
+        "avg_gold_per_min": 323.0,
+        "avg_cs_per_min": 2.1,
+        "avg_vision_score": 1.99
+      },
+      {
+        "name": "Sona",
+        "games": 5,
+        "avg_damage": 12.0,
+        "avg_gold_per_min": 319.6,
+        "avg_cs_per_min": 0.9,
+        "avg_vision_score": 2.27
+      },
+      {
+        "name": "Heimerdinger",
+        "games": 5,
+        "avg_damage": 17.0,
+        "avg_gold_per_min": 335.5,
+        "avg_cs_per_min": 1.9,
+        "avg_vision_score": 2.0
+      },
+      {
+        "name": "MissFortune",
+        "games": 4,
+        "avg_damage": 20.3,
+        "avg_gold_per_min": 362.2,
+        "avg_cs_per_min": 2.1,
+        "avg_vision_score": 1.88
+      },
+      {
+        "name": "Trundle",
+        "games": 4,
+        "avg_damage": 18.2,
+        "avg_gold_per_min": 357.8,
+        "avg_cs_per_min": 2.2,
+        "avg_vision_score": 1.69
+      },
+      {
+        "name": "Chogath",
+        "games": 3,
+        "avg_damage": 17.5,
+        "avg_gold_per_min": 420.4,
+        "avg_cs_per_min": 5.3,
+        "avg_vision_score": 0.55
+      },
+      {
+        "name": "Galio",
+        "games": 3,
+        "avg_damage": 16.4,
+        "avg_gold_per_min": 359.5,
+        "avg_cs_per_min": 4.3,
+        "avg_vision_score": 1.26
+      },
+      {
+        "name": "TahmKench",
+        "games": 3,
+        "avg_damage": 14.5,
+        "avg_gold_per_min": 298.1,
+        "avg_cs_per_min": 1.0,
+        "avg_vision_score": 1.87
+      },
+      {
+        "name": "Gwen",
+        "games": 3,
+        "avg_damage": 14.5,
+        "avg_gold_per_min": 331.8,
+        "avg_cs_per_min": 1.7,
+        "avg_vision_score": 2.34
+      },
+      {
+        "name": "Thresh",
+        "games": 2,
+        "avg_damage": 4.0,
+        "avg_gold_per_min": 252.6,
+        "avg_cs_per_min": 1.5,
+        "avg_vision_score": 1.52
+      },
+      {
+        "name": "Rakan",
+        "games": 2,
+        "avg_damage": 6.1,
+        "avg_gold_per_min": 273.1,
+        "avg_cs_per_min": 0.9,
+        "avg_vision_score": 2.37
+      },
+      {
+        "name": "Lissandra",
+        "games": 2,
+        "avg_damage": 5.3,
+        "avg_gold_per_min": 258.5,
+        "avg_cs_per_min": 1.4,
+        "avg_vision_score": 0.9
+      },
+      {
+        "name": "Veigar",
+        "games": 2,
+        "avg_damage": 9.6,
+        "avg_gold_per_min": 294.5,
+        "avg_cs_per_min": 2.5,
+        "avg_vision_score": 1.68
+      },
+      {
+        "name": "Taric",
+        "games": 2,
+        "avg_damage": 4.1,
+        "avg_gold_per_min": 272.3,
+        "avg_cs_per_min": 1.4,
+        "avg_vision_score": 1.89
+      },
+      {
+        "name": "Seraphine",
+        "games": 2,
+        "avg_damage": 12.4,
+        "avg_gold_per_min": 298.2,
+        "avg_cs_per_min": 1.3,
+        "avg_vision_score": 2.4
+      },
+      {
+        "name": "Jax",
+        "games": 2,
+        "avg_damage": 6.6,
+        "avg_gold_per_min": 306.7,
+        "avg_cs_per_min": 1.7,
+        "avg_vision_score": 2.16
+      },
+      {
+        "name": "Renata",
+        "games": 2,
+        "avg_damage": 6.7,
+        "avg_gold_per_min": 241.5,
+        "avg_cs_per_min": 1.1,
+        "avg_vision_score": 2.17
+      },
+      {
+        "name": "Vi",
+        "games": 1,
+        "avg_damage": 10.3,
+        "avg_gold_per_min": 387.8,
+        "avg_cs_per_min": 0.5,
+        "avg_vision_score": 0.85
+      },
+      {
+        "name": "Garen",
+        "games": 1,
+        "avg_damage": 22.2,
+        "avg_gold_per_min": 361.0,
+        "avg_cs_per_min": 1.9,
+        "avg_vision_score": 2.6
+      },
+      {
+        "name": "Rammus",
+        "games": 1,
+        "avg_damage": 9.7,
+        "avg_gold_per_min": 269.1,
+        "avg_cs_per_min": 1.4,
+        "avg_vision_score": 2.57
+      },
+      {
+        "name": "Sion",
+        "games": 1,
+        "avg_damage": 11.5,
+        "avg_gold_per_min": 310.2,
+        "avg_cs_per_min": 6.1,
+        "avg_vision_score": 0.64
+      },
+      {
+        "name": "Nasus",
+        "games": 1,
+        "avg_damage": 15.6,
+        "avg_gold_per_min": 384.0,
+        "avg_cs_per_min": 6.7,
+        "avg_vision_score": 0.76
+      },
+      {
+        "name": "Bard",
+        "games": 1,
+        "avg_damage": 17.9,
+        "avg_gold_per_min": 300.0,
+        "avg_cs_per_min": 0.8,
+        "avg_vision_score": 2.64
+      },
+      {
+        "name": "Malphite",
+        "games": 1,
+        "avg_damage": 8.7,
+        "avg_gold_per_min": 271.1,
+        "avg_cs_per_min": 1.6,
+        "avg_vision_score": 2.39
+      },
+      {
+        "name": "Anivia",
+        "games": 1,
+        "avg_damage": 9.4,
+        "avg_gold_per_min": 269.0,
+        "avg_cs_per_min": 1.7,
+        "avg_vision_score": 1.12
+      },
+      {
+        "name": "Lux",
+        "games": 1,
+        "avg_damage": 17.7,
+        "avg_gold_per_min": 286.4,
+        "avg_cs_per_min": 1.2,
+        "avg_vision_score": 2.33
+      },
+      {
+        "name": "Neeko",
+        "games": 1,
+        "avg_damage": 12.9,
+        "avg_gold_per_min": 270.5,
+        "avg_cs_per_min": 1.6,
+        "avg_vision_score": 1.75
+      },
+      {
+        "name": "Velkoz",
+        "games": 1,
+        "avg_damage": 7.9,
+        "avg_gold_per_min": 281.8,
+        "avg_cs_per_min": 1.3,
+        "avg_vision_score": 1.6
+      }
+    ]
+  },
+  "comebacks": {
+    "count": 1,
+    "games": [
+      {
+        "index": 945,
+        "champion": "Nami",
+        "had_open_nexus": false,
+        "description": "Comeback victory despite early struggles"
+      }
+    ],
+    "resilience_score": 0.10319917440660474
+  },
+  "insights": [
+    {
+      "category": "Farming",
+      "priority": "high",
+      "insight": "CS per minute average of 1.25 is significantly below competitive standards, even for support-focused gameplay.",
+      "action": "Spend 15 minutes in practice tool daily focusing on last-hitting, aiming to double your CS score to at least 2.5 per minute in your next 20 games."
+    },
+    {
+      "category": "Combat",
+      "priority": "medium",
+      "insight": "KDA of 1.72 shows room for improvement in survivability while maintaining impact, though the stable trend indicates consistency.",
+      "action": "Review your last 5 deaths per game in replays, focusing on positioning mistakes and identifying safer engagement distances."
+    },
+    {
+      "category": "Champion Pool",
+      "priority": "positive",
+      "insight": "Strong champion versatility score (75.2) and wide pool (54 champions) shows good adaptability and game knowledge.",
+      "action": "Continue mastering your top 3 champions while maintaining 2-3 comfort picks for each role."
+    },
+    {
+      "category": "Vision",
+      "priority": "medium",
+      "insight": "Vision score of 2.16 per minute is decent but could be optimized for better map control.",
+      "action": "Place defensive wards during laning phase and shift to aggressive vision control around objectives 1 minute before they spawn."
+    },
+    {
+      "category": "Champion Mastery",
+      "priority": "high",
+      "insight": "High games on Teemo (211) but relatively low damage output (21.7k) suggests suboptimal damage trading patterns.",
+      "action": "Practice Teemo's trading patterns in normals, focusing on maximizing poison damage and safe auto-attack harass during laning phase."
+    },
+    {
+      "category": "Progress",
+      "priority": "info",
+      "insight": "Stable trends across all metrics indicate consistent but non-improving gameplay patterns.",
+      "action": "Set specific improvement goals for each metric (KDA >2.0, CS >2.0, Vision >2.5) and track progress weekly."
+    }
+  ],
+  "year_summary": {
+    "total_games": 969.0,
+    "year_avg_kda": 1.63,
+    "year_avg_cs_per_min": 1.4,
+    "year_avg_vision_score": 2.14,
+    "total_unique_champions": 54,
+    "most_played_champion": "Teemo",
+    "comeback_victories": 1,
+    "resilience_score": 0.1,
+    "achievements": [
+      "🎯 75 First Bloods",
+      "🐉 6 Objective Steals",
+      "💀 2 Fountain Takedowns"
+    ],
+    "strengths": [
+      "Strong champion versatility score (75.2) and wide pool (54 champions) shows good adaptability and game knowledge."
+    ],
+    "growth_areas": [
+      "CS per minute average of 1.25 is significantly below competitive standards, even for support-focused gameplay.",
+      "High games on Teemo (211) but relatively low damage output (21.7k) suggests suboptimal damage trading patterns."
+    ],
+    "overall_trend": "stable",
+    "best_quarter": "Q4"
+  }
+}

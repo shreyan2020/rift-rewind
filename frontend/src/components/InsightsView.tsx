@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { TrendingUp, TrendingDown, Award, Brain } from 'lucide-react';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 interface InsightsProps {
   insights: {
@@ -11,6 +12,7 @@ interface InsightsProps {
   highlights?: any;
   championAnalysis?: any;
   yearSummary?: any;
+  quarters?: any; // Add quarters data for date ranges
   onBack?: () => void;
 }
 
@@ -20,8 +22,15 @@ const InsightsView: React.FC<InsightsProps> = ({
   highlights,
   championAnalysis,
   yearSummary,
+  quarters,
   onBack
 }) => {
+  // Helper to get quarter date range
+  const getQuarterDateRange = (quarterName: string) => {
+    if (!quarters || !quarters[quarterName]) return quarterName;
+    return quarters[quarterName].date_range || quarterName;
+  };
+  
   const priorityColors = {
     high: 'border-red-500/50 bg-red-500/10',
     medium: 'border-yellow-500/50 bg-yellow-500/10',
@@ -69,7 +78,7 @@ const InsightsView: React.FC<InsightsProps> = ({
               Your 2025 Journey
             </h1>
             
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-8">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-6 mt-8">
               <div className="bg-black/40 backdrop-blur-sm border border-yellow-500/30 rounded-xl p-6">
                 <div className="text-4xl font-bold text-yellow-400">{yearSummary.total_games}</div>
                 <div className="text-sm text-gray-400 mt-2">Total Games</div>
@@ -81,10 +90,6 @@ const InsightsView: React.FC<InsightsProps> = ({
               <div className="bg-black/40 backdrop-blur-sm border border-blue-500/30 rounded-xl p-6">
                 <div className="text-4xl font-bold text-blue-400">{yearSummary.total_unique_champions}</div>
                 <div className="text-sm text-gray-400 mt-2">Champions Played</div>
-              </div>
-              <div className="bg-black/40 backdrop-blur-sm border border-purple-500/30 rounded-xl p-6">
-                <div className="text-4xl font-bold text-purple-400">{yearSummary.comeback_victories}</div>
-                <div className="text-sm text-gray-400 mt-2">Comebacks</div>
               </div>
             </div>
 
@@ -131,6 +136,39 @@ const InsightsView: React.FC<InsightsProps> = ({
                       <TrendingDown className="w-6 h-6 text-red-400" />
                     ) : null}
                   </div>
+                  
+                  {/* Mini Chart */}
+                  <div className="h-24 mb-4">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <LineChart data={[
+                        { period: 'Period 1', label: getQuarterDateRange('Q1'), value: trends.kda.values[0] },
+                        { period: 'Period 2', label: getQuarterDateRange('Q2'), value: trends.kda.values[1] },
+                        { period: 'Period 3', label: getQuarterDateRange('Q3'), value: trends.kda.values[2] },
+                        { period: 'Period 4', label: getQuarterDateRange('Q4'), value: trends.kda.values[3] }
+                      ]}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
+                        <XAxis dataKey="period" stroke="#64748b" style={{ fontSize: '10px' }} />
+                        <YAxis stroke="#64748b" style={{ fontSize: '12px' }} />
+                        <Tooltip
+                          contentStyle={{
+                            backgroundColor: '#1e293b',
+                            border: '1px solid #475569',
+                            borderRadius: '8px',
+                            fontSize: '12px'
+                          }}
+                          formatter={(value: number) => value.toFixed(2)}
+                          labelFormatter={(label: string, payload: readonly unknown[]) => {
+                            if (payload && payload[0]) {
+                              return (payload[0] as any).payload.label;
+                            }
+                            return label;
+                          }}
+                        />
+                        <Line type="monotone" dataKey="value" stroke="#60a5fa" strokeWidth={2} dot={{ fill: '#60a5fa', r: 4 }} />
+                      </LineChart>
+                    </ResponsiveContainer>
+                  </div>
+                  
                   <div className="space-y-2">
                     <div className="text-3xl font-bold text-white">
                       {trends.kda.change_pct > 0 ? '+' : ''}{trends.kda.change_pct.toFixed(1)}%
@@ -140,7 +178,10 @@ const InsightsView: React.FC<InsightsProps> = ({
                        trends.kda.direction === 'declining' ? 'Needs Work' : 'Stable'}
                     </div>
                     <div className="text-xs text-gray-500">
-                      Best quarter: {trends.kda.best_quarter}
+                      vs Period 1 baseline
+                    </div>
+                    <div className="text-xs text-gray-400 mt-1">
+                      Best: {getQuarterDateRange(trends.kda.best_quarter)}
                     </div>
                   </div>
                 </div>
@@ -157,6 +198,39 @@ const InsightsView: React.FC<InsightsProps> = ({
                       <TrendingDown className="w-6 h-6 text-red-400" />
                     ) : null}
                   </div>
+                  
+                  {/* Mini Chart */}
+                  <div className="h-24 mb-4">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <LineChart data={[
+                        { period: 'Period 1', label: getQuarterDateRange('Q1'), value: trends.cs_per_min.values[0] },
+                        { period: 'Period 2', label: getQuarterDateRange('Q2'), value: trends.cs_per_min.values[1] },
+                        { period: 'Period 3', label: getQuarterDateRange('Q3'), value: trends.cs_per_min.values[2] },
+                        { period: 'Period 4', label: getQuarterDateRange('Q4'), value: trends.cs_per_min.values[3] }
+                      ]}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
+                        <XAxis dataKey="period" stroke="#64748b" style={{ fontSize: '10px' }} />
+                        <YAxis stroke="#64748b" style={{ fontSize: '12px' }} />
+                        <Tooltip
+                          contentStyle={{
+                            backgroundColor: '#1e293b',
+                            border: '1px solid #475569',
+                            borderRadius: '8px',
+                            fontSize: '12px'
+                          }}
+                          formatter={(value: number) => value.toFixed(2)}
+                          labelFormatter={(label: string, payload: readonly unknown[]) => {
+                            if (payload && payload[0]) {
+                              return (payload[0] as any).payload.label;
+                            }
+                            return label;
+                          }}
+                        />
+                        <Line type="monotone" dataKey="value" stroke="#4ade80" strokeWidth={2} dot={{ fill: '#4ade80', r: 4 }} />
+                      </LineChart>
+                    </ResponsiveContainer>
+                  </div>
+                  
                   <div className="space-y-2">
                     <div className="text-3xl font-bold text-white">
                       {trends.cs_per_min.change_pct > 0 ? '+' : ''}{trends.cs_per_min.change_pct.toFixed(1)}%
@@ -166,7 +240,10 @@ const InsightsView: React.FC<InsightsProps> = ({
                        trends.cs_per_min.direction === 'declining' ? 'Needs Work' : 'Stable'}
                     </div>
                     <div className="text-xs text-gray-500">
-                      Best quarter: {trends.cs_per_min.best_quarter}
+                      vs Period 1 baseline
+                    </div>
+                    <div className="text-xs text-gray-400 mt-1">
+                      Best: {getQuarterDateRange(trends.cs_per_min.best_quarter)}
                     </div>
                   </div>
                 </div>
@@ -183,6 +260,39 @@ const InsightsView: React.FC<InsightsProps> = ({
                       <TrendingDown className="w-6 h-6 text-red-400" />
                     ) : null}
                   </div>
+                  
+                  {/* Mini Chart */}
+                  <div className="h-24 mb-4">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <LineChart data={[
+                        { period: 'Period 1', label: getQuarterDateRange('Q1'), value: trends.vision_score.values[0] },
+                        { period: 'Period 2', label: getQuarterDateRange('Q2'), value: trends.vision_score.values[1] },
+                        { period: 'Period 3', label: getQuarterDateRange('Q3'), value: trends.vision_score.values[2] },
+                        { period: 'Period 4', label: getQuarterDateRange('Q4'), value: trends.vision_score.values[3] }
+                      ]}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
+                        <XAxis dataKey="period" stroke="#64748b" style={{ fontSize: '10px' }} />
+                        <YAxis stroke="#64748b" style={{ fontSize: '12px' }} />
+                        <Tooltip
+                          contentStyle={{
+                            backgroundColor: '#1e293b',
+                            border: '1px solid #475569',
+                            borderRadius: '8px',
+                            fontSize: '12px'
+                          }}
+                          formatter={(value: number) => value.toFixed(2)}
+                          labelFormatter={(label: string, payload: readonly unknown[]) => {
+                            if (payload && payload[0]) {
+                              return (payload[0] as any).payload.label;
+                            }
+                            return label;
+                          }}
+                        />
+                        <Line type="monotone" dataKey="value" stroke="#a78bfa" strokeWidth={2} dot={{ fill: '#a78bfa', r: 4 }} />
+                      </LineChart>
+                    </ResponsiveContainer>
+                  </div>
+                  
                   <div className="space-y-2">
                     <div className="text-3xl font-bold text-white">
                       {trends.vision_score.change_pct > 0 ? '+' : ''}{trends.vision_score.change_pct.toFixed(1)}%
@@ -192,7 +302,10 @@ const InsightsView: React.FC<InsightsProps> = ({
                        trends.vision_score.direction === 'declining' ? 'Needs Work' : 'Stable'}
                     </div>
                     <div className="text-xs text-gray-500">
-                      Best quarter: {trends.vision_score.best_quarter}
+                      vs Period 1 baseline
+                    </div>
+                    <div className="text-xs text-gray-400 mt-1">
+                      Best: {getQuarterDateRange(trends.vision_score.best_quarter)}
                     </div>
                   </div>
                 </div>
@@ -209,6 +322,39 @@ const InsightsView: React.FC<InsightsProps> = ({
                       <TrendingDown className="w-6 h-6 text-red-400" />
                     ) : null}
                   </div>
+                  
+                  {/* Mini Chart */}
+                  <div className="h-24 mb-4">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <LineChart data={[
+                        { period: 'Period 1', label: getQuarterDateRange('Q1'), value: trends.gold_per_min.values[0] },
+                        { period: 'Period 2', label: getQuarterDateRange('Q2'), value: trends.gold_per_min.values[1] },
+                        { period: 'Period 3', label: getQuarterDateRange('Q3'), value: trends.gold_per_min.values[2] },
+                        { period: 'Period 4', label: getQuarterDateRange('Q4'), value: trends.gold_per_min.values[3] }
+                      ]}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
+                        <XAxis dataKey="period" stroke="#64748b" style={{ fontSize: '10px' }} />
+                        <YAxis stroke="#64748b" style={{ fontSize: '12px' }} />
+                        <Tooltip
+                          contentStyle={{
+                            backgroundColor: '#1e293b',
+                            border: '1px solid #475569',
+                            borderRadius: '8px',
+                            fontSize: '12px'
+                          }}
+                          formatter={(value: number) => value.toFixed(1)}
+                          labelFormatter={(label: string, payload: readonly unknown[]) => {
+                            if (payload && payload[0]) {
+                              return (payload[0] as any).payload.label;
+                            }
+                            return label;
+                          }}
+                        />
+                        <Line type="monotone" dataKey="value" stroke="#facc15" strokeWidth={2} dot={{ fill: '#facc15', r: 4 }} />
+                      </LineChart>
+                    </ResponsiveContainer>
+                  </div>
+                  
                   <div className="space-y-2">
                     <div className="text-3xl font-bold text-white">
                       {trends.gold_per_min.change_pct > 0 ? '+' : ''}{trends.gold_per_min.change_pct.toFixed(1)}%
@@ -218,7 +364,10 @@ const InsightsView: React.FC<InsightsProps> = ({
                        trends.gold_per_min.direction === 'declining' ? 'Needs Work' : 'Stable'}
                     </div>
                     <div className="text-xs text-gray-500">
-                      Best quarter: {trends.gold_per_min.best_quarter}
+                      vs Period 1 baseline
+                    </div>
+                    <div className="text-xs text-gray-400 mt-1">
+                      Best: {getQuarterDateRange(trends.gold_per_min.best_quarter)}
                     </div>
                   </div>
                 </div>
@@ -268,7 +417,7 @@ const InsightsView: React.FC<InsightsProps> = ({
                 <div className="bg-gradient-to-br from-purple-500/10 to-pink-500/10 border border-purple-500/30 rounded-xl p-6">
                   <div className="text-purple-400 font-bold text-sm mb-2">💥 MOST DAMAGE</div>
                   <div className="text-3xl font-bold text-white mb-2">
-                    {(highlights.most_damage_game.damage / 1000).toFixed(1)}k
+                    {highlights.most_damage_game.damage}k
                   </div>
                   <div className="text-gray-400 text-sm">
                     {highlights.most_damage_game.champion}
@@ -298,7 +447,7 @@ const InsightsView: React.FC<InsightsProps> = ({
                   <div className="space-y-1 text-sm">
                     <div className="text-gray-400">{champ.games} games</div>
                     <div className="text-gray-400">{champ.avg_cs_per_min?.toFixed(1)} CS/min</div>
-                    <div className="text-gray-400">{(champ.avg_damage / 1000).toFixed(1)}k dmg</div>
+                    <div className="text-gray-400">{champ.avg_damage}k dmg</div>
                   </div>
                 </div>
               ))}

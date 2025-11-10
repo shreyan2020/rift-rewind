@@ -11,7 +11,7 @@ from bedrock_lore import (
 )
 from advanced_analytics import (
     calculate_trends, extract_best_moments, analyze_champion_pool,
-    generate_insights, analyze_comebacks, generate_year_summary
+    generate_insights, generate_year_summary
 )
 
 # Map values to Runeterra regions
@@ -97,12 +97,64 @@ def _s3_write_json(key, obj):
     S3.put_object(Bucket=BUCKET, Key=key, Body=json.dumps(obj).encode("utf-8"),
                   ContentType="application/json")
 
-def _update_job(jobId, **fields):
-    expr = "SET " + ", ".join(f"#{k} = :{k}" for k in fields)
-    names = {f"#{k}": k for k in fields}
-    vals  = {f":{k}": v for k,v in fields.items()}
-    DDB.update_item(Key={"jobId": jobId}, UpdateExpression=expr,
-                    ExpressionAttributeNames=names, ExpressionAttributeValues=vals)
+def _update_job(job_id: str, **kwargs):
+    expr = []; vals = {}
+    for k, v in kwargs.items():
+        expr.append(f"{k}=:{k}"); vals[f":{k}"] = v
+    DDB.update_item(Key={"jobId": job_id}, UpdateExpression="SET " + ", ".join(expr), ExpressionAttributeValues=vals)
+
+def extract_bundles_from_processed_match(match: dict) -> dict:
+    """
+    Extract value bundles from pre-processed match data.
+    Pre-processed matches have: achiev, power, hed, stim, sec, etc.
+    We need to convert these back to the bundle format.
+    """
+    bundle = {}
+    
+    # Achievement bundle (achiev field)
+    if "achiev" in match:
+        achiev = match["achiev"]
+        bundle["Achievement"] = {
+            "firstBloodKill": achiev.get("firstBloodKill", 0),
+            "firstTowerKill": achiev.get("firstTowerKill", 0),
+            "killParticipation": achiev.get("killParticipation", 0),
+            "soloKills": achiev.get("soloKills", 0),
+            "multiKillOneSpell": achiev.get("multiKillOneSpell", 0),
+            "doubleKills": achiev.get("doubleKills", 0),
+        }
+    
+    # Power bundle (power field)
+    if "power" in match:
+        power = match["power"]
+        bundle["Power"] = {
+            "goldEarned": power.get("goldEarnedperMin", 0) * 30,  # Approximate total
+            "totalDamageDealtToChampions": power.get("magicDamageDealtToChampions", 0) + power.get("physicalDamageDealtToChampions", 0),
+            "kills": match.get("achiev", {}).get("soloKills", 0),
+        }
+    
+    # Hedonism bundle (hed field)
+    if "hed" in match:
+        hed = match["hed"]
+        bundle["Hedonism"] = {
+            "takedownsInEnemyFountain": hed.get("takedownsInEnemyFountain", 0),
+            "alliedJungleMonsterKills": hed.get("alliedJungleMonsterKills", 0),
+        }
+    
+    # Stimulation bundle (stim field)
+    if "stim" in match:
+        stim = match["stim"]
+        bundle["Stimulation"] = {
+            "damageSelfMitigated": stim.get("damageSelfMitigated", 0),
+            "deaths": stim.get("deaths", 0),
+        }
+    
+    # Add other bundles as needed
+    # For now, use available data
+    bundle["Self-Direction"] = {"wardPlaced": match.get("sd", {}).get("wardsPlaced", 0)}
+    bundle["Benevolence"] = {"saveAllyFromDeath": match.get("bene", {}).get("saveAllyFromDeath", 0)}
+    bundle["Universalism"] = {"visionScore": match.get("univ", {}).get("visionScore", 0)}
+    
+    return bundle
 
 def handler(event, context):
     for rec in event["Records"]:
@@ -142,15 +194,38 @@ def handler(event, context):
             qmap[label] = "error"; _update_job(job_id, quarters=qmap); 
             continue
 
-        index_key = f"{s3_base}{label}/index.json"
-        index = _s3_read_json(index_key)
-        matches = [_s3_read_json(it["s3Key"]) for it in index.get("items", [])]
-
-        bundles = []
-        for mj in matches:
-            parts = (mj.get("info") or {}).get("participants") or []
-            you = next((p for p in parts if p.get("puuid")==puuid), None)
-            if you: bundles.append(bundles_from_participant(you))
+        # Check if matches were provided directly in the message (uploaded data)
+        if "matches" in msg:
+            print(f"Processing uploaded matches for {label}")
+            matches = msg["matches"]
+            
+            # Check if matches are already pre-processed (have 'achiev' field)
+            if matches and "achiev" in matches[0]:
+                print(f"Detected pre-processed matches for {label} - extracting bundles directly")
+                # Extract bundles directly from pre-processed matches
+                bundles = []
+                for match in matches:
+                    bundle = extract_bundles_from_processed_match(match)
+                    if bundle:
+                        bundles.append(bundle)
+            else:
+                # Raw Riot API format - need to extract participant data
+                bundles = []
+                for mj in matches:
+                    parts = (mj.get("info") or {}).get("participants") or []
+                    you = next((p for p in parts if p.get("puuid")==puuid), None)
+                    if you: bundles.append(bundles_from_participant(you))
+        else:
+            # Normal flow: read from S3
+            index_key = f"{s3_base}{label}/index.json"
+            index = _s3_read_json(index_key)
+            matches = [_s3_read_json(it["s3Key"]) for it in index.get("items", [])]
+            
+            bundles = []
+            for mj in matches:
+                parts = (mj.get("info") or {}).get("participants") or []
+                you = next((p for p in parts if p.get("puuid")==puuid), None)
+                if you: bundles.append(bundles_from_participant(you))
 
         # Calculate raw scores and average them (don't z-score within single player)
         raw = score_values(bundles)
@@ -275,11 +350,10 @@ def handler(event, context):
                 trends = calculate_trends(all_quarters_data)
                 highlights = extract_best_moments(all_quarters_data, all_participant_bundles)
                 champion_analysis = analyze_champion_pool(all_participant_bundles)
-                comebacks = analyze_comebacks(all_participant_bundles)
                 insights = generate_insights(all_quarters_data, trends, champion_analysis)
                 year_summary = generate_year_summary(
                     all_quarters_data, trends, highlights, 
-                    champion_analysis, comebacks, insights
+                    champion_analysis, insights
                 )
                 
                 # Save comprehensive finale
@@ -292,7 +366,6 @@ def handler(event, context):
                     "trends": trends,
                     "highlights": highlights,
                     "champion_analysis": champion_analysis,
-                    "comebacks": comebacks,
                     "insights": insights,
                     "year_summary": year_summary
                 }

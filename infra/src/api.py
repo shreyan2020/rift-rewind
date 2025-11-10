@@ -202,6 +202,108 @@ def create_job(body: dict):
 
     return _resp(200, {"jobId": job_id, "queued": True})
 
+def create_job_from_upload(body: dict):
+    """
+    Handle uploaded pre-processed match data.
+    Expects body to contain:
+    - riotId, platform, archetype (same as create_job)
+    - uploadedMatches: { Q1: [...], Q2: [...], Q3: [...], Q4: [...] }
+    
+    For pre-processed data, we:
+    1. Upload directly to S3
+    2. Skip fetch/process phases
+    3. Generate story/lore directly
+    4. Mark as ready
+    """
+    platform  = (body.get("platform") or "").lower()
+    riot_id   = body.get("riotId") or ""
+    archetype = body.get("archetype") or "explorer"
+    uploaded_matches = body.get("uploadedMatches")
+
+    if not riot_id or not platform:
+        return _resp(400, {"error": "platform and riotId required"})
+    
+    if not uploaded_matches or not all(q in uploaded_matches for q in ["Q1", "Q2", "Q3", "Q4"]):
+        return _resp(400, {"error": "uploadedMatches must contain Q1, Q2, Q3, Q4"})
+
+    job_id = str(uuid.uuid4())
+    now = int(time.time())
+    s3_base = f"{job_id}/"
+
+    # Upload matches directly to S3
+    import boto3
+    s3 = boto3.client('s3', config=Config(region_name=os.getenv("REGION_HINT", "eu-west-1")))
+    bucket_name = os.getenv("BUCKET_NAME", "")
+    
+    if not bucket_name:
+        return _resp(500, {"error": "BUCKET_NAME not configured"})
+    
+    try:
+        # Store each quarter's matches in S3
+        for quarter in ["Q1", "Q2", "Q3", "Q4"]:
+            matches = uploaded_matches[quarter]
+            
+            # Create index.json for compatibility
+            index = {
+                "quarter": quarter,
+                "count": len(matches),
+                "items": [{"matchId": m.get("matchID", f"match_{i}")} for i, m in enumerate(matches)]
+            }
+            
+            s3.put_object(
+                Bucket=bucket_name,
+                Key=f"{s3_base}{quarter}/index.json",
+                Body=json.dumps(index),
+                ContentType='application/json'
+            )
+            
+            # Store all matches as a single file (pre-processed format)
+            s3.put_object(
+                Bucket=bucket_name,
+                Key=f"{s3_base}{quarter}/matches.json",
+                Body=json.dumps(matches),
+                ContentType='application/json'
+            )
+            
+        LOG.info(f"Uploaded pre-processed matches to S3 for job {job_id}")
+        
+    except Exception as e:
+        LOG.error(f"Failed to upload to S3: {e}", exc_info=True)
+        return _resp(500, {"error": f"Failed to upload data: {str(e)}"})
+
+    # Create DynamoDB item
+    item = {
+        "jobId": job_id,
+        "platform": platform,
+        "riotId": riot_id,
+        "archetype": archetype,
+        "createdAt": now,
+        "status": "running",
+        "quarters": {"Q1": "fetched", "Q2": "fetched", "Q3": "fetched", "Q4": "fetched"},  # Mark as fetched, ready for processing
+        "s3Base": s3_base,
+        "uploadedData": True,  # Flag to indicate this is uploaded data
+    }
+
+    _safe_ddb_put(item)
+
+    local_mode = _is_local_mode()
+    if local_mode:
+        return _resp(200, {"jobId": job_id, "queued": False, "note": "local mode, SQS not used"})
+
+    # Send to PROCESS queue to generate stories
+    process_queue_url = os.getenv("PROCESS_QUEUE_URL", "")
+    if process_queue_url:
+        for quarter in ["Q1", "Q2", "Q3", "Q4"]:
+            _safe_sqs_send(process_queue_url, {
+                "jobId": job_id,
+                "quarter": quarter,
+                "archetype": archetype,
+                "platform": platform,
+                "preProcessed": True,  # Flag that data is already processed
+            })
+
+    return _resp(200, {"jobId": job_id, "queued": True, "uploaded": True})
+
 def get_status(job_id: str):
     try:
         r = TABLE.get_item(Key={"jobId": job_id})
@@ -218,9 +320,10 @@ def get_status(job_id: str):
 def handler(event, _context):
     """
     Routes:
-      OPTIONS /*            -> CORS preflight
-      POST /journey         -> create_job
-      GET  /status/{jobId}  -> get_status
+      OPTIONS /*                -> CORS preflight
+      POST /journey             -> create_job (fetch from Riot API)
+      POST /journey/upload      -> create_job_from_upload (uploaded data)
+      GET  /status/{jobId}      -> get_status
     """
     try:
         path  = (event.get("rawPath") or event.get("path") or "/").lower()
@@ -230,6 +333,11 @@ def handler(event, _context):
         # Handle CORS preflight
         if method == "OPTIONS":
             return _resp(200, {"message": "OK"})
+
+        # POST /journey/upload (must check before /journey)
+        if method == "POST" and path.rstrip("/").endswith("/journey/upload"):
+            body = json.loads(event.get("body") or "{}")
+            return create_job_from_upload(body)
 
         # POST /journey
         if method == "POST" and path.rstrip("/").endswith("/journey"):

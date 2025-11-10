@@ -227,7 +227,7 @@ const FinalDashboard: React.FC<FinalDashboardProps> = ({ quarters, riotId, final
           </p>
           
           <div className="flex gap-4 justify-center">
-            {finaleData?.insights && finaleData.insights.length > 0 && onViewAnalytics && (
+            {finaleData && onViewAnalytics && (
               <motion.button
                 onClick={onViewAnalytics}
                 className="px-8 py-4 rounded-lg font-bold text-lg bg-gradient-to-r from-runeterra-blue to-runeterra-blue-light text-white hover:shadow-lg hover:shadow-runeterra-blue/50 transition-all"
@@ -346,65 +346,38 @@ const TimelineChart: React.FC<TimelineChartProps> = ({ selectedValue, quarters, 
 
       {/* Trend Summary for selected value */}
       <div className="flex justify-center">
-        <ValueTooltipWrapper valueName={selectedValue}>
-          <motion.div
-            key={selectedValue} // Re-animate when value changes
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="bg-zinc-900 border border-zinc-700 rounded-lg p-6 text-center cursor-help max-w-sm shadow-lg"
-          >
-            <div className="w-4 h-4 rounded-full mx-auto mb-3 bg-cyan-400"></div>
-            <div className="text-cyan-400 text-lg font-bold mb-2">
-              {selectedValue}
+        <motion.div
+          key={selectedValue} // Re-animate when value changes
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className="bg-gradient-to-br from-zinc-900 to-zinc-800 border-2 border-cyan-500/30 rounded-xl p-6 text-center max-w-md shadow-2xl"
+        >
+          <div className="w-5 h-5 rounded-full mx-auto mb-3 bg-cyan-400 shadow-lg shadow-cyan-400/50"></div>
+          <div className="text-cyan-300 text-xl font-bold mb-2">
+            {selectedValue}
+          </div>
+          <div className={`text-5xl font-bold mb-3 ${
+            absoluteChange < 1 ? 'text-gray-400' : 
+            change > 0 ? 'text-green-400' : 'text-red-400'
+          }`}>
+            {absoluteChange < 1 ? '→' : change > 0 ? '↗' : '↘'}
+            {' '}
+            {displayMetric}
+          </div>
+          <div className="text-sm text-zinc-300 mb-4 font-medium">
+            Period 1: {values[0].toFixed(1)}/100 → Period 4: {values[3].toFixed(1)}/100
+          </div>
+          <div className="bg-black/30 border border-cyan-500/20 rounded-lg p-4">
+            <div className="text-xs text-cyan-400/80 font-semibold uppercase tracking-wider mb-2">
+              What This Measures
             </div>
-            <div className={`text-4xl font-bold mb-2 ${
-              absoluteChange < 1 ? 'text-gray-400' : 
-              change > 0 ? 'text-green-400' : 'text-red-400'
-            }`}>
-              {absoluteChange < 1 ? '→' : change > 0 ? '↗' : '↘'}
-              {' '}
-              {displayMetric}
-            </div>
-            <div className="text-sm text-zinc-400">
-              Q1: {values[0].toFixed(1)}/100 → Q4: {values[3].toFixed(1)}/100
-            </div>
-            <div className="text-xs text-zinc-300 mt-3 max-w-xs mx-auto">
+            <div className="text-xs text-zinc-200 leading-relaxed">
               {VALUE_DESCRIPTIONS[selectedValue]}
             </div>
-          </motion.div>
-        </ValueTooltipWrapper>
-      </div>
-    </div>
-  );
-};
-
-interface ValueTooltipWrapperProps {
-  valueName: string;
-  children: React.ReactNode;
-}
-
-const ValueTooltipWrapper: React.FC<ValueTooltipWrapperProps> = ({ valueName, children }) => {
-  const [showTooltip, setShowTooltip] = useState(false);
-  
-  return (
-    <div
-      className="relative"
-      onMouseEnter={() => setShowTooltip(true)}
-      onMouseLeave={() => setShowTooltip(false)}
-    >
-      {children}
-      {showTooltip && (
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="absolute left-0 right-0 top-full mt-2 z-10 bg-runeterra-darker border border-runeterra-blue/50 rounded-lg p-3 shadow-xl"
-        >
-          <p className="text-runeterra-gold-light text-xs leading-relaxed">
-            {VALUE_DESCRIPTIONS[valueName] || 'A measure of your playstyle.'}
-          </p>
+          </div>
         </motion.div>
-      )}
+      </div>
     </div>
   );
 };

@@ -7,6 +7,8 @@ from typing import List, Dict, Any, Tuple
 from statistics import mean, stdev
 from collections import Counter, defaultdict
 import math
+import json
+import boto3
 
 def _safe_num(x: Any, default: float = 0.0) -> float:
     """Safely convert to float"""
@@ -294,7 +296,130 @@ def analyze_champion_pool(participant_bundles: List[List[dict]]) -> Dict[str, An
 def generate_insights(quarters_data: List[Dict[str, Any]], trends: Dict[str, Any], 
                      champion_analysis: Dict[str, Any]) -> List[Dict[str, str]]:
     """
-    Generate AI-powered actionable insights and recommendations
+    Generate AI-powered actionable insights and recommendations using AWS Bedrock
+    """
+    insights = []
+    
+    if not quarters_data:
+        return insights
+    
+    try:
+        # Prepare data summary for the LLM
+        latest = quarters_data[-1] if quarters_data else {}
+        latest_stats = latest.get("stats", {})
+        
+        # Build context data
+        context = {
+            "total_periods": len(quarters_data),
+            "latest_stats": {
+                "kda": round(_safe_get(latest_stats, "kda_proxy"), 2),
+                "cs_per_min": round(_safe_get(latest_stats, "cs_per_min"), 2),
+                "gold_per_min": round(_safe_get(latest_stats, "gold_per_min"), 1),
+                "vision_score_per_min": round(_safe_get(latest_stats, "vision_score_per_min"), 2)
+            },
+            "trends": {},
+            "champion_pool": {}
+        }
+        
+        # Add trend information
+        if trends.get("available"):
+            for metric in ["kda", "cs_per_min", "vision_score", "gold_per_min"]:
+                if metric in trends:
+                    context["trends"][metric] = {
+                        "direction": trends[metric].get("direction"),
+                        "change_pct": round(trends[metric].get("change_pct", 0), 1),
+                        "values": [round(v, 2) for v in trends[metric].get("values", [])]
+                    }
+        
+        # Add champion pool information
+        if champion_analysis.get("available"):
+            context["champion_pool"] = {
+                "total_unique": champion_analysis.get("total_unique_champions", 0),
+                "versatility_score": round(champion_analysis.get("versatility_score", 0), 2),
+                "most_played": [
+                    {
+                        "name": champ["name"],
+                        "games": champ["games"],
+                        "avg_damage": round(champ["avg_damage"], 1),
+                        "avg_cs_per_min": round(champ["avg_cs_per_min"], 1)
+                    }
+                    for champ in champion_analysis.get("most_played", [])[:3]
+                ]
+            }
+        
+        # Create the prompt for Bedrock
+        prompt = f"""You are an expert League of Legends coach analyzing a player's performance data. Generate 5-7 actionable insights based on the following data:
+
+Player Performance Summary:
+{json.dumps(context, indent=2)}
+
+Generate insights that:
+1. Are specific and actionable (tell the player exactly what to do)
+2. Cover different aspects (KDA, farming, vision, champion pool, trends)
+3. Balance constructive criticism with positive reinforcement
+4. Are relevant to the player's actual performance level
+5. Include both immediate actions and long-term goals
+
+For each insight, provide:
+- category: One of [Combat, Farming, Vision, Progress, Champion Pool, Champion Mastery, Positioning]
+- priority: One of [high, medium, low, positive, info]
+- insight: A clear observation about their performance (1-2 sentences)
+- action: Specific actionable advice (1 sentence)
+
+Return ONLY a valid JSON array of insights, no other text. Format:
+[
+  {{
+    "category": "Combat",
+    "priority": "high",
+    "insight": "Your observation here",
+    "action": "Your specific advice here"
+  }}
+]"""
+
+        # Call Bedrock
+        bedrock = boto3.client('bedrock-runtime', region_name='us-east-1')
+        
+        response = bedrock.invoke_model(
+            modelId='us.anthropic.claude-3-5-sonnet-20241022-v2:0',
+            body=json.dumps({
+                "anthropic_version": "bedrock-2023-05-31",
+                "max_tokens": 2000,
+                "temperature": 0.7,
+                "messages": [
+                    {
+                        "role": "user",
+                        "content": prompt
+                    }
+                ]
+            })
+        )
+        
+        response_body = json.loads(response['body'].read())
+        ai_response = response_body['content'][0]['text']
+        
+        # Parse the JSON response
+        # Extract JSON array from response (in case there's extra text)
+        start_idx = ai_response.find('[')
+        end_idx = ai_response.rfind(']') + 1
+        if start_idx != -1 and end_idx > start_idx:
+            json_str = ai_response[start_idx:end_idx]
+            insights = json.loads(json_str)
+        
+        print(f"   ✓ Generated {len(insights)} AI-powered insights")
+        
+    except Exception as e:
+        print(f"   ⚠ Error generating AI insights: {str(e)}")
+        print(f"   → Falling back to rule-based insights")
+        # Fallback to rule-based insights
+        insights = _generate_fallback_insights(quarters_data, trends, champion_analysis)
+    
+    return insights
+
+
+def _generate_fallback_insights(quarters_data: List[Dict[str, Any]], trends: Dict[str, Any], 
+                                champion_analysis: Dict[str, Any]) -> List[Dict[str, str]]:
+    """
+    Fallback rule-based insights if AI generation fails
     """
     insights = []
     
@@ -394,64 +519,7 @@ def generate_insights(quarters_data: List[Dict[str, Any]], trends: Dict[str, Any
                 "action": f"Your average stats on {main_champ['name']}: {main_champ['avg_damage']:.0f} dmg, {main_champ['avg_cs_per_min']:.1f} CS/min"
             })
     
-    # Role insights
-    role = _safe_get(latest_stats, "primary_role", default="UNKNOWN")
-    if role != "UNKNOWN":
-        role_tips = {
-            "TOP": "Focus on wave management and teleport plays. Your impact in team fights is crucial.",
-            "JUNGLE": "Track enemy jungler and secure objectives. Your pathing determines game flow.",
-            "MIDDLE": "Roam effectively and control vision around mid. You're the center of the map.",
-            "BOTTOM": "Position safely in fights and farm efficiently. You're the late-game insurance.",
-            "UTILITY": "Vision control and peel are your priorities. You enable your team to succeed."
-        }
-        if role in role_tips:
-            insights.append({
-                "category": "Role",
-                "priority": "info",
-                "insight": f"As a {role} main:",
-                "action": role_tips[role]
-            })
-    
     return insights
-
-
-# =========================
-# COMEBACK ANALYSIS
-# =========================
-
-def analyze_comebacks(participant_bundles: List[List[dict]]) -> Dict[str, Any]:
-    """
-    Identify games where player turned around a deficit
-    """
-    comebacks = []
-    
-    all_games = []
-    for bundles in participant_bundles:
-        all_games.extend(bundles)
-    
-    for i, game in enumerate(all_games):
-        # Look for games with gold deficit early but won
-        early_deficit = _safe_get(game, "achiev", "earlyStats", "earlyLaningPhaseGoldExpAdvantage")
-        had_open_nexus = _safe_get(game, "secs", "hadOpenNexus")
-        lost_inhibitor = _safe_get(game, "secs", "lostAnInhibitor")
-        
-        # If had deficit or lost structures but still has good stats, likely a comeback
-        if (early_deficit < -500 or had_open_nexus > 0 or lost_inhibitor > 0):
-            final_kda = _safe_get(game, "achiev", "highkda")
-            if final_kda > 0:  # Won the game (assumption based on good KDA)
-                comebacks.append({
-                    "index": i,
-                    "champion": _safe_get_str(game, "selfD", "championName", default="Unknown"),
-                    "early_deficit": early_deficit,
-                    "had_open_nexus": had_open_nexus > 0,
-                    "description": "Comeback victory despite early struggles"
-                })
-    
-    return {
-        "count": len(comebacks),
-        "games": comebacks[:5],  # Top 5 comebacks
-        "resilience_score": len(comebacks) / max(1, len(all_games)) * 100
-    }
 
 
 # =========================
@@ -460,7 +528,7 @@ def analyze_comebacks(participant_bundles: List[List[dict]]) -> Dict[str, Any]:
 
 def generate_year_summary(quarters_data: List[Dict[str, Any]], trends: Dict[str, Any], 
                          highlights: Dict[str, Any], champion_analysis: Dict[str, Any],
-                         comebacks: Dict[str, Any], insights: List[Dict[str, str]]) -> Dict[str, Any]:
+                         insights: List[Dict[str, str]]) -> Dict[str, Any]:
     """
     Comprehensive year-end summary combining all analytics
     """
@@ -496,8 +564,6 @@ def generate_year_summary(quarters_data: List[Dict[str, Any]], trends: Dict[str,
         "year_avg_vision_score": round(avg_vision, 2),
         "total_unique_champions": champion_analysis.get("total_unique_champions", 0),
         "most_played_champion": champion_analysis.get("most_played", [{}])[0].get("name", "Unknown") if champion_analysis.get("most_played") else "Unknown",
-        "comeback_victories": comebacks.get("count", 0),
-        "resilience_score": round(comebacks.get("resilience_score", 0), 1),
         "achievements": achievements,
         "strengths": strengths,
         "growth_areas": growth_areas,

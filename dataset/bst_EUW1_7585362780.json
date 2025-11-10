@@ -1,0 +1,131 @@
+{
+    "matchID": "EUW1_7585362780",
+    "timestamp": 1761740673148,
+    "achiev": {
+        "firstTowerAssist": false,
+        "firstTowerKill": false,
+        "firstBloodAssist": false,
+        "firstBloodKill": true,
+        "damageSelfMitigated": 6681,
+        "doubleKills": 0,
+        "highDamagePerDeath": false,
+        "highkda": false,
+        "lane": "NONE",
+        "earlyStats": [
+            "earlyLaningPhaseGoldExpAdvantage",
+            "takedownsFirstXMinutes",
+            "turretPlatesTaken",
+            "kTurretsDestroyedBeforePlatesFall",
+            "landSkillShotsEarlyGame"
+        ],
+        "dodgeSkillShotsSmallWindow": 0,
+        "acesBefore15Minutes": 0,
+        "quickCleanse": 0,
+        "quickFirstTurret": 0,
+        "quickSoloKills": 0,
+        "skillshotsDodged": 11,
+        "skillshotsHit": 7,
+        "fullTeamTakedown": 0,
+        "killingSprees": 0,
+        "riftHeraldTakedowns": 0,
+        "killParticipation": 0.3,
+        "multiKillOneSpell": 0,
+        "deathsByEnemyChamps": 3,
+        "maxCsAdvantageOnLaneOpponent": 1,
+        "maxLevelLeadLaneOpponent": 0,
+        "teamDamagePercentage": 0.10401809466787346,
+        "soloKills": 0
+    },
+    "power": {
+        "fistBumpParticipation": 0,
+        "pings": {},
+        "goldEarnedperMin": 298.4584980237154,
+        "goldSpentperMin": 231.22529644268775,
+        "magicDamageDealt": 2118,
+        "magicDamageDealtToChampions": 1662,
+        "magicDamageTaken": 3592,
+        "physicalDamageDealt": 4788,
+        "physicalDamageDealtToChampions": 1292,
+        "physicalDamageTaken": 5042
+    },
+    "hed": {
+        "takedownsInEnemyFountain": 0,
+        "alliedJungleMonsterKills": 0,
+        "twentyMinionsIn3SecondsCount": 0,
+        "blastConeOppositeOpponentCount": 0
+    },
+    "stim": {
+        "deaths": 3,
+        "damageSelfMitigated": 6681,
+        "bountyGold": 418.08709716796875,
+        "buffsStolen": 0,
+        "elderDragonKillsWithOpposingSoul": 0,
+        "junglerTakedownsNearDamagedEpicMonster": 0,
+        "epicMonsterKillsNearEnemyJungler": 0,
+        "epicMonsterSteals": 0,
+        "killsNearEnemyTurret": 0,
+        "survivedSingleDigitHpCount": 0,
+        "survivedThreeImmobilizesInFight": 0
+    },
+    "selfD": {
+        "goldEarnedperMin": 298.4584980237154,
+        "goldSpentperMin": 231.22529644268775,
+        "championName": "Blitzcrank",
+        "championId": 53,
+        "killAfterHiddenWithAlly": 0,
+        "knockEnemyIntoTeamAndKill": 2,
+        "killsWithHelpFromEpicMonster": 0,
+        "legendaryItemUsed": [
+            3190
+        ],
+        "multiTurretRiftHeraldCount": 0,
+        "takedownsAfterGainingLevelAdvantage": 0,
+        "takedownsInAlcove": 0,
+        "soloKills": 0,
+        "unseenRecalls": 0
+    },
+    "bene": {
+        "deaths": 3,
+        "damageDealtToBuildings": 0,
+        "damageDealtToEpicMonsters": 0,
+        "damageDealtToObjectives": 0,
+        "damageDealtToTurrets": 0,
+        "controlWardsPlaced": 2,
+        "damageTakenOnTeamPercentage": 0.14426507978738068,
+        "teamDamagePercentage": 0.10401809466787346,
+        "dragonTakedowns": 0,
+        "killParticipation": 0.3,
+        "teamBaronKills": 0,
+        "teamElderDragonKills": 0,
+        "teamRiftHeraldKills": 0,
+        "takedowns": 3,
+        "enemyChampionImmobilizations": 23,
+        "immobilizeAndKillWithAlly": 3,
+        "pickKillWithAlly": 3,
+        "stealthWardsPlaced": 4,
+        "twoWardsOneSweeperCount": 0
+    },
+    "trad": {
+        "csPerMin": 1.4822134387351777,
+        "csPerMinPre10": 1.2
+    },
+    "univ": {
+        "lane": "NONE",
+        "championId": 53
+    },
+    "secs": {
+        "deaths": 3,
+        "damageSelfMitigated": 6681,
+        "longestTimeSpentLiving": 458,
+        "consumablesPurchased": 5,
+        "deathsByEnemyChamps": 3,
+        "hadOpenNexus": 0,
+        "lostAnInhibitor": 0,
+        "killsUnderOwnTurret": 1,
+        "scuttleCrabKills": 0,
+        "visionScoreAdvantageLaneOpponent": 0.1858503818511963,
+        "visionScorePerMinute": 1.0062786490079345,
+        "wardTakedowns": 5,
+        "wardsGuarded": 1
+    }
+}

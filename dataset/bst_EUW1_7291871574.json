@@ -1,0 +1,113 @@
+{
+    "matchID": "EUW1_7291871574",
+    "timestamp": 1738501886326,
+    "achiev": {
+        "firstTowerAssist": true,
+        "firstTowerKill": false,
+        "firstBloodAssist": false,
+        "firstBloodKill": true,
+        "damageSelfMitigated": 3379,
+        "doubleKills": 0,
+        "highDamagePerDeath": false,
+        "highkda": false,
+        "lane": "BOTTOM",
+        "earlyStats": [
+            "earlyLaningPhaseGoldExpAdvantage",
+            "takedownsFirstXMinutes",
+            "turretPlatesTaken",
+            "kTurretsDestroyedBeforePlatesFall",
+            "landSkillShotsEarlyGame"
+        ],
+        "dodgeSkillShotsSmallWindow": 10,
+        "acesBefore15Minutes": 0,
+        "quickCleanse": 0,
+        "quickFirstTurret": 0,
+        "quickSoloKills": 0,
+        "skillshotsDodged": 70,
+        "skillshotsHit": 19,
+        "fullTeamTakedown": 0,
+        "killingSprees": 0,
+        "riftHeraldTakedowns": 0,
+        "killParticipation": 0.6896551724137931,
+        "multiKillOneSpell": 0,
+        "deathsByEnemyChamps": 4,
+        "maxCsAdvantageOnLaneOpponent": 2,
+        "maxLevelLeadLaneOpponent": 2,
+        "teamDamagePercentage": 0.12033064631480068,
+        "soloKills": 1
+    },
+    "power": {
+        "fistBumpParticipation": 0,
+        "pings": {},
+        "goldEarnedperMin": 346.6282894736842,
+        "goldSpentperMin": 298.51973684210526,
+        "magicDamageDealt": 12103,
+        "magicDamageDealtToChampions": 6939,
+        "magicDamageTaken": 2039,
+        "physicalDamageDealt": 2664,
+        "physicalDamageDealtToChampions": 707,
+        "physicalDamageTaken": 5755
+    },
+    "hed": {
+        "takedownsInEnemyFountain": 0,
+        "alliedJungleMonsterKills": 0,
+        "twentyMinionsIn3SecondsCount": 0,
+        "blastConeOppositeOpponentCount": 0
+    },
+    "stim": {
+        "deaths": 4,
+        "damageSelfMitigated": 3379,
+        "bountyGold": 0,
+        "buffsStolen": 0,
+        "elderDragonKillsWithOpposingSoul": 0,
+        "junglerTakedownsNearDamagedEpicMonster": 0,
+        "epicMonsterKillsNearEnemyJungler": 0,
+        "epicMonsterSteals": 0,
+        "killsNearEnemyTurret": 3,
+        "survivedSingleDigitHpCount": 0,
+        "survivedThreeImmobilizesInFight": 2
+    },
+    "selfD": {
+        "goldEarnedperMin": 346.6282894736842,
+        "goldSpentperMin": 298.51973684210526,
+        "championName": "Nami",
+        "championId": 267,
+        "killAfterHiddenWithAlly": 3,
+        "knockEnemyIntoTeamAndKill": 1,
+        "killsWithHelpFromEpicMonster": 0,
+        "legendaryItemUsed": [
+            4005,
+            3871,
+            2065
+        ],
+        "multiTurretRiftHeraldCount": 0,
+        "takedownsAfterGainingLevelAdvantage": 0,
+        "takedownsInAlcove": 0,
+        "soloKills": 1,
+        "unseenRecalls": 0
+    },
+    "bene": {},
+    "trad": {
+        "csPerMin": 0.6907894736842105,
+        "csPerMinPre10": 1.3
+    },
+    "univ": {
+        "lane": "BOTTOM",
+        "championId": 267
+    },
+    "secs": {
+        "deaths": 4,
+        "damageSelfMitigated": 3379,
+        "longestTimeSpentLiving": 283,
+        "consumablesPurchased": 5,
+        "deathsByEnemyChamps": 4,
+        "hadOpenNexus": 0,
+        "lostAnInhibitor": 0,
+        "killsUnderOwnTurret": 0,
+        "scuttleCrabKills": 0,
+        "visionScoreAdvantageLaneOpponent": 0.22098493576049805,
+        "visionScorePerMinute": 1.509497281345263,
+        "wardTakedowns": 1,
+        "wardsGuarded": 0
+    }
+}

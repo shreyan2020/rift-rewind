@@ -9,13 +9,49 @@ interface JourneyProps {
   jobId: string;
   riotId: string;
   onReset?: () => void;
+  uploadedJourneyData?: any; // Complete pre-generated journey package
 }
 
-const Journey: React.FC<JourneyProps> = ({ jobId, riotId, onReset }) => {
+const Journey: React.FC<JourneyProps> = ({ jobId, riotId, onReset, uploadedJourneyData }) => {
   const [jobStatus, setJobStatus] = useState<JobStatus | null>(null);
   const [currentChapter, setCurrentChapter] = useState<string | null>(null);
   const [chapterData, setChapterData] = useState<Record<string, Quarter>>({});
   const [finaleData, setFinaleData] = useState<Finale | null>(null);
+
+  // If uploaded journey data is provided, use it directly
+  useEffect(() => {
+    if (uploadedJourneyData) {
+      console.log('Loading uploaded journey data');
+      
+      // Convert uploaded format to expected format
+      const quarters: Record<string, Quarter> = {};
+      Object.keys(uploadedJourneyData.quarters).forEach(q => {
+        quarters[q] = uploadedJourneyData.quarters[q];
+      });
+      
+      setChapterData(quarters);
+      setFinaleData(uploadedJourneyData.finale);
+      
+      // Set fake job status to show all quarters as ready
+      setJobStatus({
+        jobId: 'uploaded',
+        riotId: uploadedJourneyData.metadata?.playerName || 'Player',
+        platform: 'uploaded',
+        archetype: uploadedJourneyData.metadata?.archetype || 'explorer',
+        status: 'completed',
+        s3Base: '',
+        quarters: {
+          Q1: 'ready',
+          Q2: 'ready',
+          Q3: 'ready',
+          Q4: 'ready',
+        },
+      });
+      
+      // Auto-show Q1
+      setCurrentChapter('Q1');
+    }
+  }, [uploadedJourneyData]);
 
   const loadChapter = useCallback(async (quarter: string, s3Base: string) => {
     if (chapterData[quarter]) return; // Already loaded
@@ -29,6 +65,11 @@ const Journey: React.FC<JourneyProps> = ({ jobId, riotId, onReset }) => {
   }, [chapterData]);
 
   useEffect(() => {
+    // Skip polling if using uploaded journey data
+    if (uploadedJourneyData) {
+      return;
+    }
+    
     const pollStatus = async () => {
       try {
         const status = await getJobStatus(jobId);
@@ -47,12 +88,16 @@ const Journey: React.FC<JourneyProps> = ({ jobId, riotId, onReset }) => {
     pollStatus();
     const interval = setInterval(pollStatus, 3000); // Poll every 3 seconds
     return () => clearInterval(interval);
-  }, [jobId, currentChapter, loadChapter]);
+  }, [jobId, currentChapter, loadChapter, uploadedJourneyData]);
 
   const handleChapterClick = (quarter: string) => {
     if (!jobStatus || jobStatus.quarters[quarter as keyof typeof jobStatus.quarters] !== 'ready') return;
     setCurrentChapter(quarter);
-    loadChapter(quarter, jobStatus.s3Base);
+    
+    // Skip loading if using uploaded data (already loaded)
+    if (!uploadedJourneyData) {
+      loadChapter(quarter, jobStatus.s3Base);
+    }
   };
 
   const getQuarterStatus = (quarter: string): string => {
@@ -192,6 +237,7 @@ const Journey: React.FC<JourneyProps> = ({ jobId, riotId, onReset }) => {
         highlights={finaleData.highlights}
         championAnalysis={finaleData.champion_analysis}
         yearSummary={finaleData.year_summary}
+        quarters={chapterData}  // Pass quarters data for date ranges
         onBack={() => setCurrentChapter('FINAL')}
       />
     );

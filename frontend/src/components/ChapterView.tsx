@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import type { Quarter } from '../api';
-import { VALUE_DESCRIPTIONS } from '../constants/valueDescriptions';
+import { VALUE_DESCRIPTIONS, VALUE_CALCULATION_EXPLANATION } from '../constants/valueDescriptions';
 
 // Region-specific background themes
 const REGION_THEMES: Record<string, { bg: string; accent: string; shadow: string; description: string }> = {
@@ -216,6 +216,14 @@ const ChapterView: React.FC<ChapterViewProps> = ({ quarter, data, riotId, onNext
                     <span className="text-gray-400 ml-1">{VALUE_DESCRIPTIONS[name] || 'A measure of your playstyle.'}</span>
                   </div>
                 ))}
+              </div>
+              
+              {/* Calculation Explanation */}
+              <div className="mt-4 pt-3 border-t border-runeterra-blue/10">
+                <h4 className="text-xs font-semibold text-purple-400/70 uppercase tracking-wider mb-2">How It's Calculated</h4>
+                <p className="text-xs text-gray-400 leading-relaxed">
+                  {VALUE_CALCULATION_EXPLANATION}
+                </p>
               </div>
             </div>
           </motion.div>

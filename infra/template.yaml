@@ -14,7 +14,7 @@ Globals:
         BUCKET_NAME: !Ref DataBucket
         FETCH_QUEUE_URL: !Ref FetchQueue
         PROCESS_QUEUE_URL: !Ref ProcessQueue
-        RIOT_API_KEY: "RGAPI-80570740-09c1-46c0-a1ec-e2115cf82c17"
+        RIOT_API_KEY: "RGAPI-d47d33d8-dc71-4394-8898-c6a52f6ed456"
         MAX_MATCHES_PER_QUARTER: "50"
         MAX_CONCURRENCY: "8"
         REGION_HINT: !Ref AWS::Region
@@ -158,6 +158,7 @@ Resources:
                 - bedrock:InvokeModel
               Resource: 
                 - !Sub 'arn:aws:bedrock:${AWS::Region}::foundation-model/mistral.mistral-7b-instruct-v0:2'
+                - !Sub 'arn:aws:bedrock:us-east-1::foundation-model/us.anthropic.claude-3-5-sonnet-20241022-v2:0'
       Events:
         FromProcessQueue:
           Type: SQS

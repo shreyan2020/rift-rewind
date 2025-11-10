@@ -47,6 +47,23 @@ export const createJourney = async (request: JourneyRequest): Promise<{ jobId: s
   return response.data;
 };
 
+export interface UploadJourneyRequest {
+  platform: string;
+  riotId: string;
+  archetype: string;
+  uploadedMatches: {
+    Q1: any[];
+    Q2: any[];
+    Q3: any[];
+    Q4: any[];
+  };
+}
+
+export const createJourneyFromUpload = async (request: UploadJourneyRequest): Promise<{ jobId: string; queued: boolean }> => {
+  const response = await axios.post(`${API_BASE_URL}/journey/upload`, request);
+  return response.data;
+};
+
 export const getJobStatus = async (jobId: string): Promise<JobStatus> => {
   const response = await axios.get(`${API_BASE_URL}/status/${jobId}`);
   return response.data;

@@ -1,12 +1,14 @@
 export const VALUE_DESCRIPTIONS: Record<string, string> = {
-  'Achievement': 'Measures your drive for success through competitive performance, objective control, and winning.',
-  'Benevolence': 'Reflects your team-oriented play, helping teammates, and prioritizing collective success over personal glory.',
-  'Conformity': 'Indicates following team strategies, adapting to meta picks, and playing within established team compositions.',
-  'Hedonism': 'Represents your enjoyment of the game through playful actions, risky plays, and fun-focused decision making.',
-  'Power': 'Shows your desire for dominance through kills, gold leads, and controlling the game state.',
-  'Security': 'Reflects cautious, defensive play focused on minimizing deaths and maintaining safe positioning.',
-  'Self-Direction': 'Measures independent decision-making, creative builds, and unique playstyle choices.',
-  'Stimulation': 'Indicates aggression, variety-seeking behavior, and high-action gameplay.',
-  'Tradition': 'Shows adherence to classic strategies, standard builds, and conventional playstyles.',
-  'Universalism': 'Reflects balanced, adaptable play that values harmony, vision control, and strategic flexibility.',
+  'Achievement': 'First bloods, killing sprees, team damage %, high KDA. Your drive for competitive success.',
+  'Benevolence': 'Kill participation, vision score, wards placed, assists. Your team-oriented support play.',
+  'Conformity': 'Stealth wards, ward guarding, avoiding deaths. Following team strategies and safe play.',
+  'Hedonism': 'Fountain kills, minion clears, blast cone tricks. Your playful, fun-focused actions.',
+  'Power': 'Gold/min, damage dealt, damage mitigated. Your dominance and resource control.',
+  'Security': 'Vision control, ward clearing, damage mitigation, turret kills. Your defensive, cautious positioning.',
+  'Self-Direction': 'Solo kills, unique combos, gold spending efficiency. Your independent decision-making.',
+  'Stimulation': 'Bounty gold, epic steals, kills near turrets, deaths. Your aggressive, high-action plays.',
+  'Tradition': 'CS/min, early CS, longest life. Your adherence to standard farming and classic strategies.',
+  'Universalism': 'Champion pool diversity, role flexibility. Your balanced, adaptable playstyle.',
 };
+
+export const VALUE_CALCULATION_EXPLANATION = `Values are calculated from your match performance data and scaled relatively. The highest value in each period is set to 100, with others shown proportionally. This means your dominant playstyle trait becomes 100, and others are shown relative to it. Different periods may have different dominant values as your playstyle evolves.`;
