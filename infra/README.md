@@ -164,7 +164,7 @@ Get job status and quarter readiness
 1. Receive message: `{ jobId, quarter, archetype }`
 2. Load match data from S3
 3. **Calculate stats** (`stats_inference.py`):
-   - KDA proxy, CS/min, vision/min, gold/min
+  - KDA proxy, CS/min, vision/min, gold/min
    - Role detection and role-specific stats
    - Playstyle values (z-score normalized across games)
    - Top 3 values per quarter
@@ -199,34 +199,232 @@ Get job status and quarter readiness
 
 ### `stats_inference.py`
 
-**Purpose**: Calculate performance metrics and playstyle values
+**Purpose**: Calculate performance metrics and playstyle values using a three-step algorithm
 
-**Key Functions**:
-- `chapter_stats(matches, puuid)`: Aggregate per-quarter stats
-  - KDA proxy: `(kills + assists) / max(deaths, 1)`
-  - CS/min, gold/min, vision/min
-  - Ping rate per minute
-  - Role-specific: objective damage, kill participation, control wards
-- `bundles_from_participant(p)`: Extract per-game feature scores
-- `score_values(bundle)`: Map features to Schwartz values
-- `zscore_rows(rows, keys)`: Normalize values per-game for fair ranking
-- `aggregate_mean(rows, keys)`: Average normalized values across games
+---
 
-**Playstyle Values** (Schwartz-inspired):
-- **Power**: Dominance, kills, damage
-- **Achievement**: CS, gold, efficiency
-- **Hedonism**: Playmaking, risk-taking
-- **Stimulation**: Variety, novelty
-- **Self-Direction**: Independence, creativity
-- **Benevolence**: Support, assists, healing
-- **Tradition**: Consistency, reliability
-- **Conformity**: Team play, structure
-- **Security**: Vision, safety, control wards
-- **Universalism**: Global impact, team objectives
+#### **Algorithm Overview**
 
-**Output**:
+```
+Raw Match Data → Feature Extraction → Weighted Scoring → Z-Score Normalization → Top 3 Selection
+```
+
+---
+
+#### **Step 1: Feature Extraction** (`bundles_from_participant`)
+
+Extracts behavioral features from each participant (player) in a match, organized into "bundles":
+
+| Bundle | Features Extracted | Purpose |
+|--------|-------------------|---------|
+| `power` | Gold/min, damage dealt/taken, pings | Measures dominance and resource control |
+| `achiev` | First bloods, killing sprees, team damage %, KDA | Measures competitive achievement |
+| `hed` | Fountain kills, minion clears, blast cones | Measures playful, risky behavior |
+| `stim` | Bounty gold, epic steals, deaths | Measures aggressive, high-action play |
+| `selfD` | Solo kills, unique combos, gold spending | Measures independent decision-making |
+| `bene` | Kill participation, assists, immobilizations | Measures supportive, team-oriented play |
+| `trad` | CS/min, early CS, longest life | Measures adherence to farming fundamentals |
+| `conf` | Stealth wards, ward guarding, deaths (negative) | Measures team structure and safety |
+| `secs` | Vision score, ward takedowns, damage mitigation | Measures defensive positioning |
+| `univ` | Champion diversity, role flexibility | Measures adaptability |
+
+**Example Output** (one game):
 ```python
 {
+  "power": {"goldEarnedperMin": 340.5, "magicDamageDealtToChampions": 15234, ...},
+  "achiev": {"firstBloodKill": 1.0, "killingSprees": 2.0, "teamDamagePercentage": 0.25, ...},
+  "bene": {"killParticipation": 0.68, "controlWardsPlaced": 3.0, ...},
+  ...
+}
+```
+
+---
+
+#### **Step 2: Weighted Value Scoring** (`score_values`)
+
+Each of the 10 Schwartz values has a formula defined in the `WEIGHTS` dictionary (lines 209-262):
+
+**Complete Feature Mapping:**
+
+```python
+WEIGHTS = {
+    "Power": [
+        ("power.goldEarnedperMin", 1.0),
+        ("power.magicDamageDealtToChampions", 0.5),
+        ("power.physicalDamageDealtToChampions", 0.5),
+        ("power.damageSelfMitigated", 0.2),
+    ],
+    "Achievement": [
+        ("achiev.firstBloodKill", 0.8),
+        ("achiev.killingSprees", 0.6),
+        ("achiev.teamDamagePercentage", 0.8),
+        ("achiev.highkda", 0.6),
+    ],
+    "Hedonism": [
+        ("hed.takedownsInEnemyFountain", 1.0),
+        ("hed.twentyMinionsIn3SecondsCount", 0.5),
+        ("hed.blastConeOppositeOpponentCount", 0.3),
+    ],
+    "Stimulation": [
+        ("stim.bountyGold", 0.6),
+        ("stim.epicMonsterSteals", 0.8),
+        ("stim.killsNearEnemyTurret", 0.5),
+        ("stim.deaths", 0.2),  # Aggressive = more deaths
+    ],
+    "Self-Direction": [
+        ("selfD.soloKills", 0.8),
+        ("selfD.knockEnemyIntoTeamAndKill", 0.5),
+        ("selfD.goldSpentperMin", 0.3),
+    ],
+    "Benevolence": [
+        ("bene.killParticipation", 1.0),
+        ("secs.visionScorePerMinute", 0.8),  # Vision = teamwork
+        ("secs.wardTakedowns", 0.5),
+        ("bene.controlWardsPlaced", 0.5),
+        ("bene.immobilizeAndKillWithAlly", 0.5),
+    ],
+    "Tradition": [
+        ("trad.csPerMin", 0.8),
+        ("trad.csPerMinPre10", 0.8),
+        ("secs.longestTimeSpentLiving", 0.2),
+    ],
+    "Conformity": [
+        ("bene.stealthWardsPlaced", 0.3),
+        ("secs.wardsGuarded", 0.3),
+        ("secs.deaths", -0.6),  # Negative: avoiding deaths
+    ],
+    "Security": [
+        ("secs.visionScorePerMinute", 0.8),
+        ("secs.wardTakedowns", 0.5),
+        ("secs.damageSelfMitigated", 0.4),
+        ("secs.killsUnderOwnTurret", 0.3),
+    ],
+    "Universalism": []  # Injected as diversity bonus later
+}
+```
+
+**Formula**: For each game, for each value:
+```python
+value_score = sum(weight * feature_value for feature, weight in WEIGHTS[value])
+```
+
+**Example** (one game, Power calculation):
+```python
+Power = (340.5 * 1.0) + (15234 * 0.5) + (8921 * 0.5) + (5123 * 0.2)
+      = 340.5 + 7617 + 4460.5 + 1024.6
+      = 13442.6
+```
+
+---
+
+#### **Step 3: Z-Score Normalization** (`zscore_rows`)
+
+**The Problem**: Different values have wildly different scales:
+- Power (gold-based): 2000-5000
+- Conformity (ward-based): -2 to +2
+- Without normalization, Power always dominates
+
+**The Solution**: Normalize each value **independently** across all games in the quarter:
+
+```python
+def _z(xs: List[float]) -> List[float]:
+    n = len(xs)
+    if n == 0: return []
+    mu = sum(xs) / n
+    var = sum((x - mu) ** 2 for x in xs) / n
+    sd = math.sqrt(var) or 1.0  # Avoid division by zero
+    return [(x - mu) / sd for x in xs]
+
+def zscore_rows(rows: List[Dict[str, float]]) -> List[Dict[str, float]]:
+    """
+    For each value (column), compute z-scores independently.
+    This gives all 10 values equal footing in the ranking.
+    """
+    keys = sorted({k for r in rows for k in r})
+    cols = {k: [r.get(k, 0.0) for r in rows] for k in keys}
+    zs = {k: _z(vals) for k, vals in cols.items()}
+    return [{k: zs[k][i] for k in keys} for i in range(len(rows))]
+```
+
+**Example** (Player with 3 games):
+
+| Game | Power (raw) | Benevolence (raw) | Tradition (raw) |
+|------|-------------|-------------------|-----------------|
+| 1 | 4200 | 15 | 180 |
+| 2 | 3800 | 28 | 175 |
+| 3 | 5100 | 12 | 182 |
+| **Mean** | 4366.7 | 18.3 | 179.0 |
+| **Std** | 559.4 | 7.0 | 2.9 |
+
+**Z-Scores**:
+| Game | Power (z) | Benevolence (z) | Tradition (z) |
+|------|-----------|-----------------|---------------|
+| 1 | -0.30 | -0.47 | +0.34 |
+| 2 | -1.01 | +1.39 | -1.38 |
+| 3 | +1.31 | -0.90 | +1.03 |
+| **Avg** | 0.0 | 0.0 | 0.0 |
+
+---
+
+#### **Step 4: Aggregation & Ranking**
+
+```python
+# Average z-scores across all games (gives normalized profile)
+values_normalized = aggregate_mean(zscored_per_game)
+
+# Also keep raw scores for display
+raw_aggregated = aggregate_mean(raw_per_game)
+
+# Rank by z-score (fair comparison)
+top_by_zscore = sorted(values_normalized.items(), key=lambda kv: kv[1], reverse=True)[:3]
+
+# But display raw scores (cross-player comparison)
+top_values = [(name, raw_aggregated[name]) for name, _ in top_by_zscore]
+```
+
+**Why this hybrid approach?**
+- **Rank by z-score**: Ensures all 10 values have equal chance (no scale bias)
+- **Display raw scores**: Enables friend comparison (upload journeys and see who has higher Benevolence!)
+
+---
+
+#### **Key Functions**
+
+| Function | Purpose | Input | Output |
+|----------|---------|-------|--------|
+| `bundles_from_participant(p)` | Extract features | Participant dict | Bundle dict |
+| `score_values(bundles_list)` | Weight features into values | List of bundles | List of raw value dicts |
+| `zscore_rows(rows)` | Normalize per-value | List of raw value dicts | List of z-score dicts |
+| `aggregate_mean(vecs)` | Average across games | List of dicts | Single dict (averages) |
+| `chapter_stats(bundles)` | Aggregate non-value stats | List of bundles | Stats dict (KDA, CS, etc.) |
+| `universalism_bonus(bundles)` | Champion & role diversity | List of bundles | Float (0.0-1.0) |
+
+---
+
+#### **Playstyle Values** (Schwartz Theory Adaptation)
+
+Inspired by Schwartz's theory of basic human values, adapted for League:
+
+| Value | Psychological Meaning | LoL Behaviors |
+|-------|----------------------|---------------|
+| **Power** | Dominance, control, prestige | Gold/min, damage dealt, carry potential |
+| **Achievement** | Personal success, competence | First bloods, KDA, team damage % |
+| **Hedonism** | Pleasure, sensuous gratification | Fountain kills, flashy plays, BM |
+| **Stimulation** | Excitement, novelty, challenge | Risky plays, steals, near-death escapes |
+| **Self-Direction** | Independent thought, creativity | Solo kills, unique builds, 1v1s |
+| **Benevolence** | Preserving welfare of close others | Assists, vision for team, peeling |
+| **Tradition** | Respect for customs, humility | CS fundamentals, standard builds |
+| **Conformity** | Restraint, not violating norms | Team structure, low deaths, safe play |
+| **Security** | Safety, stability of self & team | Vision control, defensive positioning |
+| **Universalism** | Understanding, tolerance, welfare of all | Diverse champion pool, role flexibility |
+
+---
+
+#### **Output Format**
+
+```python
+{
+  # Core stats
   "games": 15,
   "kda_proxy": 3.2,
   "cs_per_min": 5.8,
@@ -237,23 +435,47 @@ Get job status and quarter readiness
   "obj_damage_per_min": 150,
   "kill_participation": 0.62,
   "control_wards_per_game": 2.3,
+  
+  # Playstyle values (RAW aggregated scores)
   "values": {
-    "Power": 0.12,
-    "Achievement": 0.45,
-    "Benevolence": 0.78,
-    ...
+    "Power": 4366.7,
+    "Achievement": 8.2,
+    "Benevolence": 18.3,
+    "Tradition": 179.0,
+    "Security": 25.6,
+    "Self-Direction": 12.1,
+    "Hedonism": 2.4,
+    "Stimulation": 14.8,
+    "Conformity": 3.1,
+    "Universalism": 0.65
   },
+  
+  # Top 3 by z-score ranking, but showing raw scores
   "top_values": [
-    ["Benevolence", 0.78],
-    ["Achievement", 0.45],
-    ["Security", 0.32]
+    ["Benevolence", 18.3],   # Highest z-score
+    ["Tradition", 179.0],    # 2nd highest z-score
+    ["Security", 25.6]       # 3rd highest z-score
   ],
+  
+  # Champion analysis
   "top_champions": [
     {"name": "Thresh", "games": 5},
-    {"name": "Nautilus", "games": 4}
+    {"name": "Nautilus", "games": 4},
+    {"name": "Leona", "games": 3}
   ]
 }
 ```
+
+---
+
+#### **Edge Cases & Error Handling**
+
+1. **No games**: All values default to 0
+2. **Single game**: Z-scores become 0 (no variance), falls back to raw ranking
+3. **Constant values**: If `std=0`, z-score set to 0 to avoid `NaN`
+4. **Outliers**: Mild clipping (`±1e9`) before z-scoring
+5. **Missing features**: Defaults to 0 (robust `_get` and `_num` helpers)
+6. **Invalid time played**: Clamped to minimum 1 minute to avoid division errors
 
 ---
 
@@ -521,14 +743,14 @@ Set in `template.yaml` for each Lambda:
    ```
 
 2. **Build Lambda packages**:
-   ```bash
-   cd infra
-   sam build
+```bash
+cd infra
+sam build
    ```
 
 3. **Deploy (first time)**:
    ```bash
-   sam deploy --guided
+sam deploy --guided
    ```
    
    Follow prompts:
@@ -540,8 +762,8 @@ Set in `template.yaml` for each Lambda:
 
 4. **Subsequent deployments**:
    ```bash
-   sam deploy --no-confirm-changeset
-   ```
+sam deploy --no-confirm-changeset
+```
 
 ---
 
@@ -817,23 +1039,23 @@ This prevents scale bias (e.g., "Power" having larger raw numbers than "Traditio
 ## 🛠️ Troubleshooting Commands
 
 ### Check DynamoDB Item
-```bash
-aws dynamodb get-item \
+   ```bash
+   aws dynamodb get-item \
   --table-name rift-rewind-jobs-{AccountId} \
   --key '{"jobId": {"S": "uuid"}}'
-```
+   ```
 
 ### List S3 Files for Job
-```bash
+   ```bash
 aws s3 ls s3://rift-rewind-data-{AccountId}-{Region}/{jobId}/ --recursive
-```
+   ```
 
 ### Monitor SQS Queue Depth
-```bash
-aws sqs get-queue-attributes \
-  --queue-url {queue-url} \
-  --attribute-names ApproximateNumberOfMessages
-```
+   ```bash
+   aws sqs get-queue-attributes \
+     --queue-url {queue-url} \
+     --attribute-names ApproximateNumberOfMessages
+   ```
 
 ### Manually Trigger Processing
 ```bash

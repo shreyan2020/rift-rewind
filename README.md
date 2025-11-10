@@ -611,32 +611,103 @@ rift-rewind/
 
 ## 🔬 How Playstyle Values are Calculated
 
-Rift Rewind computes psychological "playstyle values" per quarter to summarize behavioral tendencies.
+Rift Rewind computes psychological "playstyle values" per quarter to summarize your behavioral tendencies. These values are inspired by Schwartz's theory of basic human values, adapted for League of Legends gameplay.
 
-### Calculation Process
+### The Three-Step Algorithm
 
-1. **Per-game feature extraction**: Extract raw metrics (kills, assists, CS, vision, etc.)
-2. **Per-game value scoring**: Map features to Schwartz values (e.g., kills → Power, assists → Benevolence)
-3. **Per-value z-score normalization**: Normalize each value independently across games
-   ```python
-   z = (x - mean(value_over_games)) / std(value_over_games)
-   ```
-4. **Aggregate per quarter**: Average z-scores to get per-quarter value profile
-5. **Rank and select top 3**: Sort by aggregate z-score (descending)
+#### 1. **Feature Extraction** (Per-Game)
+From each match, we extract dozens of behavioral metrics:
+- Combat: Kills, assists, deaths, damage dealt/taken
+- Economy: Gold earned/spent per minute
+- Vision: Wards placed, vision score, ward takedowns
+- Objectives: Turret damage, epic monster kills
+- Macro: CS/min, kill participation, time alive
+- And many more from Riot's `challenges` API
 
-### Why Z-Score Normalization?
+#### 2. **Weighted Value Scoring** (Per-Game)
+Each of the 10 values has a unique formula based on weighted features:
 
-**Problem**: Raw values have different scales (e.g., Power naturally has higher magnitudes than Tradition)
+| Value | Key Features | Example Weights |
+|-------|-------------|-----------------|
+| **Power** | Gold/min (1.0), damage to champions (0.5), damage mitigated (0.2) |
+| **Benevolence** | Kill participation (1.0), vision/min (0.8), control wards (0.5) |
+| **Achievement** | First bloods (0.8), killing sprees (0.6), team damage % (0.8) |
+| **Tradition** | CS/min (0.8), early CS/min (0.8), longest life (0.2) |
+| **Security** | Vision/min (0.8), ward takedowns (0.5), damage mitigation (0.4) |
+| ... | ... | ... |
 
-**Solution**: Z-score normalization gives each value equal opportunity to rank highly based on relative prominence, not absolute magnitude.
+See [`infra/src/stats_inference.py`](infra/src/stats_inference.py) line 209 for complete `WEIGHTS` mapping.
 
-### Where to Find the Logic
+#### 3. **Z-Score Normalization** (Per-Value, Across Games)
+This is the key innovation that ensures fair ranking:
 
-- **Backend**: [`infra/src/stats_inference.py`](infra/src/stats_inference.py) (z-score functions)
-- **Frontend**: [`frontend/src/components/ChapterView.tsx`](frontend/src/components/ChapterView.tsx) (display)
+```python
+# For each value independently
+z_score = (game_score - mean_across_games) / std_across_games
+```
+
+**Why normalize?**
+- **Problem**: Raw values have wildly different scales
+  - Power naturally ranges 2000-5000 (gold amounts)
+  - Conformity ranges -2 to +2 (ward counts minus deaths)
+  - Without normalization, Power would always dominate
+  
+- **Solution**: Z-scores express "how unusual is this value for YOU?"
+  - Z > 0: Above your personal average for that value
+  - Z < 0: Below your personal average
+  - All values now comparable on the same scale
+
+#### 4. **Aggregation & Ranking**
+- Average z-scores across all games in the quarter
+- Rank values by their z-score (which you express most strongly)
+- **Display raw scores** (not z-scores) so friends can compare
+
+### Hybrid Approach: Rank by Z-Score, Display Raw
+
+This is a deliberate design choice:
+
+**Ranking by z-score** ensures:
+- Fair comparison within your own gameplay
+- All 10 values have equal chance to be "top 3"
+- Highlights your *relative* behavioral patterns
+
+**Displaying raw scores** enables:
+- Cross-player comparison (upload your journeys and compare!)
+- Intuitive interpretation (higher = more of that behavior)
+- Consistency across different quarters
+
+### Example
+
+**Player A's Q1 Games:**
+```
+Game 1: Power=4200, Benevolence=15, Tradition=180
+Game 2: Power=3800, Benevolence=28, Tradition=175
+Game 3: Power=5100, Benevolence=12, Tradition=182
+```
+
+**After Z-Score Normalization:**
+```
+Power: z = 0.0 (average for them)
+Benevolence: z = 0.3 (slightly above average for them)
+Tradition: z = 0.1 (slightly above average for them)
+```
+
+**Result**: Top 3 = Benevolence, Tradition, Power (despite Power having bigger raw numbers!)
+
+### Edge Cases Handled
+
+- **No games**: All values default to 0
+- **Single game**: Z-score becomes 0 (no variance), raw score used
+- **Constant values**: If std=0, treated as z=0 to avoid NaN
+- **Outliers**: Mild clipping (±1e9) before z-scoring to resist extreme outliers
+
+### Where to Find the Implementation
+
+- **Value weights**: [`infra/src/stats_inference.py`](infra/src/stats_inference.py) lines 209-262
+- **Z-score function**: [`infra/src/stats_inference.py`](infra/src/stats_inference.py) lines 284-300
+- **Process flow**: [`infra/src/process_quarter.py`](infra/src/process_quarter.py) lines 230-250
+- **Frontend display**: [`frontend/src/components/ChapterView.tsx`](frontend/src/components/ChapterView.tsx)
 - **Descriptions**: [`frontend/src/constants/valueDescriptions.ts`](frontend/src/constants/valueDescriptions.ts)
-
-See main [`README.md`](README.md) section "How Playstyle Values are Calculated" for more details.
 
 ## 💰 Cost Estimate
 

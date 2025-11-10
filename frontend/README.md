@@ -426,6 +426,13 @@ getFinale(bucketUrl: string): Promise<Finale>
 
 ## 🚀 Development
 
+### Prerequisites for Local Development
+
+Before running locally, ensure you have:
+- **Node.js** 18+ installed
+- **npm** or **yarn**
+- (Optional) Backend running locally or deployed to AWS
+
 ### Installation
 
 ```bash
@@ -433,33 +440,229 @@ cd frontend
 npm install
 ```
 
-### Running Locally
+This installs all dependencies including React, Vite, TypeScript, Tailwind, and Recharts.
+
+---
+
+### Running the Development Server
 
 ```bash
 npm run dev
 ```
 
-Opens at `http://localhost:5173`
+**What happens:**
+- Vite dev server starts at `http://localhost:5173`
+- Browser automatically opens (if not, visit the URL manually)
+- **Hot Module Replacement (HMR)** enabled - changes reflect instantly
+- TypeScript compilation happens in the background
+- Tailwind CSS processes your styles on-demand
 
-### Building for Production
+**What you'll see:**
+- The landing page with three mode tabs (API Fetch / Upload / Compare)
+- Real-time console logs in terminal for debugging
+- Any TypeScript/ESLint errors displayed in browser overlay
 
+**Configure API endpoint** (for local development):
+
+Edit `src/api.ts`:
+```typescript
+// Development: Local backend
+const API_BASE_URL = 'http://localhost:3001';
+
+// Development: Deployed backend
+const API_BASE_URL = 'https://your-api-id.execute-api.region.amazonaws.com';
+
+// Production: Your actual backend
+const API_BASE_URL = 'https://vassfd5se4.execute-api.eu-west-1.amazonaws.com';
+```
+
+**Tip**: For fastest iteration, use **Upload Mode** with pre-generated journey files (see `friend1/` and `friend2/` folders) to avoid waiting for backend processing.
+
+---
+
+### Available Scripts
+
+#### `npm run build`
 ```bash
 npm run build
 ```
 
-Output in `dist/` directory.
+**What it does:**
+- Compiles TypeScript to JavaScript
+- Bundles all assets with Vite
+- Minifies code for production
+- Outputs to `dist/` directory
 
-### Linting
+**When to use:** Before deployment or to test production build locally.
 
+**Output:**
+```
+dist/
+├── assets/
+│   ├── index-[hash].js    # Bundled JavaScript
+│   └── index-[hash].css   # Compiled CSS
+└── index.html             # Entry point
+```
+
+---
+
+#### `npm run lint`
 ```bash
 npm run lint
 ```
 
-### Preview Production Build
+**What it does:**
+- Runs ESLint on all `.ts` and `.tsx` files
+- Checks for code quality issues, unused imports, type errors
+- Reports warnings and errors
 
+**Fix automatically:**
+```bash
+npm run lint -- --fix
+```
+
+**Common issues:**
+- Unused variables/imports
+- Missing dependency arrays in `useEffect`
+- Type mismatches
+
+---
+
+#### `npm run preview`
 ```bash
 npm run preview
 ```
+
+**What it does:**
+- Serves the **production build** locally (must run `npm run build` first)
+- Opens at `http://localhost:4173`
+- Useful for testing production behavior before deployment
+
+**When to use:**
+- Testing performance of production build
+- Verifying code splitting works
+- Checking that all assets load correctly
+
+---
+
+### Development Workflow
+
+**Recommended flow for contributors:**
+
+1. **Start backend** (optional, or use upload mode):
+   ```bash
+   cd ../infra
+   sam local start-api --port 3001
+   ```
+
+2. **Start frontend**:
+   ```bash
+   cd frontend
+   npm run dev
+   ```
+
+3. **Make changes**:
+   - Edit components in `src/components/`
+   - Changes auto-reload via HMR
+   - Check browser console for errors
+
+4. **Test with real data**:
+   - Use Upload Mode with `friend1/` test data
+   - Or create a journey via API Fetch mode
+
+5. **Lint before committing**:
+   ```bash
+   npm run lint
+   ```
+
+---
+
+### Hot Module Replacement (HMR)
+
+**What is HMR?**
+When you save a file, Vite instantly updates the browser without full page reload, preserving:
+- Component state
+- Form inputs
+- Current navigation
+
+**Files that trigger HMR:**
+- `.tsx` - React components
+- `.ts` - TypeScript files
+- `.css` - Stylesheets
+- Config files (requires manual refresh)
+
+**If HMR breaks:**
+```bash
+# Clear Vite cache
+rm -rf node_modules/.vite
+
+# Restart dev server
+npm run dev
+```
+
+---
+
+### Working with Mock Data
+
+**For rapid development without backend:**
+
+1. Copy a journey file:
+   ```bash
+   cp ../friend1/Q1/story.json public/test-q1.json
+   ```
+
+2. Modify `Journey.tsx` to load local file:
+   ```typescript
+   // For testing only
+   const story = await fetch('/test-q1.json').then(r => r.json());
+   ```
+
+3. Use Upload Mode with pre-generated journeys from `friend1/` and `friend2/`
+
+---
+
+### Debugging Tips
+
+**React DevTools:**
+- Install [React DevTools](https://react.dev/learn/react-developer-tools)
+- Inspect component props and state
+- Trace re-renders
+
+**Network Tab:**
+- Check API requests in browser DevTools
+- Verify S3 story files load correctly
+- Check CORS errors
+
+**Console Logs:**
+- Check terminal for Vite errors
+- Check browser console for runtime errors
+- Look for TypeScript type errors
+
+**Common Development Issues:**
+
+| Issue | Solution |
+|-------|----------|
+| Port 5173 already in use | Kill process: `lsof -ti:5173 \| xargs kill -9` |
+| API calls failing (CORS) | Update `API_BASE_URL` in `src/api.ts` |
+| TypeScript errors | Run `npm run build` to see all errors |
+| Tailwind styles not applying | Check `tailwind.config.js` content paths |
+| Components not updating | Clear cache: `rm -rf node_modules/.vite` |
+
+---
+
+### Environment-Specific Configuration
+
+**Development:**
+- API: `http://localhost:3001` (sam local) or deployed URL
+- Fast refresh enabled
+- Source maps included
+- No minification
+
+**Production:**
+- API: Your AWS API Gateway URL
+- Minified bundles
+- Tree-shaking applied
+- Source maps excluded (smaller bundle)
 
 ## 📦 Deployment
 

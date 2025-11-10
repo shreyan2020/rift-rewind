@@ -11,4 +11,14 @@ export const VALUE_DESCRIPTIONS: Record<string, string> = {
   'Universalism': 'Champion pool diversity, role flexibility. Your balanced, adaptable playstyle.',
 };
 
-export const VALUE_CALCULATION_EXPLANATION = `Values are calculated as raw scores from your match performance data - weighted combinations of your in-game behaviors like gold earned, damage dealt, vision control, and teamwork. Higher scores indicate stronger expression of that behavioral trait. Different values naturally have different scales (e.g., Power uses gold amounts ~2000-5000, while Conformity uses ward counts ~-2 to +2), making direct comparisons meaningful when looking at relative patterns over time.`;
+export const VALUE_CALCULATION_EXPLANATION = `
+Playstyle values are calculated through a three-step process:
+
+1. Feature Extraction: Your in-game behaviors (kills, assists, vision, CS, etc.) are extracted from each match
+2. Weighted Scoring: Features are combined with weights specific to each value (e.g., gold/min → Power, assists → Benevolence)
+3. Z-Score Normalization: Each value is normalized independently across your games to ensure fair ranking
+
+Your top 3 values are determined by which behaviors you expressed most consistently and strongly relative to your own baseline—not by absolute numbers. This ensures that all 10 values have equal opportunity to rank highly based on how prominently you exhibit each playstyle pattern.
+
+The scores shown are the raw aggregated values (not z-scores) so you can compare with friends who upload their journeys!
+`.trim();
