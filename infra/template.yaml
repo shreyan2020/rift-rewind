@@ -14,7 +14,7 @@ Globals:
         BUCKET_NAME: !Ref DataBucket
         FETCH_QUEUE_URL: !Ref FetchQueue
         PROCESS_QUEUE_URL: !Ref ProcessQueue
-        RIOT_API_KEY: "RGAPI-d47d33d8-dc71-4394-8898-c6a52f6ed456"
+        RIOT_API_KEY: ""
         MAX_MATCHES_PER_QUARTER: "50"
         MAX_CONCURRENCY: "8"
         REGION_HINT: !Ref AWS::Region
