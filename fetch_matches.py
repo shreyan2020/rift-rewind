@@ -27,9 +27,11 @@ import os
 import sys
 import time
 import argparse
+from tqdm import tqdm
 from pathlib import Path
 from datetime import datetime, timezone
 from typing import List, Dict, Any, Optional
+
 import requests
 
 # Import from infra/src for bundle extraction
@@ -292,13 +294,13 @@ def fetch_matches(riot_id: str, platform: str, api_key: str, max_matches: int = 
     successful = 0
     failed = 0
     
-    for i, match_id in enumerate(all_match_ids, 1):
-        print(f"   [{i}/{len(all_match_ids)}] {match_id}...", end=" ")
+    for i, match_id in enumerate(tqdm(all_match_ids, desc="Fetching matches", unit="match", total=len(all_match_ids)), 1):
+        # print(f"   [{i}/{len(all_match_ids)}] {match_id}...", end=" ")
         
         # Check if already downloaded
         match_file = output_path / f"{match_id}.json"
         if match_file.exists():
-            print("⏭️  (cached)")
+            # print("⏭️  (cached)")
             successful += 1
             continue
         
@@ -306,7 +308,7 @@ def fetch_matches(riot_id: str, platform: str, api_key: str, max_matches: int = 
         match_data = client.get_match_details(regional, match_id)
         
         if not match_data:
-            print("❌ (failed)")
+            # print("❌ (failed)")
             failed += 1
             continue
         
@@ -314,7 +316,7 @@ def fetch_matches(riot_id: str, platform: str, api_key: str, max_matches: int = 
         preprocessed = convert_match_to_preprocessed(match_data, puuid)
         
         if not preprocessed:
-            print("❌ (conversion failed)")
+            # print("❌ (conversion failed)")
             failed += 1
             continue
         
@@ -322,7 +324,7 @@ def fetch_matches(riot_id: str, platform: str, api_key: str, max_matches: int = 
         with open(match_file, 'w', encoding='utf-8') as f:
             json.dump(preprocessed, f, indent=2, ensure_ascii=False)
         
-        print("✅")
+        # print("✅")
         successful += 1
     
     print(f"\n{'='*60}")

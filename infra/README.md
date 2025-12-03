@@ -199,21 +199,15 @@ Get job status and quarter readiness
 
 ### `stats_inference.py`
 
-**Purpose**: Calculate performance metrics and playstyle values using a three-step algorithm
+**Purpose**: Calculate performance metrics and playstyle values
 
----
+See [main README](../README.md#how-playstyle-values-are-calculated) for the complete algorithm explanation including:
+- Feature extraction process
+- Weighted scoring formulas
+- Z-score normalization
+- Why we rank by z-score but display raw values
 
-#### **Algorithm Overview**
-
-```
-Raw Match Data → Feature Extraction → Weighted Scoring → Z-Score Normalization → Top 3 Selection
-```
-
----
-
-#### **Step 1: Feature Extraction** (`bundles_from_participant`)
-
-Extracts behavioral features from each participant (player) in a match, organized into "bundles":
+#### **Quick Reference**
 
 | Bundle | Features Extracted | Purpose |
 |--------|-------------------|---------|
@@ -420,68 +414,9 @@ Inspired by Schwartz's theory of basic human values, adapted for League:
 
 ---
 
-#### **Output Format**
-
-```python
-{
-  # Core stats
-  "games": 15,
-  "kda_proxy": 3.2,
-  "cs_per_min": 5.8,
-  "gold_per_min": 340,
-  "vision_score_per_min": 1.2,
-  "ping_rate_per_min": 0.8,
-  "primary_role": "SUPPORT",
-  "obj_damage_per_min": 150,
-  "kill_participation": 0.62,
-  "control_wards_per_game": 2.3,
-  
-  # Playstyle values (RAW aggregated scores)
-  "values": {
-    "Power": 4366.7,
-    "Achievement": 8.2,
-    "Benevolence": 18.3,
-    "Tradition": 179.0,
-    "Security": 25.6,
-    "Self-Direction": 12.1,
-    "Hedonism": 2.4,
-    "Stimulation": 14.8,
-    "Conformity": 3.1,
-    "Universalism": 0.65
-  },
-  
-  # Top 3 by z-score ranking, but showing raw scores
-  "top_values": [
-    ["Benevolence", 18.3],   # Highest z-score
-    ["Tradition", 179.0],    # 2nd highest z-score
-    ["Security", 25.6]       # 3rd highest z-score
-  ],
-  
-  # Champion analysis
-  "top_champions": [
-    {"name": "Thresh", "games": 5},
-    {"name": "Nautilus", "games": 4},
-    {"name": "Leona", "games": 3}
-  ]
-}
-```
-
----
-
-#### **Edge Cases & Error Handling**
-
-1. **No games**: All values default to 0
-2. **Single game**: Z-scores become 0 (no variance), falls back to raw ranking
-3. **Constant values**: If `std=0`, z-score set to 0 to avoid `NaN`
-4. **Outliers**: Mild clipping (`±1e9`) before z-scoring
-5. **Missing features**: Defaults to 0 (robust `_get` and `_num` helpers)
-6. **Invalid time played**: Clamped to minimum 1 minute to avoid division errors
-
----
-
 ### `bedrock_lore.py`
 
-**Purpose**: AI generation via Amazon Bedrock
+**Purpose**: AI generation via Amazon Bedrock (Mistral 7B Instruct)
 
 **Functions**:
 - `generate_quarter_lore()`: Region-specific narrative
@@ -490,25 +425,7 @@ Inspired by Schwartz's theory of basic human values, adapted for League:
 - `generate_finale_reflection()`: Consolidated insights
 - `generate_friend_comparison_lore()`: Relationship narrative (Allies vs Rivals)
 
-**Model**: Mistral 7B Instruct (`mistral.mistral-7b-instruct-v0:2`)
-
-**Prompt Engineering**:
-- Contextual templates per region (Demacia, Noxus, Ionia, etc.)
-- Story continuity: Previous quarter summary included
-- Concise: 2-3 paragraphs for lore, 2-3 sentences for reflection
-- Tone: Immersive, encouraging, narrative-driven
-
-**Example Invocation**:
-```python
-lore = generate_quarter_lore(
-    archetype="explorer",
-    region="Demacia",
-    quarter="Q1",
-    stats={...},
-    top_values=[("Benevolence", 0.78), ...],
-    previous_quarters=[]
-)
-```
+See [main README](../README.md#how-lore-generation-works) for complete prompt engineering details, parameters, and examples.
 
 ---
 

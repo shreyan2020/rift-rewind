@@ -15,48 +15,13 @@ React + TypeScript frontend for the Rift Rewind experience - an immersive narrat
 
 ## 📖 Understanding Your Journey
 
-Before diving in, let's clarify the core concepts:
+**Quarter = Chapter**: Throughout this documentation, the terms **"quarter"** (Q1-Q4) and **"chapter"** are used interchangeably to refer to each part of your story.
 
-### What is a Quarter?
-
-Your 2025 ranked season is divided into **four quarters** based on the calendar year:
-
-- **Q1** (Chapter 1): **January through March** - Your journey begins
-- **Q2** (Chapter 2): **April through June** - Growth and adaptation
-- **Q3** (Chapter 3): **July through September** - Challenges and trials
-- **Q4** (Chapter 4): **October through December** - Mastery and resolution
-
-Each quarter represents approximately 3 months of your gameplay and becomes one **chapter** in your Runeterra story.
-
-### Quarter = Chapter
-
-Throughout this documentation, you'll see the terms **"quarter"** and **"chapter"** used interchangeably:
-- **Technical term**: Quarter (Q1, Q2, Q3, Q4)
-- **Narrative term**: Chapter (your story progression)
-- They mean the same thing: a 3-month period of your season that becomes one act in your journey
-
-### Why Quarters?
-
-Dividing your season into quarters provides:
-- **Natural progression**: Each quarter can show growth or change
-- **Manageable analysis**: ~15-50 games per period for meaningful stats
-- **Story structure**: Creates a 4-act narrative arc (Setup → Growth → Challenge → Resolution)
-- **Regional mapping**: Each quarter gets its own Runeterra region based on your evolving playstyle
-
-### The Journey Flow
-
-Your complete experience follows this path:
-
-```
-Start → Q1 (Chapter 1) → Q2 (Chapter 2) → Q3 (Chapter 3) → Q4 (Chapter 4) → Finale → Insights
-```
-
-Each quarter gives you:
-- A **Runeterra region** (dynamically chosen based on your playstyle)
-- An **AI-generated story** about your time in that region
-- **Performance statistics** for those months
-- **Role-specific feedback** on your gameplay
-- Your **top 3 playstyle values** for that period
+See the [main README](../README.md#how-it-works) for complete details on:
+- How quarters are divided (match-count based, not calendar)
+- Region selection logic
+- Playstyle value calculation
+- Lore generation process
 
 ## ✨ Features
 
@@ -729,12 +694,7 @@ colors: {
 
 ### Region Background Gradients
 
-Each region has a unique gradient defined in `ChapterView.tsx`:
-- **Demacia**: Blue → Gold
-- **Noxus**: Red → Crimson
-- **Ionia**: Pink → Purple
-- **Piltover**: Bronze → Cyan
-- And more...
+Each region has a unique gradient defined in `ChapterView.tsx`. See [main README](../README.md#runeterra-regions) for the complete region-to-values mapping.
 
 ## 🐛 Troubleshooting
 
