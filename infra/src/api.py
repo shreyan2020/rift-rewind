@@ -4,12 +4,15 @@ import os
 import time
 import uuid
 import logging
+import requests
 from datetime import datetime, timezone
 from decimal import Decimal
 
 import boto3
 from botocore.config import Config
 from botocore.exceptions import ClientError
+
+from bedrock_lore import generate_comparison_lore
 
 # -------- logging --------
 LOG = logging.getLogger()
@@ -121,11 +124,20 @@ def create_job(body: dict):
     
     # Get PUUID
     try:
+        LOG.info(f"Attempting to get PUUID for {game_name}#{tag_line} on {regional}")
         puuid = get_puuid(regional, game_name, tag_line)
+        LOG.info(f"Got PUUID: {puuid[:20] if puuid else 'None'}...")
         if not puuid:
+            LOG.error(f"PUUID not found for {game_name}#{tag_line}")
             return _resp(404, {"error": "Summoner not found"})
+    except requests.exceptions.Timeout as e:
+        LOG.error(f"Riot API timeout: {e}")
+        return _resp(504, {"error": "Riot API request timed out. Please try again."})
+    except requests.exceptions.RequestException as e:
+        LOG.error(f"Riot API request failed: {e}")
+        return _resp(502, {"error": f"Failed to communicate with Riot API: {str(e)}"})
     except Exception as e:
-        LOG.error("Failed to get PUUID: %s", e, exc_info=True)
+        LOG.error(f"Failed to get PUUID: {e}", exc_info=True)
         return _resp(500, {"error": f"Failed to fetch summoner: {str(e)}"})
 
     # Check for existing completed job (cache lookup) - unless bypassed
@@ -325,14 +337,23 @@ def handler(event, _context):
       POST /journey/upload      -> create_job_from_upload (uploaded data)
       GET  /status/{jobId}      -> get_status
     """
+    # Handle CORS preflight FIRST - before any exception can occur
+    method = (event.get("requestContext", {}).get("http", {}).get("method")
+              or event.get("httpMethod") or "GET").upper()
+    
+    if method == "OPTIONS":
+        return {
+            "statusCode": 200,
+            "headers": {
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Headers": "Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token",
+                "Access-Control-Allow-Methods": "GET,POST,PUT,DELETE,OPTIONS",
+            },
+            "body": ""
+        }
+    
     try:
         path  = (event.get("rawPath") or event.get("path") or "/").lower()
-        method = (event.get("requestContext", {}).get("http", {}).get("method")
-                  or event.get("httpMethod") or "GET").upper()
-
-        # Handle CORS preflight
-        if method == "OPTIONS":
-            return _resp(200, {"message": "OK"})
 
         # POST /journey/upload (must check before /journey)
         if method == "POST" and path.rstrip("/").endswith("/journey/upload"):
@@ -351,7 +372,26 @@ def handler(event, _context):
                 return _resp(400, {"error": "missing job id"})
             return get_status(job_id)
 
+        if method == "POST" and path.rstrip("/").endswith("/journey/compare"):
+            try:
+                body = json.loads(event.get("body") or "{}")
+            except Exception:
+                return _resp(400, {"error": "invalid json"})
+
+            p1 = body.get("player1") or {}
+            p2 = body.get("player2") or {}
+            relationship = body.get("relationship", "allies")
+            shared = body.get("sharedValues") or []
+            conflict = body.get("conflictingValues") or []
+            score = float(body.get("similarityScore") or 0.0)
+
+            # Call Bedrock-backed lore generator
+            lore = generate_comparison_lore(p1, p2, relationship, shared, conflict, score)
+            return _resp(200, {"lore": lore})
+        
         return _resp(404, {"error": "route not found"})
+
+        
 
     except Exception as e:
         LOG.exception("Unhandled error")

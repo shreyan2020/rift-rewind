@@ -52,7 +52,10 @@ try:
     )
 except ImportError as e:
     print(f"❌ Error importing backend modules: {e}")
-    print("Make sure you're running from the rift-rewind-v2 directory")
+    print("\n💡 To fix this, install backend dependencies:")
+    print("   pip install -r infra/src/requirements.txt")
+    print("\nOr install just the essentials:")
+    print("   pip install boto3 requests")
     sys.exit(1)
 
 

@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // Directly use AWS API endpoint (proxy not working in dev)
-const API_BASE_URL = 'https://vassfd5se4.execute-api.eu-west-1.amazonaws.com';
+const API_BASE_URL = 'https://prbztxv7p9.execute-api.eu-west-1.amazonaws.com';
 
 export interface JourneyRequest {
   platform: string;

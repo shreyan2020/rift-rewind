@@ -1,0 +1,42 @@
+{
+  "quarter": "Q3",
+  "date_range": "Nov 22, 2025 - Nov 27, 2025",
+  "values": {
+    "Achievement": 0.4,
+    "Benevolence": 9.64,
+    "Conformity": 2.35,
+    "Hedonism": 0.01,
+    "Power": 11171.83,
+    "Security": 7431.57,
+    "Self-Direction": 90.46,
+    "Stimulation": 67.23,
+    "Tradition": 124.69,
+    "Universalism": 0.2
+  },
+  "stats": {
+    "games": 50,
+    "kda_proxy": 2.12,
+    "cs_per_min": 2.38,
+    "gold_per_min": 329.6,
+    "vision_score_per_min": 1.7,
+    "avg_kill_participation": 0.535,
+    "ping_rate_per_min": 0.0
+  },
+  "lore": "In the vibrant city of Piltover, our summoner, known for their self-driven nature, embarks on their journey, seeking to contribute to the advancements of this technologically-inclined metropolis. Their benevolent tendencies surface as they assist local scientists, offering their magical expertise to aid in their research. The hum of innovation and progress drives our summoner forward, their hedonistic desires suppressed, as they immerse themselves in Piltover's ceaseless pursuit of knowledge and improvement.",
+  "reflection": "Based on the provided performance stats, the player's low CS/min (2.38) indicates a need to improve their last-hitting and farming efficiency. Practice last-hitting in custom games and aim for a CS/min of 3.5 or higher.",
+  "region_arc": "Piltover",
+  "top_values": [
+    [
+      "Self-Direction",
+      90.46
+    ],
+    [
+      "Benevolence",
+      9.64
+    ],
+    [
+      "Hedonism",
+      0.01
+    ]
+  ]
+}

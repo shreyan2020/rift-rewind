@@ -105,55 +105,23 @@ def _update_job(job_id: str, **kwargs):
 
 def extract_bundles_from_processed_match(match: dict) -> dict:
     """
-    Extract value bundles from pre-processed match data.
-    Pre-processed matches have: achiev, power, hed, stim, sec, etc.
-    We need to convert these back to the bundle format.
+    Convert pre-processed match format to backend-compatible bundle format.
+    
+    Pre-processed matches have fields like: achiev, power, selfD, secs, trad, bene, hed, stim, univ
+    Backend expects: bundles with these same fields (these ARE the bundles already)
     """
-    bundle = {}
-    
-    # Achievement bundle (achiev field)
-    if "achiev" in match:
-        achiev = match["achiev"]
-        bundle["Achievement"] = {
-            "firstBloodKill": achiev.get("firstBloodKill", 0),
-            "firstTowerKill": achiev.get("firstTowerKill", 0),
-            "killParticipation": achiev.get("killParticipation", 0),
-            "soloKills": achiev.get("soloKills", 0),
-            "multiKillOneSpell": achiev.get("multiKillOneSpell", 0),
-            "doubleKills": achiev.get("doubleKills", 0),
-        }
-    
-    # Power bundle (power field)
-    if "power" in match:
-        power = match["power"]
-        bundle["Power"] = {
-            "goldEarned": power.get("goldEarnedperMin", 0) * 30,  # Approximate total
-            "totalDamageDealtToChampions": power.get("magicDamageDealtToChampions", 0) + power.get("physicalDamageDealtToChampions", 0),
-            "kills": match.get("achiev", {}).get("soloKills", 0),
-        }
-    
-    # Hedonism bundle (hed field)
-    if "hed" in match:
-        hed = match["hed"]
-        bundle["Hedonism"] = {
-            "takedownsInEnemyFountain": hed.get("takedownsInEnemyFountain", 0),
-            "alliedJungleMonsterKills": hed.get("alliedJungleMonsterKills", 0),
-        }
-    
-    # Stimulation bundle (stim field)
-    if "stim" in match:
-        stim = match["stim"]
-        bundle["Stimulation"] = {
-            "damageSelfMitigated": stim.get("damageSelfMitigated", 0),
-            "deaths": stim.get("deaths", 0),
-        }
-    
-    # Add other bundles as needed
-    # For now, use available data
-    bundle["Self-Direction"] = {"wardPlaced": match.get("sd", {}).get("wardsPlaced", 0)}
-    bundle["Benevolence"] = {"saveAllyFromDeath": match.get("bene", {}).get("saveAllyFromDeath", 0)}
-    bundle["Universalism"] = {"visionScore": match.get("univ", {}).get("visionScore", 0)}
-    
+    bundle = {
+        "achiev": match.get("achiev", {}),
+        "power": match.get("power", {}),
+        "selfD": match.get("selfD", {}),  # Note: "selfD" not "sd"
+        "secs": match.get("secs", {}),    # Note: "secs" not "sec"
+        "trad": match.get("trad", {}),
+        "bene": match.get("bene", {}),
+        "hed": match.get("hed", {}),
+        "stim": match.get("stim", {}),
+        "univ": match.get("univ", {}),
+        "conf": {}  # Conformity not in pre-processed data
+    }
     return bundle
 
 def handler(event, context):

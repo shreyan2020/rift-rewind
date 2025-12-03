@@ -48,6 +48,15 @@ function App() {
       if (data.type === 'complete-journey' && data.metadata && data.quarters && data.finale) {
         setUploadedFile(data);
         setUploadedJourneyData(data); // Store for direct display
+        
+        // Auto-fill player name and archetype from metadata
+        if (data.metadata.playerName) {
+          setFormData(prev => ({ 
+            ...prev, 
+            riotId: data.metadata.playerName,
+            archetype: data.metadata.archetype || prev.archetype
+          }));
+        }
         return;
       }
       
@@ -55,6 +64,18 @@ function App() {
       if (data.Q1 || data.Q2 || data.Q3 || data.Q4) {
         setUploadedFile(data);
         setUploadedJourneyData(null); // Will need backend processing
+        
+        // Try to extract player name from first match
+        const firstQuarter = data.Q1 || data.Q2 || data.Q3 || data.Q4;
+        if (firstQuarter && firstQuarter.length > 0) {
+          const firstMatch = firstQuarter[0];
+          if (firstMatch.playerName) {
+            setFormData(prev => ({ 
+              ...prev, 
+              riotId: firstMatch.playerName
+            }));
+          }
+        }
         return;
       }
       
@@ -172,7 +193,7 @@ function App() {
           <button
             onClick={() => setMode('compare')}
             className={`flex-1 py-3 rounded-lg font-medium transition-all flex items-center justify-center gap-2 ${
-              mode === 'compare'
+              (mode as Mode) === 'compare'
                 ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white'
                 : 'bg-runeterra-dark/50 text-runeterra-gold-light border border-purple-500/30'
             }`}
@@ -300,6 +321,7 @@ function App() {
                   onChange={(e) => setFormData({ ...formData, riotId: e.target.value })}
                   className="w-full px-4 py-3 bg-runeterra-darker border border-runeterra-gold/30 rounded-lg text-runeterra-gold-light focus:outline-none focus:border-runeterra-gold transition-colors"
                   required
+                  disabled={!!uploadedFile}
                 />
                 <p className="text-sm text-gray-400 mt-1">e.g., Faker#KR1</p>
               </div>
@@ -312,6 +334,7 @@ function App() {
                   value={formData.platform}
                   onChange={(e) => setFormData({ ...formData, platform: e.target.value })}
                   className="w-full px-4 py-3 bg-runeterra-darker border border-runeterra-gold/30 rounded-lg text-runeterra-gold-light focus:outline-none focus:border-runeterra-gold transition-colors"
+                  disabled={!!uploadedFile}
                 >
                   <option value="euw1">EUW</option>
                   <option value="eun1">EUNE</option>
@@ -333,6 +356,7 @@ function App() {
                   value={formData.archetype}
                   onChange={(e) => setFormData({ ...formData, archetype: e.target.value })}
                   className="w-full px-4 py-3 bg-runeterra-darker border border-runeterra-gold/30 rounded-lg text-runeterra-gold-light focus:outline-none focus:border-runeterra-gold transition-colors"
+                  disabled={!!uploadedFile}
                 >
                   <option value="explorer" className="bg-zinc-800 text-zinc-100">Explorer</option>
                   <option value="warrior" className="bg-zinc-800 text-zinc-100">Warrior</option>

@@ -1,0 +1,42 @@
+{
+  "quarter": "Q4",
+  "date_range": "Nov 28, 2025 - Dec 03, 2025",
+  "values": {
+    "Achievement": 0.34,
+    "Benevolence": 11.52,
+    "Conformity": 4.47,
+    "Hedonism": 0.01,
+    "Power": 8116.53,
+    "Security": 4668.53,
+    "Self-Direction": 83.66,
+    "Stimulation": 33.02,
+    "Tradition": 121.49,
+    "Universalism": 0.19
+  },
+  "stats": {
+    "games": 49,
+    "kda_proxy": 2.79,
+    "cs_per_min": 1.22,
+    "gold_per_min": 314.6,
+    "vision_score_per_min": 2.02,
+    "avg_kill_participation": 0.555,
+    "ping_rate_per_min": 0.0
+  },
+  "lore": "As the sun sets over Piltover, the summoner, a self-taught prodigy, gazes upon the city's gleaming towers, their heart filled with the fire of ambition. With each game mastered, they've not only honed their craft, but contributed to the technological marvels that define this city of progress. The hum of the Hextech engines resonates in their chest, fueling their unquenchable thirst for knowledge and power, as they prepare to embark on their next challenge.",
+  "reflection": "Based on the provided stats, I'd recommend focusing on improving CS/min by practicing last-hitting in the practice tool and paying closer attention to minion waves during laning phase. Aim for 2-3 CS per minute above your current rate to increase overall gold income and contribute more effectively to team fights.",
+  "region_arc": "Piltover",
+  "top_values": [
+    [
+      "Self-Direction",
+      83.66
+    ],
+    [
+      "Benevolence",
+      11.52
+    ],
+    [
+      "Power",
+      8116.53
+    ]
+  ]
+}

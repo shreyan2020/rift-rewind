@@ -8,13 +8,15 @@ Globals:
     Timeout: 120
     MemorySize: 1024
     Tracing: Active
+    Tags:
+      rift-rewind-hackathon: "2025"
     Environment:
       Variables:
         TABLE_NAME: !Ref JobsTable
         BUCKET_NAME: !Ref DataBucket
         FETCH_QUEUE_URL: !Ref FetchQueue
         PROCESS_QUEUE_URL: !Ref ProcessQueue
-        RIOT_API_KEY: ""
+        RIOT_API_KEY: "RGAPI-66092eaa-96e7-4821-8ef1-abc3fc4236e6"
         MAX_MATCHES_PER_QUARTER: "50"
         MAX_CONCURRENCY: "8"
         REGION_HINT: !Ref AWS::Region
@@ -26,17 +28,40 @@ Resources:
     Type: AWS::S3::Bucket
     Properties:
       BucketName: !Sub rift-rewind-data-${AWS::AccountId}-${AWS::Region}
+      Tags:
+        - Key: rift-rewind-hackathon
+          Value: "2025"
       CorsConfiguration:
         CorsRules:
           - AllowedOrigins: ['*']
             AllowedHeaders: ['*']
             AllowedMethods: ['GET','HEAD']
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: false
+        BlockPublicPolicy: false
+        IgnorePublicAcls: false
+        RestrictPublicBuckets: false
+
+  DataBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref DataBucket
+      PolicyDocument:
+        Statement:
+          - Sid: PublicReadGetObject
+            Effect: Allow
+            Principal: '*'
+            Action: 's3:GetObject'
+            Resource: !Sub '${DataBucket.Arn}/*'
 
   JobsTable:
     Type: AWS::DynamoDB::Table
     Properties:
       TableName: !Sub rift-rewind-jobs-${AWS::AccountId}
       BillingMode: PAY_PER_REQUEST
+      Tags:
+        - Key: rift-rewind-hackathon
+          Value: "2025"
       AttributeDefinitions:
         - AttributeName: jobId
           AttributeType: S
@@ -52,6 +77,9 @@ Resources:
       VisibilityTimeout: 1800   # > fetch lambda timeout
       MessageRetentionPeriod: 86400  # 24 hours
       ReceiveMessageWaitTimeSeconds: 20  # Long polling
+      Tags:
+        - Key: rift-rewind-hackathon
+          Value: "2025"
 
   ProcessQueue:
     Type: AWS::SQS::Queue
@@ -60,6 +88,9 @@ Resources:
       VisibilityTimeout: 300    # > process lambda timeout
       MessageRetentionPeriod: 86400  # 24 hours
       ReceiveMessageWaitTimeSeconds: 20  # Long polling
+      Tags:
+        - Key: rift-rewind-hackathon
+          Value: "2025"
 
   # -------- HTTP API (renamed to avoid reserved ID) --------
   RiftHttpApi:
@@ -77,6 +108,7 @@ Resources:
       FunctionName: rift-rewind-api
       CodeUri: src/
       Handler: api.handler
+      Timeout: 30
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref JobsTable
@@ -88,6 +120,12 @@ Resources:
               Action:
                 - secretsmanager:GetSecretValue
               Resource: !Sub 'arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:RiotApiKey-*'
+            - Effect: Allow
+              Action:
+                - bedrock:InvokeModel
+              Resource:
+                - !Sub 'arn:aws:bedrock:${AWS::Region}::foundation-model/mistral.mistral-7b-instruct-v0:2'
+                - !Sub 'arn:aws:bedrock:us-east-1::foundation-model/us.anthropic.claude-3-5-sonnet-20241022-v2:0'
       Events:
         HttpAny:
           Type: HttpApi

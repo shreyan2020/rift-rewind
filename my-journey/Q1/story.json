@@ -1,0 +1,42 @@
+{
+  "quarter": "Q1",
+  "date_range": "Nov 13, 2025 - Nov 19, 2025",
+  "values": {
+    "Achievement": 0.17,
+    "Benevolence": 11.73,
+    "Conformity": 4.06,
+    "Hedonism": 0.0,
+    "Power": 7411.64,
+    "Security": 4093.6,
+    "Self-Direction": 76.81,
+    "Stimulation": 46.8,
+    "Tradition": 126.37,
+    "Universalism": 0.16
+  },
+  "stats": {
+    "games": 50,
+    "kda_proxy": 2.46,
+    "cs_per_min": 1.09,
+    "gold_per_min": 290.3,
+    "vision_score_per_min": 2.16,
+    "avg_kill_participation": 0.539,
+    "ping_rate_per_min": 0.0
+  },
+  "lore": "---\n\nIn the heart of Noxus, the summoner's journey began amidst the thunderous drums of war. The air was heavy with the scent of gunpowder and the taste of iron. The summoner, a devotee of raw power, sought to harness the primal energies of the battlefield. With every victorious clash, their playstyle values echoed through the battle lines, fueling their comrades with renewed vigor and fear in the hearts of their enemies. The fires of war burned bright, but the summoner's thirst for power was insatiable.",
+  "reflection": "Based on the provided stats, the player's kill participation is 0.0%, which means they are not contributing to their team's kills. To improve, they should focus on last-hitting and positioning to increase their chances of getting involved in team fights and securing kills.",
+  "region_arc": "Noxus",
+  "top_values": [
+    [
+      "Power",
+      7411.64
+    ],
+    [
+      "Hedonism",
+      0.0
+    ],
+    [
+      "Universalism",
+      0.16
+    ]
+  ]
+}

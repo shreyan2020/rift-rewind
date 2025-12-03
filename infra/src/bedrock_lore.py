@@ -12,6 +12,53 @@ bedrock_runtime = boto3.client("bedrock-runtime", region_name=REGION)
 # Using Mistral 7B Instruct (working model)
 MODEL_ID = "mistral.mistral-7b-instruct-v0:2"
 
+def generate_comparison_lore(player1: dict, player2: dict, relationship: str, shared_values: list, conflicting_values: list, similarity_score: float) -> str:
+    """
+    Generate lore comparing two players using Bedrock
+    """
+    p1_name = player1.get('name', 'Player 1')
+    p2_name = player2.get('name', 'Player 2')
+    p1_champ = player1.get('topChampion', 'Unknown')
+    p2_champ = player2.get('topChampion', 'Unknown')
+    p1_values = ', '.join(player1.get('topValues', []))
+    p2_values = ', '.join(player2.get('topValues', []))
+    shared = ', '.join([v['name'] for v in shared_values])
+    conflict = ', '.join([v['name'] for v in conflicting_values])
+
+    prompt = f"""You are a League of Legends bard narrating the story of two players' journeys through Runeterra.
+
+Player 1: {p1_name} (Top Champion: {p1_champ}, Top Values: {p1_values})
+Player 2: {p2_name} (Top Champion: {p2_champ}, Top Values: {p2_values})
+Relationship: {relationship} (similarity score: {similarity_score:.2f})
+Shared strengths: {shared}
+Conflicting strengths: {conflict}
+
+Write a short, atmospheric lore paragraph (2-4 sentences) that:
+- Describes their relationship (allies or rivals)
+- References their shared and conflicting strengths
+- Uses League of Legends lore and epic language
+- Feels like a unique story for this duo
+Keep it under 120 words."""
+
+    body = {
+        "prompt": prompt,
+        "max_tokens": 220,
+        "temperature": 0.7
+    }
+
+    try:
+        response = bedrock_runtime.invoke_model(
+            modelId=MODEL_ID,
+            contentType="application/json",
+            accept="application/json",
+            body=json.dumps(body)
+        )
+        response_body = json.loads(response['body'].read())
+        return response_body['outputs'][0]['text'].strip()
+    except Exception as e:
+        print(f"Bedrock error generating comparison lore: {e}")
+        return f"{p1_name} and {p2_name} journeyed through Runeterra as {relationship}. Their strengths and differences shaped a legendary tale."
+
 def generate_quarter_lore(quarter: str, stats: Dict[str, float], top_values: List[tuple], 
                          region_arc: str, previous_lore = None) -> str:
     """
