@@ -2,6 +2,12 @@ AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: Rift Rewind — API → FetchQuarter → ProcessQuarter (no LLM yet)
 
+Parameters:
+  RiotApiKey:
+    Type: String
+    NoEcho: true
+    Description: Riot API key supplied at deployment; never commit this value.
+
 Globals:
   Function:
     Runtime: python3.11
@@ -16,7 +22,7 @@ Globals:
         BUCKET_NAME: !Ref DataBucket
         FETCH_QUEUE_URL: !Ref FetchQueue
         PROCESS_QUEUE_URL: !Ref ProcessQueue
-        RIOT_API_KEY: "RGAPI-66092eaa-96e7-4821-8ef1-abc3fc4236e6"
+        RIOT_API_KEY: !Ref RiotApiKey
         MAX_MATCHES_PER_QUARTER: "50"
         MAX_CONCURRENCY: "8"
         REGION_HINT: !Ref AWS::Region
@@ -236,3 +242,4 @@ Outputs:
   ProcessQueueUrl:
     Description: URL of the process queue
     Value: !Ref ProcessQueue
+
