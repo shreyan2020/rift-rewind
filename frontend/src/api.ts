@@ -1,7 +1,13 @@
 import axios from 'axios';
 
-// Directly use AWS API endpoint (proxy not working in dev)
-const API_BASE_URL = 'https://prbztxv7p9.execute-api.eu-west-1.amazonaws.com';
+// Deployment URLs are public configuration; credentials belong in the backend.
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || '/api').replace(/\/$/, '');
+const STORY_BASE_URL = (import.meta.env.VITE_STORY_BASE_URL || '').replace(/\/$/, '');
+
+function resolveStoryUrl(path: string): string {
+  if (!STORY_BASE_URL) throw new Error('Set VITE_STORY_BASE_URL to your story bucket HTTPS URL.');
+  return `${STORY_BASE_URL}/${path.replace(/^\//, '')}`;
+}
 
 export interface JourneyRequest {
   platform: string;
@@ -119,15 +125,13 @@ export interface Finale {
 export const getQuarterStory = async (bucketUrl: string, quarter: string): Promise<Quarter> => {
   // S3 bucket URL format: s3://bucket/jobId/Q1/story.json
   // We'll need to construct the proper URL
-  const s3BucketName = 'rift-rewind-data-567020425899-eu-west-1';
-  const storyUrl = `https://${s3BucketName}.s3.eu-west-1.amazonaws.com/${bucketUrl}${quarter}/story.json`;
+  const storyUrl = resolveStoryUrl(`${bucketUrl}${quarter}/story.json`);
   const response = await axios.get(storyUrl);
   return response.data;
 };
 
 export const getFinale = async (bucketUrl: string): Promise<Finale> => {
-  const s3BucketName = 'rift-rewind-data-567020425899-eu-west-1';
-  const finaleUrl = `https://${s3BucketName}.s3.eu-west-1.amazonaws.com/${bucketUrl}finale.json`;
+  const finaleUrl = resolveStoryUrl(`${bucketUrl}finale.json`);
   const response = await axios.get(finaleUrl);
   return response.data;
 };
