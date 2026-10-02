@@ -62,15 +62,13 @@ python fetch_matches.py --riot-id "Player#TAG" --platform euw1 --year 2025
 ## Verify
 
 ```powershell
-python -m pip install -r backend/requirements.txt
 python -m unittest discover -s backend/tests -v
 cd frontend
-npm ci
 npm run build
 npm run lint
 ```
 
-Three end-to-end tests start a real local API with temporary storage and exercise upload-to-export, two-player expedition-to-skill-download, and CLI journey generation. They use the included demo matches and deterministic narratives. These checks do not validate psychological interpretations or live model output.
+The three end-to-end workflows cover journey upload and export, two-player expeditions and profile downloads, and CLI generation. They use a temporary local API, demo matches, and deterministic narratives.
 
 ## Code map
 
@@ -91,4 +89,4 @@ The ten gameplay scores borrow labels from human values research. They are hand-
 
 Statistics and route decisions are computed independently of the model. Generated prose is prompted to use those inputs, but its factual accuracy is not automatically verified. Review stories and coaching suggestions before sharing them.
 
-This is a personal prototype, with no affiliation to Riot Games. Live Riot fetching and Ollama generation require their respective services; the tests use local inputs and mocked model responses.
+This is a personal prototype, with no affiliation to Riot Games. Live Riot fetching and Ollama generation require their respective services and are not exercised by the end-to-end tests.
