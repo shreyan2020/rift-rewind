@@ -62,7 +62,7 @@ python fetch_matches.py --riot-id "Player#TAG" --platform euw1 --year 2025
 ## Verify
 
 ```powershell
-python -m pip install -r backend/requirements-dev.txt
+python -m pip install -r backend/requirements.txt
 python -m unittest discover -s backend/tests -v
 cd frontend
 npm ci
@@ -70,7 +70,7 @@ npm run build
 npm run lint
 ```
 
-Backend tests cover chronological acts, bounded gameplay scores, uploaded journeys, two-player output, and narrative fallback. These checks do not validate psychological interpretations or the quality of generated stories.
+Three end-to-end tests start a real local API with temporary storage and exercise upload-to-export, two-player expedition-to-skill-download, and CLI journey generation. They use the included demo matches and deterministic narratives. These checks do not validate psychological interpretations or live model output.
 
 ## Code map
 
