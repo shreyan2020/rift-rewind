@@ -12,15 +12,16 @@ interface FinalDashboardProps {
   finaleData: Finale | null;
   onNewJourney?: () => void;
   onViewAnalytics?: () => void;
+  onViewMap?: () => void;
 }
 
-const FinalDashboard: React.FC<FinalDashboardProps> = ({ quarters, riotId, finaleData, onNewJourney, onViewAnalytics }) => {
+const FinalDashboard: React.FC<FinalDashboardProps> = ({ quarters, riotId, finaleData, onNewJourney, onViewAnalytics, onViewMap }) => {
   const quarterKeys = useMemo(() => ['Q1', 'Q2', 'Q3', 'Q4'], []);
 
   // State for selected value in dropdown
   const [selectedValue, setSelectedValue] = useState<string | null>(null);
   const [showShareReport, setShowShareReport] = useState(false);
-  
+
   // Get all unique values from all quarters for dropdown
   const allValueNames = useMemo(() => {
     const valueSet = new Set<string>();
@@ -29,18 +30,18 @@ const FinalDashboard: React.FC<FinalDashboardProps> = ({ quarters, riotId, final
     });
     return Array.from(valueSet).sort();
   }, [quarters]);
-  
+
   // Get top 4 values across all quarters (by average)
   const topValues = useMemo(() => {
     const valueAverages: Record<string, number> = {};
-    
+
     Object.values(quarters).forEach(q => {
       Object.entries(q.values || {}).forEach(([name, value]) => {
         if (!valueAverages[name]) valueAverages[name] = 0;
         valueAverages[name] += value;
       });
     });
-    
+
     // Calculate averages and get top 4
     return Object.entries(valueAverages)
       .map(([name, sum]) => ({ name, avg: sum / 4 }))
@@ -55,7 +56,7 @@ const FinalDashboard: React.FC<FinalDashboardProps> = ({ quarters, riotId, final
       setSelectedValue(topValues[0]);
     }
   }, [topValues, selectedValue]);
-  
+
   // Calculate average stats across all quarters
   const avgStats = {
     games: 0,
@@ -65,7 +66,7 @@ const FinalDashboard: React.FC<FinalDashboardProps> = ({ quarters, riotId, final
     vision_score_per_min: 0,
     // ping_rate_per_min: 0,
   };
-  
+
   quarterKeys.forEach(qKey => {
     const q = quarters[qKey];
     if (q && q.stats) {
@@ -77,17 +78,17 @@ const FinalDashboard: React.FC<FinalDashboardProps> = ({ quarters, riotId, final
       // avgStats.ping_rate_per_min += q.stats.ping_rate_per_min;
     }
   });
-  
+
   // Average non-game stats
   avgStats.kda_proxy /= 4;
   avgStats.cs_per_min /= 4;
   avgStats.gold_per_min /= 4;
   avgStats.vision_score_per_min /= 4;
   // avgStats.ping_rate_per_min /= 4;
-  
+
   // Use finale lore if available, otherwise fallback
   const finalLore = finaleData?.lore || `Your journey through Runeterra comes to a close. From the first steps in Q1 to the final battles of Q4, you've carved a unique path across the Rift. The data reveals not just numbers, but a story of growth, adaptation, and perseverance. As the season ends, your legend in Runeterra is etched into the annals of the Rift. What will your next chapter hold?`;
-  
+
   // Use finale reflection if available, otherwise consolidate quarter reflections
   const consolidatedReflection = finaleData?.final_reflection || quarterKeys
     .map(qKey => quarters[qKey]?.reflection)
@@ -102,8 +103,8 @@ const FinalDashboard: React.FC<FinalDashboardProps> = ({ quarters, riotId, final
           animate={{ opacity: 1, y: 0 }}
           className="text-center mb-12"
         >
-          <h1 className="text-7xl font-bold text-runeterra-gold mb-4 animate-glow">
-            Journey Complete
+          <h1 className="text-5xl md:text-7xl font-bold text-runeterra-gold mb-4 animate-glow">
+            {finaleData?.season_title || 'Journey Complete'}
           </h1>
           <p className="text-runeterra-gold-light text-2xl mb-2">{riotId}'s 2025 Season</p>
           <p className="text-gray-400 text-lg">Your legend across Runeterra</p>
@@ -225,8 +226,18 @@ const FinalDashboard: React.FC<FinalDashboardProps> = ({ quarters, riotId, final
           <p className="text-gray-400 mb-6">
             Keep climbing, Summoner. The Rift awaits your return.
           </p>
-          
+
           <div className="flex gap-4 justify-center flex-wrap">
+            {onViewMap && (
+              <motion.button
+                onClick={onViewMap}
+                className="px-8 py-4 rounded-lg font-bold text-lg bg-runeterra-dark text-runeterra-gold border border-runeterra-gold/40 hover:bg-runeterra-gold/10 transition-all"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                🧭 Return to Journey Map
+              </motion.button>
+            )}
             <motion.button
               onClick={() => setShowShareReport(true)}
               className="px-8 py-4 rounded-lg font-bold text-lg bg-gradient-to-r from-emerald-600 to-teal-600 text-white hover:shadow-lg hover:shadow-emerald-500/50 transition-all"
@@ -299,10 +310,10 @@ const TimelineChart: React.FC<TimelineChartProps> = ({ selectedValue, quarters, 
   // Values are raw scores (weighted sums of in-game behaviors)
   // Different values have different natural scales based on their underlying game statistics
   const values = quarterKeys.map(qKey => quarters[qKey]?.values?.[selectedValue] ?? 0);
-  
+
   // Period labels for display
   const periodLabels = ['Period 1', 'Period 2', 'Period 3', 'Period 4'];
-  
+
   // Prepare data for Recharts
   const chartData = quarterKeys.map((_, idx) => ({
     quarter: periodLabels[idx],
@@ -313,9 +324,9 @@ const TimelineChart: React.FC<TimelineChartProps> = ({ selectedValue, quarters, 
   const change = values[3] - values[0];
   const absoluteChange = Math.abs(change);
   const percentChange = values[0] !== 0 ? (change / values[0]) * 100 : 0;
-  
+
   // For display
-  const displayMetric = absoluteChange < 1 
+  const displayMetric = absoluteChange < 1
     ? 'Stable'
     : Math.abs(percentChange) >= 5
       ? `${percentChange > 0 ? '+' : ''}${percentChange.toFixed(1)}%`
@@ -342,22 +353,22 @@ const TimelineChart: React.FC<TimelineChartProps> = ({ selectedValue, quarters, 
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={chartData} margin={{ left: 8, right: 8, top: 8, bottom: 8 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="rgba(100, 116, 139, 0.3)" />
-            <XAxis 
-              dataKey="quarter" 
+            <XAxis
+              dataKey="quarter"
               stroke="#22d3ee"
               style={{ fontSize: '12px', fontWeight: 'bold' }}
             />
-            <YAxis 
+            <YAxis
               stroke="#9ca3af"
               style={{ fontSize: '11px' }}
             />
-            <Tooltip 
+            <Tooltip
               content={<CustomTooltip />}
             />
-            <Line 
-              type="monotone" 
-              dataKey="value" 
-              stroke="#22d3ee" 
+            <Line
+              type="monotone"
+              dataKey="value"
+              stroke="#22d3ee"
               strokeWidth={2}
               dot={{ fill: '#22d3ee', r: 4 }}
               activeDot={{ r: 6 }}
@@ -380,7 +391,7 @@ const TimelineChart: React.FC<TimelineChartProps> = ({ selectedValue, quarters, 
             {selectedValue}
           </div>
           <div className={`text-5xl font-bold mb-3 ${
-            absoluteChange < 1 ? 'text-gray-400' : 
+            absoluteChange < 1 ? 'text-gray-400' :
             change > 0 ? 'text-green-400' : 'text-red-400'
           }`}>
             {absoluteChange < 1 ? '→' : change > 0 ? '↗' : '↘'}

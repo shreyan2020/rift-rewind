@@ -2,19 +2,26 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { TrendingUp, TrendingDown, Award, Brain } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import type { ChampionAnalysis, Insight, JourneyHighlights, JourneyTrends, Quarter, YearSummary } from '../api';
 
 interface InsightsProps {
-  insights: {
-    insight: string;
-    priority: string;
-  }[];
-  trends?: any;
-  highlights?: any;
-  championAnalysis?: any;
-  yearSummary?: any;
-  quarters?: any; // Add quarters data for date ranges
+  insights: Insight[];
+  trends?: JourneyTrends;
+  highlights?: JourneyHighlights;
+  championAnalysis?: ChampionAnalysis;
+  yearSummary?: YearSummary;
+  quarters?: Record<string, Quarter>;
   onBack?: () => void;
 }
+
+interface TooltipEntry {
+  payload?: { label?: string };
+}
+
+const tooltipLabel = (label: string, payload: readonly unknown[]) => {
+  const entry = payload[0] as TooltipEntry | undefined;
+  return entry?.payload?.label || label;
+};
 
 const InsightsView: React.FC<InsightsProps> = ({
   insights,
@@ -30,7 +37,7 @@ const InsightsView: React.FC<InsightsProps> = ({
     if (!quarters || !quarters[quarterName]) return quarterName;
     return quarters[quarterName].date_range || quarterName;
   };
-  
+
   const priorityColors = {
     high: 'border-runeterra-gold/70 bg-runeterra-gold/20',
     medium: 'border-runeterra-gold/50 bg-runeterra-gold/10',
@@ -61,7 +68,7 @@ const InsightsView: React.FC<InsightsProps> = ({
   return (
     <div className="min-h-screen bg-gradient-to-b from-runeterra-dark via-runeterra-darker to-runeterra-dark py-12 px-4">
       <div className="max-w-7xl mx-auto space-y-12">
-        
+
         {/* Back Button */}
         {onBack && (
           <motion.button
@@ -75,7 +82,7 @@ const InsightsView: React.FC<InsightsProps> = ({
             <span>Back to Summary</span>
           </motion.button>
         )}
-        
+
         {/* Year Summary Header */}
         {yearSummary && (
           <motion.div
@@ -86,7 +93,7 @@ const InsightsView: React.FC<InsightsProps> = ({
             <h1 className="text-6xl font-bold text-runeterra-gold animate-glow">
               Your 2025 Journey
             </h1>
-            
+
             <div className="grid grid-cols-2 md:grid-cols-3 gap-6 mt-8">
               <div className="bg-runeterra-darker/70 backdrop-blur-sm border border-runeterra-gold/30 rounded-xl p-6">
                 <div className="text-4xl font-bold text-runeterra-gold">{yearSummary.total_games}</div>
@@ -137,7 +144,7 @@ const InsightsView: React.FC<InsightsProps> = ({
                 Your matches divided into 4 equal periods to track progression
               </p>
             </div>
-            
+
             <div className="grid md:grid-cols-2 gap-6">
               {/* KDA Trend */}
               {trends.kda && (
@@ -150,7 +157,7 @@ const InsightsView: React.FC<InsightsProps> = ({
                       <TrendingDown className="w-6 h-6 text-red-400" />
                     ) : null}
                   </div>
-                  
+
                   {/* Mini Chart */}
                   <div className="h-24 mb-4">
                     <ResponsiveContainer width="100%" height="100%">
@@ -171,24 +178,19 @@ const InsightsView: React.FC<InsightsProps> = ({
                             fontSize: '12px'
                           }}
                           formatter={(value: number) => value.toFixed(2)}
-                          labelFormatter={(label: string, payload: readonly unknown[]) => {
-                            if (payload && payload[0]) {
-                              return (payload[0] as any).payload.label;
-                            }
-                            return label;
-                          }}
+                          labelFormatter={tooltipLabel}
                         />
                         <Line type="monotone" dataKey="value" stroke="#C89B3C" strokeWidth={2} dot={{ fill: '#C89B3C', r: 4 }} />
                       </LineChart>
                     </ResponsiveContainer>
                   </div>
-                  
+
                   <div className="space-y-2">
                     <div className="text-3xl font-bold text-runeterra-gold">
                       {trends.kda.change_pct > 0 ? '+' : ''}{trends.kda.change_pct.toFixed(1)}%
                     </div>
                     <div className="text-sm text-runeterra-gold-light">
-                      {trends.kda.direction === 'improving' ? 'Improving' : 
+                      {trends.kda.direction === 'improving' ? 'Improving' :
                        trends.kda.direction === 'declining' ? 'Needs Work' : 'Stable'}
                     </div>
                     <div className="text-xs text-gray-400">
@@ -212,7 +214,7 @@ const InsightsView: React.FC<InsightsProps> = ({
                       <TrendingDown className="w-6 h-6 text-red-400" />
                     ) : null}
                   </div>
-                  
+
                   {/* Mini Chart */}
                   <div className="h-24 mb-4">
                     <ResponsiveContainer width="100%" height="100%">
@@ -233,24 +235,19 @@ const InsightsView: React.FC<InsightsProps> = ({
                             fontSize: '12px'
                           }}
                           formatter={(value: number) => value.toFixed(2)}
-                          labelFormatter={(label: string, payload: readonly unknown[]) => {
-                            if (payload && payload[0]) {
-                              return (payload[0] as any).payload.label;
-                            }
-                            return label;
-                          }}
+                          labelFormatter={tooltipLabel}
                         />
                         <Line type="monotone" dataKey="value" stroke="#C89B3C" strokeWidth={2} dot={{ fill: '#C89B3C', r: 4 }} />
                       </LineChart>
                     </ResponsiveContainer>
                   </div>
-                  
+
                   <div className="space-y-2">
                     <div className="text-3xl font-bold text-runeterra-gold">
                       {trends.cs_per_min.change_pct > 0 ? '+' : ''}{trends.cs_per_min.change_pct.toFixed(1)}%
                     </div>
                     <div className="text-sm text-runeterra-gold-light">
-                      {trends.cs_per_min.direction === 'improving' ? 'Improving' : 
+                      {trends.cs_per_min.direction === 'improving' ? 'Improving' :
                        trends.cs_per_min.direction === 'declining' ? 'Needs Work' : 'Stable'}
                     </div>
                     <div className="text-xs text-gray-400">
@@ -274,7 +271,7 @@ const InsightsView: React.FC<InsightsProps> = ({
                       <TrendingDown className="w-6 h-6 text-red-400" />
                     ) : null}
                   </div>
-                  
+
                   {/* Mini Chart */}
                   <div className="h-24 mb-4">
                     <ResponsiveContainer width="100%" height="100%">
@@ -295,24 +292,19 @@ const InsightsView: React.FC<InsightsProps> = ({
                             fontSize: '12px'
                           }}
                           formatter={(value: number) => value.toFixed(2)}
-                          labelFormatter={(label: string, payload: readonly unknown[]) => {
-                            if (payload && payload[0]) {
-                              return (payload[0] as any).payload.label;
-                            }
-                            return label;
-                          }}
+                          labelFormatter={tooltipLabel}
                         />
                         <Line type="monotone" dataKey="value" stroke="#C89B3C" strokeWidth={2} dot={{ fill: '#C89B3C', r: 4 }} />
                       </LineChart>
                     </ResponsiveContainer>
                   </div>
-                  
+
                   <div className="space-y-2">
                     <div className="text-3xl font-bold text-runeterra-gold">
                       {trends.vision_score.change_pct > 0 ? '+' : ''}{trends.vision_score.change_pct.toFixed(1)}%
                     </div>
                     <div className="text-sm text-runeterra-gold-light">
-                      {trends.vision_score.direction === 'improving' ? 'Improving' : 
+                      {trends.vision_score.direction === 'improving' ? 'Improving' :
                        trends.vision_score.direction === 'declining' ? 'Needs Work' : 'Stable'}
                     </div>
                     <div className="text-xs text-gray-400">
@@ -336,7 +328,7 @@ const InsightsView: React.FC<InsightsProps> = ({
                       <TrendingDown className="w-6 h-6 text-red-400" />
                     ) : null}
                   </div>
-                  
+
                   {/* Mini Chart */}
                   <div className="h-24 mb-4">
                     <ResponsiveContainer width="100%" height="100%">
@@ -357,24 +349,19 @@ const InsightsView: React.FC<InsightsProps> = ({
                             fontSize: '12px'
                           }}
                           formatter={(value: number) => value.toFixed(1)}
-                          labelFormatter={(label: string, payload: readonly unknown[]) => {
-                            if (payload && payload[0]) {
-                              return (payload[0] as any).payload.label;
-                            }
-                            return label;
-                          }}
+                          labelFormatter={tooltipLabel}
                         />
                         <Line type="monotone" dataKey="value" stroke="#C89B3C" strokeWidth={2} dot={{ fill: '#C89B3C', r: 4 }} />
                       </LineChart>
                     </ResponsiveContainer>
                   </div>
-                  
+
                   <div className="space-y-2">
                     <div className="text-3xl font-bold text-runeterra-gold">
                       {trends.gold_per_min.change_pct > 0 ? '+' : ''}{trends.gold_per_min.change_pct.toFixed(1)}%
                     </div>
                     <div className="text-sm text-runeterra-gold-light">
-                      {trends.gold_per_min.direction === 'improving' ? 'Improving' : 
+                      {trends.gold_per_min.direction === 'improving' ? 'Improving' :
                        trends.gold_per_min.direction === 'declining' ? 'Needs Work' : 'Stable'}
                     </div>
                     <div className="text-xs text-gray-400">
@@ -401,7 +388,7 @@ const InsightsView: React.FC<InsightsProps> = ({
             <h2 className="text-4xl font-bold text-runeterra-gold animate-glow">
               Best Moments
             </h2>
-            
+
             <div className="grid md:grid-cols-3 gap-6">
               {highlights.best_kda_game && (
                 <div className="bg-gradient-to-br from-runeterra-gold/10 to-runeterra-gold/20 border border-runeterra-gold/30 rounded-xl p-6">
@@ -455,9 +442,9 @@ const InsightsView: React.FC<InsightsProps> = ({
             <h2 className="text-4xl font-bold text-runeterra-gold animate-glow">
               Champion Mastery
             </h2>
-            
+
             <div className="grid md:grid-cols-5 gap-4">
-              {championAnalysis.most_played?.slice(0, 5).map((champ: any, idx: number) => (
+              {championAnalysis.most_played?.slice(0, 5).map((champ, idx) => (
                 <div key={idx} className="bg-runeterra-darker/70 backdrop-blur-sm border border-runeterra-gold/30 rounded-xl p-4">
                   <div className="text-xl font-bold text-runeterra-gold mb-2">{champ.name}</div>
                   <div className="space-y-1 text-sm">
@@ -485,7 +472,7 @@ const InsightsView: React.FC<InsightsProps> = ({
           <h2 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-blue-500">
             Actionable Insights
           </h2>
-          
+
           <div className="grid md:grid-cols-2 gap-4">
             {insights?.map((insight, idx) => {
               return (
