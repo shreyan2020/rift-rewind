@@ -76,6 +76,8 @@ matches_*.json
 journey-output/
 journey-output-upload*.json
 *-upload.json
+journey-local.json
+.local-data/
 
 # AWS
 .aws/

@@ -1,390 +1,238 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Upload } from 'lucide-react';
-import { createJourney, createJourneyFromUpload, type JourneyRequest } from './api';
+import { Cpu, Database, Map, Swords, Upload } from 'lucide-react';
+import {
+  createJourney,
+  createJourneyFromUpload,
+  apiErrorMessage,
+  type CompleteJourney,
+  type JourneyRequest,
+} from './api';
 import Journey from './components/Journey';
 import FriendComparison from './components/FriendComparison';
 
-type Mode = 'api' | 'upload' | 'compare';
+type Mode = 'riot' | 'upload' | 'compare';
+
+const previousYear = new Date().getFullYear() - 1;
 
 function App() {
-  const [mode, setMode] = useState<Mode>('api');
+  const [mode, setMode] = useState<Mode>('riot');
   const [jobId, setJobId] = useState<string | null>(null);
+  const [uploadedJourney, setUploadedJourney] = useState<CompleteJourney | null>(null);
+  const [uploadPayload, setUploadPayload] = useState<unknown>(null);
+  const [uploadName, setUploadName] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [bypassCache, setBypassCache] = useState(false);
-  const [uploadedFile, setUploadedFile] = useState<any>(null);
-  const [uploadedJourneyData, setUploadedJourneyData] = useState<any>(null);
-  const [formData, setFormData] = useState<JourneyRequest>({
+  const [error, setError] = useState('');
+  const [form, setForm] = useState<JourneyRequest>({
     platform: 'euw1',
     riotId: '',
     archetype: 'explorer',
+    year: previousYear,
+    queue: 420,
+    maxMatches: 200,
+    useLocalLlm: true,
   });
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const startRiotJourney = async (event: React.FormEvent) => {
+    event.preventDefault();
     setIsLoading(true);
+    setError('');
     try {
-      const response = await createJourney({
-        ...formData,
-        bypassCache,
-      });
-      setJobId(response.jobId);
-    } catch (error) {
-      console.error('Failed to create journey:', error);
-      alert('Failed to start your journey. Please try again.');
+      const job = await createJourney(form);
+      setJobId(job.jobId);
+    } catch (reason: unknown) {
+      setError(apiErrorMessage(reason, 'The local API could not start the journey.'));
       setIsLoading(false);
     }
   };
 
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
+  const readUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
     if (!file) return;
-
+    setError('');
     try {
-      const text = await file.text();
-      const data = JSON.parse(text);
-      
-      // Check if it's a complete journey package (new format)
-      if (data.type === 'complete-journey' && data.metadata && data.quarters && data.finale) {
-        setUploadedFile(data);
-        setUploadedJourneyData(data); // Store for direct display
-        
-        // Auto-fill player name and archetype from metadata
-        if (data.metadata.playerName) {
-          setFormData(prev => ({ 
-            ...prev, 
-            riotId: data.metadata.playerName,
-            archetype: data.metadata.archetype || prev.archetype
-          }));
-        }
-        return;
+      const data = JSON.parse(await file.text());
+      setUploadName(file.name);
+      if (data.type === 'complete-journey' && data.quarters && data.finale) {
+        setUploadedJourney(data as CompleteJourney);
+        setUploadPayload(null);
+        setForm(current => ({
+          ...current,
+          riotId: data.metadata?.playerName || current.riotId,
+          archetype: data.metadata?.archetype || current.archetype,
+          year: data.metadata?.year || current.year,
+        }));
+      } else {
+        setUploadedJourney(null);
+        setUploadPayload(data);
       }
-      
-      // Check if it's the old format (raw matches with Q1-Q4)
-      if (data.Q1 || data.Q2 || data.Q3 || data.Q4) {
-        setUploadedFile(data);
-        setUploadedJourneyData(null); // Will need backend processing
-        
-        // Try to extract player name from first match
-        const firstQuarter = data.Q1 || data.Q2 || data.Q3 || data.Q4;
-        if (firstQuarter && firstQuarter.length > 0) {
-          const firstMatch = firstQuarter[0];
-          if (firstMatch.playerName) {
-            setFormData(prev => ({ 
-              ...prev, 
-              riotId: firstMatch.playerName
-            }));
-          }
-        }
-        return;
-      }
-      
-      throw new Error('Invalid data format. File must be either a complete journey package or contain Q1-Q4 match data.');
-    } catch (error) {
-      console.error('Failed to parse uploaded file:', error);
-      alert('Invalid file format. Please upload a valid journey-upload.json file.');
-      setUploadedFile(null);
-      setUploadedJourneyData(null);
+    } catch {
+      setUploadPayload(null);
+      setUploadedJourney(null);
+      setError('That file is not valid JSON.');
     }
   };
 
-  const handleUploadSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!uploadedFile) {
-      alert('Please select a file first');
-      return;
-    }
-
-    // If it's a complete journey package, display it directly
-    if (uploadedJourneyData) {
-      // Create a fake jobId to trigger Journey component
+  const startUploadedJourney = async (event: React.FormEvent) => {
+    event.preventDefault();
+    if (uploadedJourney) {
       setJobId('uploaded-journey');
       return;
     }
-
-    // Otherwise, send to backend for processing (legacy path)
+    if (!uploadPayload) {
+      setError('Choose a match-data JSON file first.');
+      return;
+    }
+    if (!form.riotId.trim()) {
+      setError('Enter the player name that belongs to this dataset.');
+      return;
+    }
     setIsLoading(true);
+    setError('');
     try {
-      const response = await createJourneyFromUpload({
-        platform: formData.platform,
-        riotId: formData.riotId,
-        archetype: formData.archetype,
-        uploadedMatches: uploadedFile,
+      const job = await createJourneyFromUpload({
+        playerName: form.riotId,
+        archetype: form.archetype,
+        year: form.year,
+        useLocalLlm: form.useLocalLlm,
+        payload: uploadPayload,
       });
-
-      setJobId(response.jobId);
-    } catch (error) {
-      console.error('Failed to process uploaded file:', error);
-      alert('Failed to upload data. Please check the file format and try again.');
+      setJobId(job.jobId);
+    } catch (reason: unknown) {
+      setError(apiErrorMessage(reason, 'The local API could not read the dataset.'));
       setIsLoading(false);
     }
   };
 
-  const handleReset = () => {
+  const reset = () => {
     setJobId(null);
+    setUploadedJourney(null);
+    setUploadPayload(null);
+    setUploadName('');
     setIsLoading(false);
-    setFormData({
-      platform: 'euw1',
-      riotId: '',
-      archetype: 'explorer',
-    });
+    setError('');
   };
 
   if (jobId) {
-    return <Journey 
-      jobId={jobId} 
-      riotId={formData.riotId} 
-      onReset={handleReset}
-      uploadedJourneyData={uploadedJourneyData}
-    />;
+    return (
+      <Journey
+        jobId={jobId}
+        riotId={form.riotId}
+        onReset={reset}
+        uploadedJourneyData={uploadedJourney || undefined}
+      />
+    );
   }
 
   if (mode === 'compare') {
-    return <FriendComparison onBack={() => setMode('api')} />;
+    return <FriendComparison onBack={() => setMode('riot')} />;
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="max-w-md w-full"
-      >
-        <div className="text-center mb-8">
-          <motion.h1
-            className="text-5xl font-bold text-runeterra-gold mb-4"
-            animate={{ textShadow: ['0 0 10px #c8aa6e', '0 0 20px #c8aa6e', '0 0 10px #c8aa6e'] }}
-            transition={{ duration: 2, repeat: Infinity }}
-          >
-            Rift Rewind
-          </motion.h1>
-          <p className="text-runeterra-gold-light text-lg">
-            Embark on a journey through Runeterra
-          </p>
-          <p className="text-gray-400 mt-2">
-            Discover your story across the 2025 season
-          </p>
-        </div>
-
-        {/* Mode Tabs */}
-        <div className="flex gap-2 mb-6">
-          <button
-            onClick={() => setMode('api')}
-            className={`flex-1 py-3 rounded-lg font-medium transition-all ${
-              mode === 'api'
-                ? 'bg-runeterra-gold text-runeterra-darker'
-                : 'bg-runeterra-dark/50 text-runeterra-gold-light border border-runeterra-gold/30'
-            }`}
-          >
-            Fetch from Riot API
-          </button>
-          <button
-            onClick={() => setMode('upload')}
-            className={`flex-1 py-3 rounded-lg font-medium transition-all flex items-center justify-center gap-2 ${
-              mode === 'upload'
-                ? 'bg-runeterra-gold text-runeterra-darker'
-                : 'bg-runeterra-dark/50 text-runeterra-gold-light border border-runeterra-gold/30'
-            }`}
-          >
-            <Upload size={18} />
-            Upload Data
-          </button>
-          <button
-            onClick={() => setMode('compare')}
-            className={`flex-1 py-3 rounded-lg font-medium transition-all flex items-center justify-center gap-2 ${
-              (mode as Mode) === 'compare'
-                ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white'
-                : 'bg-runeterra-dark/50 text-runeterra-gold-light border border-purple-500/30'
-            }`}
-          >
-            🤝 Compare with Friend
-          </button>
-        </div>
-
-        {mode === 'api' ? (
-          <motion.form
-            onSubmit={handleSubmit}
-            className="bg-runeterra-dark/50 backdrop-blur-sm border border-runeterra-gold/30 rounded-lg p-8 shadow-xl"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.2 }}
-          >
-          <div className="space-y-6">
-            <div>
-              <label className="block text-runeterra-gold-light mb-2 font-medium">
-                Summoner Name
-              </label>
-              <input
-                type="text"
-                placeholder="Name#TAG"
-                value={formData.riotId}
-                onChange={(e) => setFormData({ ...formData, riotId: e.target.value })}
-                className="w-full px-4 py-3 bg-runeterra-darker border border-runeterra-gold/30 rounded-lg text-runeterra-gold-light focus:outline-none focus:border-runeterra-gold transition-colors"
-                required
-              />
-              <p className="text-sm text-gray-400 mt-1">e.g., Faker#KR1</p>
-            </div>
-
-            <div>
-              <label className="block text-runeterra-gold-light mb-2 font-medium">
-                Region
-              </label>
-              <select
-                value={formData.platform}
-                onChange={(e) => setFormData({ ...formData, platform: e.target.value })}
-                className="w-full px-4 py-3 bg-runeterra-darker border border-runeterra-gold/30 rounded-lg text-runeterra-gold-light focus:outline-none focus:border-runeterra-gold transition-colors"
-              >
-                <option value="euw1">EUW</option>
-                <option value="eun1">EUNE</option>
-                <option value="na1">NA</option>
-                <option value="br1">BR</option>
-                <option value="la1">LAN</option>
-                <option value="la2">LAS</option>
-                <option value="kr">KR</option>
-                <option value="jp1">JP</option>
-                <option value="oc1">OCE</option>
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-runeterra-gold-light mb-2 font-medium">
-                Archetype
-              </label>
-              <select
-                value={formData.archetype}
-                onChange={(e) => setFormData({ ...formData, archetype: e.target.value })}
-                className="w-full px-4 py-3 bg-runeterra-darker border border-runeterra-gold/30 rounded-lg text-runeterra-gold-light focus:outline-none focus:border-runeterra-gold transition-colors"
-              >
-                <option value="explorer" className="bg-zinc-800 text-zinc-100">Explorer</option>
-                <option value="warrior" className="bg-zinc-800 text-zinc-100">Warrior</option>
-                <option value="sage" className="bg-zinc-800 text-zinc-100">Sage</option>
-                <option value="guardian" className="bg-zinc-800 text-zinc-100">Guardian</option>
-              </select>
-            </div>
-
-            <div className="flex items-center gap-3">
-              <input
-                type="checkbox"
-                id="bypassCache"
-                checked={bypassCache}
-                onChange={(e) => setBypassCache(e.target.checked)}
-                className="w-4 h-4 rounded border-runeterra-gold/30 bg-runeterra-darker focus:ring-runeterra-gold"
-              />
-              <label htmlFor="bypassCache" className="text-sm text-runeterra-gold-light">
-                Force refresh (bypass cache)
-              </label>
-            </div>
-
-            <motion.button
-              type="submit"
-              disabled={isLoading}
-              className="w-full py-4 bg-gradient-to-r from-runeterra-gold to-runeterra-gold-light text-runeterra-darker font-bold rounded-lg hover:shadow-lg hover:shadow-runeterra-gold/50 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              {isLoading ? 'Preparing Your Journey...' : 'Begin Journey'}
-            </motion.button>
+    <main className="min-h-screen map-grid px-4 py-10 md:py-16">
+      <div className="mx-auto max-w-6xl">
+        <motion.header initial={{ opacity: 0, y: -16 }} animate={{ opacity: 1, y: 0 }} className="mb-10 text-center">
+          <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-runeterra-gold/30 bg-black/30 px-4 py-2 text-xs uppercase tracking-[0.28em] text-runeterra-gold">
+            <Cpu size={14} /> Local-first · private by default
           </div>
-        </motion.form>
-        ) : (
-          <motion.div
-            className="bg-runeterra-dark/50 backdrop-blur-sm border border-runeterra-gold/30 rounded-lg p-8 shadow-xl"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.2 }}
-          >
-            <div className="space-y-6">
-              <div>
-                <label className="block text-runeterra-gold-light mb-2 font-medium">
-                  Upload Match Data
-                </label>
-                <input
-                  type="file"
-                  accept=".json"
-                  onChange={handleFileUpload}
-                  className="w-full px-4 py-3 bg-runeterra-darker border border-runeterra-gold/30 rounded-lg text-runeterra-gold-light file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-runeterra-gold file:text-runeterra-darker file:font-medium hover:file:bg-runeterra-gold-light focus:outline-none focus:border-runeterra-gold transition-colors"
-                />
-                <p className="text-sm text-gray-400 mt-1">
-                  Upload matches-upload.json generated by aggregate_matches.py
-                </p>
-              </div>
+          <h1 className="text-5xl font-bold text-runeterra-gold md:text-7xl">Rift Rewind</h1>
+          <p className="mx-auto mt-4 max-w-2xl text-lg text-runeterra-gold-light/80">
+            Turn a ranked season into a four-act expedition across Runeterra—grounded in your data, narrated by your local model.
+          </p>
+        </motion.header>
 
-              <div>
-                <label className="block text-runeterra-gold-light mb-2 font-medium">
-                  Summoner Name
-                </label>
-                <input
-                  type="text"
-                  placeholder="Name#TAG"
-                  value={formData.riotId}
-                  onChange={(e) => setFormData({ ...formData, riotId: e.target.value })}
-                  className="w-full px-4 py-3 bg-runeterra-darker border border-runeterra-gold/30 rounded-lg text-runeterra-gold-light focus:outline-none focus:border-runeterra-gold transition-colors"
-                  required
-                  disabled={!!uploadedFile}
-                />
-                <p className="text-sm text-gray-400 mt-1">e.g., Faker#KR1</p>
-              </div>
+        <section className="mb-8 grid gap-3 md:grid-cols-3">
+          {[
+            { id: 'riot' as const, icon: Swords, label: 'Riot ID', note: 'Fetch ranked matches locally' },
+            { id: 'upload' as const, icon: Upload, label: 'Local data', note: 'Analyze an existing JSON dataset' },
+            { id: 'compare' as const, icon: Map, label: 'Journey together', note: 'Let two player agents negotiate' },
+          ].map(item => (
+            <button
+              key={item.id}
+              onClick={() => setMode(item.id)}
+              className={`rounded-xl border p-4 text-left transition ${mode === item.id ? 'border-runeterra-gold bg-runeterra-gold/15' : 'border-runeterra-gold/20 bg-black/25 hover:border-runeterra-gold/50'}`}
+            >
+              <item.icon className="mb-3 text-runeterra-gold" size={22} />
+              <span className="block font-semibold text-runeterra-gold-light">{item.label}</span>
+              <span className="mt-1 block text-sm text-gray-400">{item.note}</span>
+            </button>
+          ))}
+        </section>
 
-              <div>
-                <label className="block text-runeterra-gold-light mb-2 font-medium">
-                  Region
-                </label>
-                <select
-                  value={formData.platform}
-                  onChange={(e) => setFormData({ ...formData, platform: e.target.value })}
-                  className="w-full px-4 py-3 bg-runeterra-darker border border-runeterra-gold/30 rounded-lg text-runeterra-gold-light focus:outline-none focus:border-runeterra-gold transition-colors"
-                  disabled={!!uploadedFile}
-                >
-                  <option value="euw1">EUW</option>
-                  <option value="eun1">EUNE</option>
-                  <option value="na1">NA</option>
-                  <option value="br1">BR</option>
-                  <option value="la1">LAN</option>
-                  <option value="la2">LAS</option>
-                  <option value="kr">KR</option>
-                  <option value="jp1">JP</option>
-                  <option value="oc1">OCE</option>
-                </select>
-              </div>
+        <motion.section layout className="mx-auto max-w-2xl rounded-2xl border border-runeterra-gold/25 bg-runeterra-darker/85 p-6 shadow-2xl backdrop-blur md:p-9">
+          <form onSubmit={mode === 'riot' ? startRiotJourney : startUploadedJourney} className="space-y-6">
+            {mode === 'upload' && (
+              <label className="block rounded-xl border border-dashed border-runeterra-gold/40 bg-runeterra-gold/5 p-6 text-center transition hover:bg-runeterra-gold/10">
+                <Database className="mx-auto mb-3 text-runeterra-gold" />
+                <span className="block font-semibold text-runeterra-gold-light">{uploadName || 'Choose match data or a journey export'}</span>
+                <span className="mt-1 block text-sm text-gray-400">JSON array, matches object, Q1–Q4 object, or complete journey</span>
+                <input type="file" accept="application/json,.json" onChange={readUpload} className="sr-only" />
+              </label>
+            )}
 
-              <div>
-                <label className="block text-runeterra-gold-light mb-2 font-medium">
-                  Archetype
-                </label>
-                <select
-                  value={formData.archetype}
-                  onChange={(e) => setFormData({ ...formData, archetype: e.target.value })}
-                  className="w-full px-4 py-3 bg-runeterra-darker border border-runeterra-gold/30 rounded-lg text-runeterra-gold-light focus:outline-none focus:border-runeterra-gold transition-colors"
-                  disabled={!!uploadedFile}
-                >
-                  <option value="explorer" className="bg-zinc-800 text-zinc-100">Explorer</option>
-                  <option value="warrior" className="bg-zinc-800 text-zinc-100">Warrior</option>
-                  <option value="sage" className="bg-zinc-800 text-zinc-100">Sage</option>
-                  <option value="guardian" className="bg-zinc-800 text-zinc-100">Guardian</option>
-                </select>
-              </div>
-
-              <motion.button
-                onClick={handleUploadSubmit}
-                disabled={isLoading || !uploadedFile}
-                className="w-full py-4 bg-gradient-to-r from-runeterra-gold to-runeterra-gold-light text-runeterra-darker font-bold rounded-lg hover:shadow-lg hover:shadow-runeterra-gold/50 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-              >
-                {isLoading ? 'Preparing Your Journey...' : uploadedFile ? 'Begin Journey' : 'Please Select a File First'}
-              </motion.button>
+            <div>
+              <label className="mb-2 block text-sm font-medium text-runeterra-gold-light">{mode === 'riot' ? 'Riot ID' : 'Player name'}</label>
+              <input
+                value={form.riotId}
+                onChange={event => setForm({ ...form, riotId: event.target.value })}
+                placeholder="GameName#TAG"
+                disabled={Boolean(uploadedJourney)}
+                required
+                className="w-full rounded-lg border border-runeterra-gold/25 bg-black/35 px-4 py-3 text-runeterra-gold-light outline-none focus:border-runeterra-gold disabled:opacity-60"
+              />
             </div>
-          </motion.div>
-        )}
 
-        <p className="text-center text-gray-500 text-sm mt-6">
-          A journey through your 2025 League of Legends season
-        </p>
-      </motion.div>
-    </div>
+            <div className="grid gap-4 sm:grid-cols-2">
+              {mode === 'riot' && (
+                <div>
+                  <label className="mb-2 block text-sm font-medium text-runeterra-gold-light">Server</label>
+                  <select value={form.platform} onChange={event => setForm({ ...form, platform: event.target.value })} className="w-full rounded-lg border border-runeterra-gold/25 bg-zinc-900 px-4 py-3 text-runeterra-gold-light">
+                    <option value="euw1">EU West</option><option value="eun1">EU Nordic & East</option><option value="na1">North America</option>
+                    <option value="kr">Korea</option><option value="br1">Brazil</option><option value="jp1">Japan</option>
+                    <option value="la1">LAN</option><option value="la2">LAS</option><option value="oc1">Oceania</option>
+                  </select>
+                </div>
+              )}
+              <div>
+                <label className="mb-2 block text-sm font-medium text-runeterra-gold-light">Season year</label>
+                <input type="number" min="2018" max="2100" value={form.year} onChange={event => setForm({ ...form, year: Number(event.target.value) })} className="w-full rounded-lg border border-runeterra-gold/25 bg-zinc-900 px-4 py-3 text-runeterra-gold-light" />
+              </div>
+              <div>
+                <label className="mb-2 block text-sm font-medium text-runeterra-gold-light">Journey archetype</label>
+                <select value={form.archetype} onChange={event => setForm({ ...form, archetype: event.target.value })} disabled={Boolean(uploadedJourney)} className="w-full rounded-lg border border-runeterra-gold/25 bg-zinc-900 px-4 py-3 text-runeterra-gold-light disabled:opacity-60">
+                  <option value="explorer">Explorer</option><option value="warrior">Warrior</option><option value="sage">Sage</option><option value="guardian">Guardian</option>
+                </select>
+              </div>
+              {mode === 'riot' && (
+                <div>
+                  <label className="mb-2 block text-sm font-medium text-runeterra-gold-light">Ranked queue</label>
+                  <select value={form.queue} onChange={event => setForm({ ...form, queue: Number(event.target.value) as 420 | 440 })} className="w-full rounded-lg border border-runeterra-gold/25 bg-zinc-900 px-4 py-3 text-runeterra-gold-light">
+                    <option value={420}>Solo / Duo</option><option value={440}>Flex</option>
+                  </select>
+                </div>
+              )}
+            </div>
+
+            {!uploadedJourney && (
+              <label className="flex items-start gap-3 rounded-lg border border-cyan-400/20 bg-cyan-400/5 p-4">
+                <input type="checkbox" checked={form.useLocalLlm} onChange={event => setForm({ ...form, useLocalLlm: event.target.checked })} className="mt-1 h-4 w-4" />
+                <span>
+                  <span className="block font-medium text-cyan-200">Narrate with the configured local LLM</span>
+                  <span className="mt-1 block text-xs text-gray-400">If Ollama is unavailable, the app still produces a deterministic evidence-based journey.</span>
+                </span>
+              </label>
+            )}
+
+            {error && <div className="rounded-lg border border-red-500/40 bg-red-500/10 p-3 text-sm text-red-200">{error}</div>}
+
+            <button disabled={isLoading || (mode === 'upload' && !uploadPayload && !uploadedJourney)} className="w-full rounded-xl bg-gradient-to-r from-runeterra-gold to-amber-200 px-6 py-4 font-bold text-runeterra-darker transition hover:shadow-lg hover:shadow-runeterra-gold/20 disabled:cursor-not-allowed disabled:opacity-50">
+              {isLoading ? 'Charting the route…' : uploadedJourney ? 'Open this journey' : 'Create the Runeterra journey'}
+            </button>
+          </form>
+        </motion.section>
+      </div>
+    </main>
   );
 }
 
 export default App;
-
